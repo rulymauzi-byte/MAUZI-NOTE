@@ -1,0 +1,70 @@
+MAUZI NOTE 3.1 — ACTUALIZACIÓN
+
+Sube TODO el contenido de este ZIP a la misma raíz del repositorio.
+Incluye editor-enhancements.js y editor-enhancements.css, además de sw.js actualizado.
+No se cambia la carpeta de Drive, el identificador de la aplicación ni el esquema
+local de las notas. Si ya configuraste google-config.js, CONSERVA tu ID existente.
+Antes de reemplazar la app, guarda una copia de tus notas. No borres datos del sitio
+para actualizar. Guarda o cierra el editor antes de aplicar una actualización.
+
+CONFIGURAR_GOOGLE.html contiene el asistente para configurar Google Drive.
+Los cambios del editor no exigen permisos nuevos de Google.
+
+MAUZI NOTE 3.0 — SOLO GOOGLE DRIVE DE CADA USUARIO
+================================================
+No usa Firebase. No necesita firebase-config.js ni Firestore.
+GitHub Pages sirve la app; cada persona autoriza y utiliza SU PROPIO Google Drive.
+
+FALTA UN DATO ANTES DE USAR GOOGLE:
+El creador debe registrar MAUZI NOTE con Google y obtener el ID de cliente OAuth
+para una aplicación web. No es un correo ni una cuenta para guardar notas.
+Abre CONFIGURAR_GOOGLE.html: tiene instrucciones y un botón para generar
+google-config.js pegando solo ese ID. No necesita contraseñas ni client_secret.
+Los usuarios finales NO configuran nada: conectan su cuenta Google.
+
+PUBLICACIÓN:
+- Exporta tus notas desde la versión anterior. Conserva esa versión y su respaldo.
+- Descomprime este ZIP. Sube todo su contenido a la raíz de tu repositorio.
+- Activa GitHub Pages (main, raíz). Abre su dirección HTTPS, no el ZIP o file://.
+- Elimina del repositorio el antiguo cloud.js, firebase-config.js, firebase.json
+  y firestore.*. No borres los datos ni respaldos de ninguna versión anterior.
+- Completa google-config.js con el ID y autoriza tu origen HTTPS en Google.
+- Completa el contacto real de soporte en PRIVACIDAD.html antes de publicarla.
+- No cambies luego de proyecto de Google sin planificar la migración y respaldos.
+
+RECUPERACIÓN:
+La app recupera las versiones de Drive al conectar la misma cuenta. Las antiguas
+notas locales se importan desde Mi cuenta → Importar notas de este teléfono,
+o mediante Guardar copia / Recuperar copia. Datos anteriores en Firebase deben
+exportarse desde la app anterior; no hay migración de Firestore por internet.
+
+CONFIRMACIÓN:
+«Guardado en tu Google Drive ✓» confirma que terminó el intercambio con Drive.
+«Solo en el teléfono», «pendiente» o «Conectar Google» NO significan que tus cambios
+ya estén a salvo en otro teléfono. Si el permiso vence, toca Conectar Google.
+
+SIN SERVIDOR PRIVADO:
+Se usa Google Identity Services. El permiso temporal vive solo en memoria, por
+seguridad. La app recuerda tu copia local, pero Google puede pedir reconectar
+al volver a abrirla o tras vencer el permiso. No sincroniza mientras está cerrada.
+No se guardan secretos en GitHub para evitar una nueva autorización.
+
+HISTORIAL:
+Cada guardado crea un archivo de versión independiente para no sobrescribir
+ediciones simultáneas. Las anteriores quedan en Historial y la papelera es lógica.
+No hay borrado automático; el espacio usado aumenta en el Drive de cada usuario.
+No borres ni compartas la carpeta MAUZI NOTE desde Drive. Son datos de aplicación
+JSON, no archivos de Google Docs. Guarda copias independientes.
+
+INSTALACIÓN:
+Chrome Android: instala desde la app o el menú del navegador.
+Safari iPhone: Compartir → Añadir a pantalla de inicio.
+Espera «Lista sin conexión». En modo instalado se ocultan los botones Instalar.
+Se conservan el logo, colores, notas de pantalla completa, editor y cuatro Biblias
+integradas para lectura sin internet. La conexión de Google sí requiere internet.
+
+PRUEBA REAL OBLIGATORIA:
+Este ZIP no incluye un ID de cliente inventado ni una cuenta de prueba ajena.
+Antes de distribuir: configura Google, entra, guarda una nota, espera confirmación
+y comprueba que se recupera con la misma cuenta en otro teléfono/navegador.
+Las pruebas del paquete con Drive son simuladas, no una vinculación real a Google.

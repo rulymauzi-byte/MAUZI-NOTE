@@ -1,0 +1,32 @@
+MAUZI NOTE 3.1 — ALCANCE DE LAS COMPROBACIONES
+
+Cambios de esta entrega:
+- Renglones medidos debajo de cada fila real de texto (lectura y edición).
+- Pegado de HTML con formato y listas de Office, sin fuentes o librerías remotas.
+- Listas romanas, incisos, listas anidadas y comienzo distinto de 1 conservados.
+- Asistente CONFIGURAR_GOOGLE actualizado y generador de contacto de privacidad.
+- Service worker actualizado para conservar también los archivos nuevos offline.
+
+Pruebas realizadas en Chromium con vistas móviles 390x844 y 360x640:
+- Pegado mediante eventos ClipboardEvent con fragmentos HTML y Office de prueba.
+- Lectura tras guardar, negritas, cursivas, color, tamaños, numeración y listas anidadas.
+- Sanitización repetida conserva el formato; scripts, controladores de eventos y URLs
+  ejecutables se descartan. No se cargan imágenes remotas pegadas.
+- Renglones sin intersección con los rectángulos de texto en la nota de prueba.
+- Ajuste de líneas al variar el ancho y el tamaño de los títulos.
+- Citas bíblicas después de pegar texto con formato; datos bíblicos sin modificaciones.
+- Archivos del logo y drive-sync.js idénticos al paquete v3.
+- Comprobación de sintaxis y existencia de archivos del manifiesto/caché.
+
+Límites de esta prueba:
+El entorno impide navegar a un servidor, incluso localhost. Se ejecutó la interfaz
+como documento de prueba. El guardado/cuenta se sustituyó por un adaptador de prueba.
+No se ha verificado OAuth con Google real, IndexedDB persistente, service worker
+publicado ni una instalación física Android/iPhone en esta sesión.
+El pegado real depende del HTML que la app de origen y el navegador pongan en el
+portapapeles; las fuentes ausentes en el teléfono utilizan una fuente de reemplazo.
+No se incorporan scripts, objetos de Office ni imágenes remotas al pegar.
+
+La configuración debe completarse con el ID público del creador y verificarse
+con dos dispositivos antes de confiar información importante a la sincronización.
+Los archivos de prueba, notas ficticias y adaptadores no se incluyen en este paquete.

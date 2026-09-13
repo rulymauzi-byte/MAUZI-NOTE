@@ -1,0 +1,34 @@
+/* MAUZI NOTE 3.1. Se dibujan renglones debajo del texto medido, no sobre una cuadrícula fija. */
+#noteReadModal .note-read-sheet,#noteReadModal .read-note-paper{background-image:none!important;}
+#noteContent.rich-editor,#noteReadModal #readNoteContent{
+  background-image:var(--note-rules,none)!important;
+  background-repeat:no-repeat!important;background-position:0 0!important;background-size:100% 100%!important;
+  background-attachment:scroll!important;line-height:1.8;overflow-wrap:anywhere;word-break:normal;
+}
+#noteReadModal #readNoteContent{padding:0 0 55px!important;min-height:240px;}
+#noteContent.rich-editor :is(p,div,li),#noteReadModal #readNoteContent :is(p,div,li){min-height:0;line-height:inherit;}
+#noteContent.rich-editor :is(p,div),#noteReadModal #readNoteContent :is(p,div){margin:0;}
+#noteContent.rich-editor :is(ul,ol),#noteReadModal #readNoteContent :is(ul,ol){margin:0;padding-left:2.05em;}
+#noteContent.rich-editor li,#noteReadModal #readNoteContent li{padding-left:.12em;}
+#noteContent.rich-editor :is(h1,h2,h3,h4,h5,h6),#noteReadModal #readNoteContent :is(h1,h2,h3,h4,h5,h6){line-height:1.45;margin:.3em 0 .15em;color:inherit;}
+#noteContent.rich-editor h1,#noteReadModal #readNoteContent h1{font-size:1.6em;}
+#noteContent.rich-editor h2,#noteReadModal #readNoteContent h2{font-size:1.3em;}
+#noteContent.rich-editor h3,#noteReadModal #readNoteContent h3{font-size:1.12em;}
+#noteContent.rich-editor blockquote,#noteReadModal #readNoteContent blockquote{border-left:3px solid #b3914b;margin:.5em 0;padding-left:.85em;}
+#noteContent.rich-editor :is(td,th),#noteReadModal #readNoteContent :is(td,th){border:1px solid #756244;padding:.25em .4em;overflow-wrap:anywhere;}
+#noteContent.rich-editor table,#noteReadModal #readNoteContent table{max-width:100%;border-collapse:collapse;margin:.35em 0;}
+#noteContent.rich-editor pre,#noteReadModal #readNoteContent pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.9em;line-height:1.5;}
+#noteReadModal #readNoteContent a:not(.bible-link){color:#1a4272;background:#dce7f5;text-decoration:underline;border-radius:3px;}
+#noteContent.rich-editor sub,#noteReadModal #readNoteContent sub{vertical-align:sub;font-size:.75em;line-height:0;}
+#noteContent.rich-editor sup,#noteReadModal #readNoteContent sup{vertical-align:super;font-size:.75em;line-height:0;}
+/* Incisos de Office con cierre de paréntesis, sin convertir números romanos en decimales. */
+ol[data-mauzi-suffix=")"][data-mauzi-list="upper-roman"]>li::marker{content:counter(list-item,upper-roman) ") ";}
+ol[data-mauzi-suffix=")"][data-mauzi-list="lower-roman"]>li::marker{content:counter(list-item,lower-roman) ") ";}
+ol[data-mauzi-suffix=")"][data-mauzi-list="upper-alpha"]>li::marker{content:counter(list-item,upper-alpha) ") ";}
+ol[data-mauzi-suffix=")"][data-mauzi-list="lower-alpha"]>li::marker{content:counter(list-item,lower-alpha) ") ";}
+ol[data-mauzi-suffix=")"][data-mauzi-list="decimal"]>li::marker{content:counter(list-item,decimal) ") ";}
+ol[data-mauzi-prefix="("][data-mauzi-list="upper-roman"]>li::marker{content:"(" counter(list-item,upper-roman) ") ";}
+ol[data-mauzi-prefix="("][data-mauzi-list="lower-roman"]>li::marker{content:"(" counter(list-item,lower-roman) ") ";}
+ol[data-mauzi-prefix="("][data-mauzi-list="upper-alpha"]>li::marker{content:"(" counter(list-item,upper-alpha) ") ";}
+ol[data-mauzi-prefix="("][data-mauzi-list="lower-alpha"]>li::marker{content:"(" counter(list-item,lower-alpha) ") ";}
+ol[data-mauzi-prefix="("][data-mauzi-list="decimal"]>li::marker{content:"(" counter(list-item,decimal) ") ";}
