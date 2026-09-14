@@ -1,0 +1,28 @@
+/* 4.7 — instalación ofrecida solo fuera de la app instalada. */
+html.install-offer-open,html.install-offer-open body{overflow:hidden!important;}
+.install-offer{position:fixed;inset:0;z-index:400;display:grid;place-items:center;padding:24px;background:rgba(2,9,16,.82);backdrop-filter:blur(12px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;height:var(--app-vh,100dvh);box-sizing:border-box;}
+.install-offer.hidden{display:none!important;}
+.install-offer-card{position:relative;width:100%;max-width:465px;padding:30px;border:1px solid #486072;border-radius:26px;color:#f4f3ed;background:radial-gradient(ellipse at 0 0,#143d5f 0,transparent 72%),linear-gradient(150deg,#102336,#090f18);box-shadow:0 25px 90px #0009;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+.install-offer-card [hidden]{display:none!important;}
+.install-offer-close{position:absolute;top:10px;right:10px;width:38px;height:38px;border:0;border-radius:12px;color:#d8c18e;background:#ffffff08;font:25px/1 system-ui;cursor:pointer;}
+.install-offer-brand{display:flex;align-items:center;gap:15px;margin-bottom:25px;}
+.install-offer-brand img{flex-shrink:0;border-radius:17px;border:1px solid #b88e47;object-fit:contain;box-shadow:0 5px 18px #0004;}
+.install-offer-brand span{font-size:18px;font-weight:800;letter-spacing:.6px;}
+.install-offer-brand small{display:block;color:#9eb7cb;font-size:11px;font-weight:450;letter-spacing:0;margin-top:5px;}
+.install-offer-eyebrow{font-size:10px;letter-spacing:1.3px;font-weight:750;color:#dab56f;margin:0 0 10px;}
+#installOfferTitle{font-size:29px;line-height:1.16;letter-spacing:-.7px;margin:0 0 13px;outline:none;}
+.install-offer-description{font-size:14px;color:#c8d3df;line-height:1.6;margin:0 0 17px;}
+.install-offer-benefits{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px;}
+.install-offer-benefits span{padding:6px 8px;border:1px solid #446074;border-radius:7px;font-size:10px;color:#e3c88f;background:#102a3c;}
+.install-offer-primary,.install-offer-secondary{font:700 14px system-ui;display:flex;gap:8px;align-items:center;justify-content:center;width:100%;min-height:48px;border:1px solid #e5bf77;border-radius:13px;padding:12px;cursor:pointer;touch-action:manipulation;}
+.install-offer-primary{background:linear-gradient(100deg,#e5bd67,#e7a05c);color:#151c24;box-shadow:0 7px 20px #0003;}
+.install-offer-primary svg{height:20px;width:20px;}
+.install-offer-secondary{margin-top:9px;background:#0a1926;color:#bcd2e5;border-color:#35516b;font-weight:550;}
+.install-offer-primary:active,.install-offer-secondary:active{transform:translateY(1px);}
+.install-offer-foot{margin:16px 0 0;color:#92a7b9;font-size:11px;line-height:1.6;}
+.install-offer-guide{padding:12px;border:1px solid #9e7a3c;background:#d0a45013;color:#f2d79f;font-size:13px;line-height:1.6;border-radius:10px;}
+.install-offer button:focus-visible{outline:3px solid #f5d790;outline-offset:3px;}
+html.mauzi-installed [data-install-open],html.mauzi-installed #installNowBtn,html.mauzi-installed #installOffer{display:none!important;}
+@media (display-mode:standalone),(display-mode:minimal-ui){[data-install-open],#installNowBtn,#installOffer{display:none!important;}}
+@media(max-width:500px){.install-offer{padding:16px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(16px,env(safe-area-inset-bottom));}.install-offer-card{padding:26px 22px 23px;border-radius:23px;}#installOfferTitle{font-size:27px;}.install-offer-brand{gap:13px;}.install-offer-brand img{width:60px;height:60px;}}
+@media(max-height:560px){.install-offer{align-items:start;}.install-offer-card{padding:20px;}.install-offer-brand{margin-bottom:14px;}.install-offer-benefits{margin-bottom:14px;}}

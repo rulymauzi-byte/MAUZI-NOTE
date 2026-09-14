@@ -1,52 +1,86 @@
-MAUZI NOTE 4.6 — COMPROBACIONES DE ESTA ENTREGA
-==============================================
-Fecha: 14 de septiembre de 2026.
+MAUZI NOTE 4.7 — COMPROBACIONES REALIZADAS
+========================================
+Fecha del paquete: 14 de septiembre de 2026.
+Entorno: Chromium 144.0.7559.96, Playwright y Node.js.
 
-Método: se ejecutaron los archivos reales en Chromium mediante Playwright,
-con un montaje de HTML/CSS/scripts en memoria. Google Identity, respuestas de
-Drive y almacenamiento fueron simulados exclusivamente en la prueba.
-El navegador gestionado no permitió navegar al servidor local; por ese motivo
-NO se presenta esto como una prueba real de HTTP, PWA, persistencia o Google.
-Los simuladores NO están dentro del paquete de la aplicación.
+ALCANCE Y LÍMITES
+El navegador de pruebas de este entorno bloquea navegaciones externas y locales
+con ERR_BLOCKED_BY_ADMINISTRATOR. Por eso las pruebas cargaron el DOM, estilos y
+código reales mediante set_content, con un adaptador EXTERNO al paquete que
+simula dirección HTTPS, almacenamiento local/IndexedDB y señales de instalación.
+Se preservaron los archivos de producción: el adaptador no se entrega.
+No se modificó la política administrada del navegador.
 
-01. OK — One visible button with exact label
-02. OK — Local state is not green
-03. OK — First linkage keeps access validation
-04. OK — Expired/restored session signals reconnection
-05. OK — Single tap invokes Google exactly once
-06. OK — Known account renews without opening settings
-07. OK — Cloud scan confirms success before green
-08. OK — Connected tap syncs without new Google prompt
-09. OK — Save retains journal uploads
-10. OK — Controls in one row at 320px
-11. OK — Controls in one row at 390px
-12. OK — Controls in one row at 768px
-13. OK — Controls in one row at 1440px
-14. OK — Long folder never hides sync at 320px
-15. OK — Long folder never hides sync at 390px
-16. OK — Long folder never hides sync at 1440px
-17. OK — Offline is not green
-18. OK — No authorization request without internet
-19. OK — Desktop note stays open with visible sync button
-20. OK — Expiration returns to reconnect state
-21. OK — Cancelling Google keeps notes
-22. OK — Blocked popup reports error without settings
-23. OK — Denied access keeps the saved note and no green
-24. OK — Retry reconnects same account
-25. OK — No JavaScript runtime errors
-26. OK — Token never persisted in local storage
+Se probaron la selección nativa con ratón/teclado y los cambios del DOM de texto
+real. Los eventos de doble toque y de instalación, el modo standalone y la
+API getInstalledRelatedApps se simularon. No se probó la aparición real de
+los tiradores de selección en un teléfono físico. Las capturas usan tamaños
+360, 390, 768 y 1440 píxeles.
+No se inició sesión en Google, no se enviaron notas a Drive ni WhatsApp, no se
+instaló la PWA en un teléfono y no se ejecutó la descarga real del service worker.
+Las cuatro Biblias se consultaron desde los datos integrados sin solicitudes
+externas. El código de Drive no se cambió.
 
-ALCANCE
-- Se verificó el botón real y su ruta de clic a la conexión existente.
-- Se verificó ancho de 320, 390, 768 y 1440 px, nombres de carpeta largos,
-  estado sin internet, acceso denegado/cancelado y reintento.
-- No se inició sesión en Google real ni se midieron latencias reales de Drive.
-- No se probaron instalación física, ventanas OAuth reales, sensores ni pagos.
-- No se reejecutó toda la batería histórica de Biblia, calendario e imágenes;
-  sus archivos/datos están conservados y se compararon con el paquete anterior.
-- No se modificó el repositorio del usuario desde esta conversación.
+RESULTADOS: 44 verificaciones aprobadas
+Los nombres siguientes corresponden a los casos ejecutados; «fixture» significa
+el adaptador simulado descrito arriba, no un dispositivo real.
+01. OK — Public link: installation invitation opens
+02. OK — Continue without installation: invitation closes
+03. OK — Google choices remain accessible
+04. OK — Free local entry works
+05. OK — Does not reopen automatically after dismissal
+06. OK — Native dismissal does not mark installed
+07. OK — Browser prompt requested exactly once
+08. OK — Double click selects a word in reader
+09. OK — No dictionary UI/function after selection
+10. OK — Native keyboard selection can expand to more words
+11. OK — Selection survives reader -> format
+12. OK — Format mode does not use editable host
+13. OK — Bold applied to selected range
+14. OK — Color applied without losing range
+15. OK — Selected color preserved in note HTML
+16. OK — Mixed selection can become bold
+17. OK — Bold can be removed including preexisting strong
+18. OK — Formatting preserves paragraphs and Roman list
+19. OK — Writing mode remains editable
+20. OK — Double-touch fallback selects word
+21. OK — Saved formatting reopens in a fresh session fixture
+22. OK — Standalone installed app: no installation offer
+23. OK — Standalone installed app: all install entries hidden
+24. OK — Full-screen reading does not mark app installed
+25. OK — Offline Bible RVR1960
+26. OK — Offline Bible NVI
+27. OK — Offline Bible NTV
+28. OK — Offline Bible TLA
+29. OK — No dictionary/network requests in local tests
+30. OK — Installed-related-app evidence hides browser offer
+31. OK — Accepted request alone does not fake installation
+32. OK — Confirmed appinstalled hides offer and entries
+33. OK — Reopening with known installation does not ask again
+34. OK — Fresh beforeinstallprompt clears stale installed flag after uninstall
+35. OK — Installation card fits 360
+36. OK — Installation card fits 768
+37. OK — Installation card fits 1440
+38. OK — No uncaught script errors in all test contexts
+39. OK — iPhone fallback shows Add to Home Screen inside offer
+40. OK — No browser tab opened for installation guidance
+41. OK — iPhone standalone signal hides installation offer
+42. OK — Image and formatting kept after save
+43. OK — Bible references still open without dictionary
+44. OK — Favorites and agenda remain available
 
-REVISIÓN DEL PAQUETE
-Se comprobaron la sintaxis JavaScript, las referencias a archivos locales,
-la presencia de los nuevos archivos en sw.js, el mismo ID público de Google
-y la identidad del bloque de datos de las Biblias frente a la entrega 4.5.
+CONTROLES ESTÁTICOS
+- node --check para todos los archivos JavaScript y scripts ejecutables inline.
+- Los 41 recursos indicados en sw.js existen y no se repiten.
+- dictionary.js no se carga; el léxico vacío no se solicita ni se cachea.
+- Datos bíblicos integrados idénticos a los de la entrega 4.6.
+- google-config.js, drive-sync.js, media-sync.js, archive-core.js, archive-ui.js,
+  modules-store.js, calendar-link.js y quick-sync.js idénticos a la entrega 4.6.
+- ZIP comprobado por CRC y rutas relativas, sin carpeta exterior, secretos o
+  archivos de pruebas. SHA256_ARCHIVOS.txt permite verificar su contenido.
+
+COMPROBACIÓN PENDIENTE DESPUÉS DE PUBLICAR
+Probar el enlace HTTPS en Chrome/Edge y en Safari/iPhone; confirmar la instalación
+real y abrir desde el icono. Comprobar la ampliación nativa de selección en su
+celular y guardar una nota de prueba para verificar su sincronización real.
+No borrar datos ni desinstalar para actualizar.

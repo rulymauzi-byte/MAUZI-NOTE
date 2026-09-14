@@ -2,15 +2,15 @@
    Deploy next to index.html. Relative URLs also work in /repository-name/.
    When publishing an update, change BUILD (or regenerate this package). */
 'use strict';
-const BUILD = '4.6.0-sincronice-directo-20260914';
+const BUILD = '4.7.0-instalacion-seleccion-20260914';
 const CACHE_PREFIX = 'mauzi-note::'+self.registration.scope+'::';
 const CACHE_NAME = CACHE_PREFIX+BUILD;
 const ASSETS = [
-  './index.html', './quick-sync.js', './quick-sync.css', './welcome-access.js', './welcome-access.css', './manifest.webmanifest', './favicon.ico',
+  './index.html', './install-manager.js', './install-manager.css', './text-selection.js', './text-selection.css', './quick-sync.js', './quick-sync.css', './welcome-access.js', './welcome-access.css', './manifest.webmanifest', './favicon.ico',
   './archive-core.js', './archive-ui.js', './archive-ui.css', './AYUDA_GOOGLE_Y_CARPETAS.html',
   './studio.js', './studio.css', './navigation.js', './media-sync.js',
   './editor-enhancements.js', './editor-enhancements.css', './note-experience.js', './note-experience.css', './drive-sync.js', './google-config.js', './CONFIGURAR_GOOGLE.html', './PRIVACIDAD.html',
-  './ACTUALIZAR.html', './account-config.js', './account-access.css', './modules-store.js', './modules-ui.js', './modules.css', './editor-modes.js', './dictionary.js', './calendar-link.js', './lexico-biblico.json', './ACTIVAR_RECORDATORIOS.html',
+  './ACTUALIZAR.html', './account-config.js', './account-access.css', './modules-store.js', './modules-ui.js', './modules.css', './editor-modes.js', './calendar-link.js', './ACTIVAR_RECORDATORIOS.html',
   './icons/icon-192.png', './icons/icon-512.png',
   './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'
 ].map(path=>new URL(path,self.registration.scope).href);

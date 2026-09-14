@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="mauzi-google-client-id" content="516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com" />
-  <meta name="mauzi-build" content="4.6.0-sincronice-directo" />
+  <meta name="mauzi-build" content="4.7.0-instalacion-seleccion" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#0a2947" />
   <title>MAUZI NOTE</title>
@@ -1461,7 +1461,7 @@
 .recovery-item h3{margin:0;font-size:14px;overflow-wrap:anywhere}.recovery-item p{color:#b4c1cf;white-space:pre-wrap;font-size:12px;line-height:1.5;max-height:170px;overflow:auto;overflow-wrap:anywhere}
 .recovery-item small{color:#a99974}.recovery-item button{margin-top:7px;font-size:12px}
 #noteReadModal .note-read-actions{display:flex;justify-content:flex-end;gap:8px}#noteReadModal .note-read-actions .secondary-btn{margin-left:0}
-@media(display-mode:standalone),(display-mode:minimal-ui),(display-mode:fullscreen){[data-install-open],#installNowBtn{display:none!important}}
+@media(display-mode:standalone),(display-mode:minimal-ui){[data-install-open],#installNowBtn{display:none!important}}
 
 #accountSyncStatus{white-space:pre-line}
 </style>
@@ -1473,6 +1473,8 @@
 <link rel="stylesheet" href="./archive-ui.css">
 <link rel="stylesheet" href="./welcome-access.css">
 <link rel="stylesheet" href="./quick-sync.css">
+<link rel="stylesheet" href="./install-manager.css">
+<link rel="stylesheet" href="./text-selection.css">
 </head>
 <body>
 
@@ -2388,7 +2390,7 @@ THE SOFTWARE.
       for(const btn of document.querySelectorAll('.fmt-btn')){
         let active=false;
         try{
-          if(btn.dataset.format==='bold') active=document.queryCommandState('bold');
+          if(btn.dataset.format==='bold') active=window.MauziEditorModes?.isFormat()?window.MauziEditorModes.selectionBold():document.queryCommandState('bold');
           if(btn.dataset.format==='formatBlock') active=!!anchor?.closest('h2');
           if(btn.dataset.format==='insertUnorderedList') active=list?.tagName==='UL';
           if(btn.dataset.format==='insertOrderedList') active=list?.tagName==='OL' && listStyle==='decimal';
@@ -2900,20 +2902,14 @@ THE SOFTWARE.
     boot();
     applyView(currentView);
   </script>
+<script src="./install-manager.js"></script>
 <script id="mauziPwa">
 /* MAUZI NOTE · PWA installation, offline status, and local backups.
    This block manages installation and local export. drive-sync.js manages user-authorized Google Drive access. */
 (() => {
   'use strict';
-  const APP_VERSION = '4.6.0-sincronice-directo';
+  const APP_VERSION = '4.7.0-instalacion-seleccion';
   const $p = id => document.getElementById(id);
-  const installButtons = [...document.querySelectorAll('[data-install-open]')];
-  const standaloneQuery = window.matchMedia('(display-mode: standalone)');
-  const isStandalone = () => standaloneQuery.matches || navigator.standalone === true || window.matchMedia('(display-mode: minimal-ui)').matches || window.matchMedia('(display-mode: fullscreen)').matches;
-  const installedKey='mauzi_note_installed';
-  const installedKnown=()=>isStandalone() || localStorage.getItem(installedKey)==='1';
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  let installPrompt = null;
   let registration = null;
   let reloadAfterUpdate = false;
   let offlineReady = location.protocol === 'file:';
@@ -2927,63 +2923,8 @@ THE SOFTWARE.
     $p('retryOfflineBtn').classList.toggle('hidden', state !== 'error' || location.protocol === 'file:');
   }
 
-  function refreshInstallHelp() {
-    const help = $p('installHelp');
-    if(isStandalone()) localStorage.setItem(installedKey,'1');
-    installButtons.forEach(button=>button.classList.toggle('hidden',installedKnown()));
-    $p('installTitle').textContent=installedKnown()?'MAUZI NOTE · aplicación':'Instalar MAUZI NOTE';
-    $p('installNowBtn').classList.toggle('hidden', !installPrompt || installedKnown());
-    if (installedKnown()) {
-      help.textContent = 'MAUZI NOTE ya está instalada en este dispositivo. Abre su icono para usarla como aplicación. Aquí puedes revisar el uso sin conexión y las actualizaciones.';
-      installButtons.forEach(button => button.classList.add('hidden'));
-    } else if (location.protocol === 'file:') {
-      help.textContent = 'Estás viendo el archivo local. La Biblia ya funciona sin internet. Para instalar la app, sube el paquete completo a GitHub Pages y abre su dirección HTTPS desde el celular; no se instala desde la vista previa del archivo.';
-    } else if (!window.isSecureContext) {
-      help.textContent = 'Abre la dirección HTTPS publicada en GitHub Pages. Esta dirección no permite instalar la aplicación ni preparar su apertura sin conexión.';
-    } else if (installPrompt) {
-      help.textContent = 'Toca “Instalar aplicación” y confirma. Se añadirá MAUZI NOTE con tu logo a la pantalla de inicio. Espera a que el estado indique “Lista sin conexión”.';
-    } else if (isIOS) {
-      help.textContent = 'En Safari, toca Compartir y luego “Añadir a pantalla de inicio”. Activa “Abrir como app web” cuando aparezca y toca Añadir. Abre la app instalada una vez con internet y espera “Lista sin conexión”.';
-    } else {
-      help.textContent = 'En Chrome para Android, abre el menú ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. También puedes instalar desde Samsung Internet. Si estás en una vista previa o navegador interno, abre el enlace publicado en tu navegador habitual.';
-    }
-  }
-
-  [...installButtons,...document.querySelectorAll('[data-app-status]')].forEach(button => button.addEventListener('click', () => {
-    refreshInstallHelp();
-    openModal('installModal');
-    if (registration) readOfflineStatus();
-  }));
-
-  window.addEventListener('beforeinstallprompt', event => {
-    event.preventDefault();
-    installPrompt = event;
-    if(!isStandalone()) localStorage.removeItem(installedKey);
-    refreshInstallHelp();
-  });
-
-  $p('installNowBtn').addEventListener('click', async () => {
-    if (!installPrompt) { refreshInstallHelp(); return; }
-    const event = installPrompt;
-    installPrompt = null;
-    try {
-      await event.prompt();
-      const result = await event.userChoice;
-      if (result.outcome === 'accepted') showToast('Instalación solicitada. Confirma en tu navegador.');
-      if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
-    } catch (error) {
-      showToast('Usa el menú del navegador para instalar MAUZI NOTE.');
-    }
-    refreshInstallHelp();
-  });
-
-  window.addEventListener('appinstalled', () => {
-    installPrompt = null;
-    localStorage.setItem(installedKey,'1');
-    showToast('MAUZI NOTE instalada');
-    refreshInstallHelp();
-  });
-  if (standaloneQuery.addEventListener) standaloneQuery.addEventListener('change', refreshInstallHelp);
+  function refreshInstallHelp(){ window.MauziInstall?.refresh(); }
+  window.addEventListener('mauzi:app-status-open',()=>{if(registration)readOfflineStatus();});
 
   function askWorker(message) {
     return new Promise((resolve, reject) => {
@@ -3206,9 +3147,10 @@ THE SOFTWARE.
 <script src="./media-sync.js"></script>
 <script src="./drive-sync.js"></script>
 <script src="./modules-store.js"></script>
+<script src="./text-selection.js"></script>
 <script src="./editor-modes.js"></script>
 <script src="./modules-ui.js"></script>
-<script src="./dictionary.js"></script>
+
 <script src="./calendar-link.js"></script>
 <script src="./studio.js"></script>
 <script src="./archive-ui.js"></script>

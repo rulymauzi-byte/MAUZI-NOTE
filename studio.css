@@ -35,13 +35,6 @@
 #navigationNotice{position:fixed;z-index:310;bottom:calc(88px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:calc(100vw - 26px);padding:12px 17px;border:1px solid #c09545;border-radius:12px;background:#102f48;color:#f8e9ca;box-shadow:0 7px 28px #0005;font-size:14px;text-align:center;pointer-events:none;}
 #navigationNotice[hidden]{display:none!important;}
 #noteReadModal #readNoteContent,#noteContent.rich-editor,#libraryText{-webkit-user-select:text;user-select:text;}
-#dictionarySources summary{cursor:pointer;font-size:10px;color:#dcbd7d;}
-#dictionarySources .source-citation{font-size:10px;margin-top:5px;color:#bac9d4;line-height:1.5;}
-#dictionaryContext:empty{display:none;}
-.dictionary-popover{width:min(300px,calc(100vw - 24px));padding:12px 14px;}
-.dictionary-popover #dictionaryMeaning{margin-bottom:4px;font-size:15px;}
-.dictionary-popover::after{content:"";position:absolute;left:var(--arrow-left,30px);bottom:-6px;width:10px;height:10px;transform:rotate(45deg);background:#102c46;border-right:1px solid #d2a550;border-bottom:1px solid #d2a550;}
-.dictionary-popover[data-placement="below"]::after{top:-6px;bottom:auto;transform:rotate(225deg);}
 @media(min-width:720px) and (max-width:1099px){
  #mainApp>.content{padding:16px 28px 110px;}#mainApp .notes.view-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
  #mainApp .notes.view-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
@@ -130,17 +123,4 @@
 .sync-diagnostics p{font-size:13px;line-height:1.5;margin:6px 0;color:#e6eff7}
 #syncProgressDetails{white-space:pre-line;font-size:12px;line-height:1.7;color:#b9c9d8;overflow-wrap:anywhere}
 .sync-diagnostics small{display:block;margin-top:8px;line-height:1.45;color:#9cabb9}
-
-/* Biblical meaning popover: source details and verses stay within the app. */
-.dictionary-kicker{font-size:9px!important;letter-spacing:1px;color:#ebc87c!important;padding-bottom:5px;font-weight:700}
-#wordDictionary{max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain}
-.dictionary-sources{display:block!important;font-size:11px;color:#d8bd7c;line-height:1.5}
-.dictionary-sources summary{cursor:pointer;padding:4px 0}
-.dictionary-verse{padding:6px 8px;font-size:11px;border-radius:7px;border:1px solid #6482a3;background:#e0edf8;color:#123c69;margin:3px 4px 4px 0;cursor:pointer}
-.dictionary-note{font-size:11px!important;color:#d1dce5;margin:5px 0!important}
 .source-citation{font-size:11px;line-height:1.4;margin:7px 0;color:#b8c9d6;overflow-wrap:anywhere}
-.dictionary-test-row{display:flex;gap:6px;margin:8px 0}
-.dictionary-test-row input{min-width:0;flex:1;border:1px solid #35516c;border-radius:8px;background:#102030;color:#edf5fc;padding:8px;font:inherit;font-size:14px}
-.dictionary-test-row button,#dictionarySuggestions button{border:1px solid #57738e;border-radius:8px;padding:7px 9px;background:#193850;color:#f5d193;cursor:pointer;font-size:12px}
-#dictionarySuggestions{display:flex;gap:5px;flex-wrap:wrap}
-.biblical-dictionary-settings small{color:#afbdc9;font-size:11px}

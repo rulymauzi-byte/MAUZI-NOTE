@@ -13,17 +13,7 @@ https://developers.google.com/identity/oauth2/web/guides/use-token-model
 Suspensión de temporizadores en segundo plano:
 https://developer.chrome.com/blog/timer-throttling-in-chrome-88/
 
-Diccionario: cada ficha de lexico-biblico.json incluye sus pasajes y fuentes.
-Las definiciones son síntesis editoriales propias, no transcripciones literales.
-Algunas fuentes históricas consultadas, reproducidas en BibleHub:
-Thayer / Strong: https://biblehub.com/greek/2316.htm
-Fe / pistis: https://biblehub.com/greek/4102.htm
-BDB / Elohim: https://biblehub.com/hebrew/430.htm
-Easton / God: https://biblehub.com/topical/g/god.htm
-Matthew Henry / Salmo 90: https://biblehub.com/commentaries/mhc/psalms/90.htm
-No hay consulta a Wikcionario en la versión 4.3. No hay llamadas de IA.
-No se descargaron nuevas Biblias ni se alteró la división de sus versículos.
-Las cuatro versiones proceden del paquete anterior que aportó el usuario.
+El diccionario fue retirado en la versión 4.7. No hay consultas externas de palabras.
 
 Funciones conservadas:
 Calendario: https://developers.google.com/workspace/calendar/api/v3/reference/calendars/insert
@@ -44,3 +34,11 @@ Eliminación específica: https://developers.google.com/workspace/drive/api/refe
   https://developers.google.com/workspace/drive/api/guides/folder
 - Alcance limitado drive.file:
   https://developers.google.com/workspace/drive/api/guides/api-specific-auth
+
+4.7 INSTALACIÓN Y SELECCIÓN
+https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/How_to/Trigger_install_prompt
+https://developer.chrome.com/docs/capabilities/get-installed-related-apps
+https://developer.mozilla.org/en-US/docs/Web/API/Selection
+
+Apple — instalar como app web en iPhone:
+https://support.apple.com/es-es/guide/iphone/iphea86e5236/ios

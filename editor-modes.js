@@ -11,8 +11,8 @@
  $('noteModalTitle').hidden=true;head.insertBefore(title,close);title.readOnly=true;title.title='Toca para cambiar el título';title.setAttribute('aria-label','Título de la nota. Toca para cambiarlo');title.classList.add('inline-note-title');title.placeholder='Sin título';
  const writeBtn=button('editorWriteMode','Escribir con teclado',icons.write),fmtBtn=button('editorFormatMode','Dar formato sin teclado',icons.format),saveBtn=button('editorQuickSave','Guardar nota',icons.save);
  head.insertBefore(writeBtn,close);head.insertBefore(fmtBtn,close);head.insertBefore(saveBtn,close);
- const hint=document.createElement('div');hint.id='formatModeHint';hint.textContent='Selecciona texto y toca un formato. Sin teclado.';head.after(hint);
- let mode='write',nextMode='write',range=null,baseline='',skipGuard=false;
+ const hint=document.createElement('div');hint.id='formatModeHint';hint.textContent='Doble toque para seleccionar. Amplía la selección y aplica negrita o color.';head.after(hint);
+ let mode='write',nextMode='write',range=null,baseline='',skipGuard=false,incomingSelection=null;
  const snap=()=>JSON.stringify([title.value,editor.innerHTML,$('noteCategory').value,$('noteBgColorPicker').value,window.MauziArchive?.editorRaw()||null]);
  function remember(){const s=getSelection();if(s?.rangeCount&&editor.contains(s.anchorNode)&&editor.contains(s.focusNode))range=s.getRangeAt(0).cloneRange();}
  function restore(){if(!range||!editor.contains(range.startContainer)||!editor.contains(range.endContainer))return false;const s=getSelection();s.removeAllRanges();s.addRange(range);return true;}
@@ -21,27 +21,24 @@
   else if(focus){editor.focus({preventScroll:true});if(!restore()){const r=document.createRange();r.selectNodeContents(editor);r.collapse(false);getSelection().removeAllRanges();getSelection().addRange(r);}}
   writeBtn.setAttribute('aria-pressed',String(value==='write'));fmtBtn.setAttribute('aria-pressed',String(value==='format'));hint.hidden=value!=='format';window.MauziRich?.refresh();window.updateAppViewport?.();
  }
- function opened(){range=null;title.readOnly=true;baseline=snap();skipGuard=false;setMode(nextMode);nextMode='write';
-  if(mode==='write'){editor.focus({preventScroll:true});const r=document.createRange();r.selectNodeContents(editor);r.collapse(false);getSelection().removeAllRanges();getSelection().addRange(r);}else editor.blur();
+ function opened(){const incoming=incomingSelection;incomingSelection=null;range=null;title.readOnly=true;baseline=snap();skipGuard=false;setMode(nextMode);nextMode='write';
+  if(mode==='write'){editor.focus({preventScroll:true});const r=document.createRange();r.selectNodeContents(editor);r.collapse(false);getSelection().removeAllRanges();getSelection().addRange(r);}else {editor.blur();if(incoming){range=window.MauziTextSelection?.select(editor,incoming);remember();window.refreshEditorToolbar?.();}}
  }
  title.addEventListener('click',()=>{title.readOnly=false;title.focus();});
  title.addEventListener('blur',()=>{title.readOnly=true;});title.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();title.readOnly=true;title.blur();if(mode==='write')editor.focus({preventScroll:true});}});
+ for(const b of [writeBtn,fmtBtn])b.addEventListener('pointerdown',e=>{remember();e.preventDefault();});
  writeBtn.onclick=()=>setMode('write',true);fmtBtn.onclick=()=>setMode('format');saveBtn.onclick=()=>$('saveNoteBtn').click();
  document.addEventListener('selectionchange',()=>{if(!modal.classList.contains('hidden'))remember();});
  // Intercept read-only focus before the old mobile viewport helper runs.
  editor.addEventListener('focus',()=>{if(mode==='format')modal.classList.remove('keyboard-open');});
- function changed(){editor.dispatchEvent(new Event('input',{bubbles:true}));window.MauziRich?.refresh();remember();}
+ function changed(){editor.dispatchEvent(new Event('input',{bubbles:true}));window.MauziRich?.refresh();remember();window.refreshEditorToolbar?.();}
  function selectedBlocks(r){const candidates=[...editor.querySelectorAll('p,div,h1,h2,h3,h4,h5,h6,li,blockquote')].filter(e=>{try{return r.intersectsNode(e)&&!e.querySelector('p,div,h1,h2,h3,li');}catch(_){return false;}});return candidates;}
  function selectNodeContents(node){const r=document.createRange();r.selectNodeContents(node);range=r;restore();}
  function apply(command,value){if(mode!=='format')return;remember();if(!restore()||range.collapsed){A.toast('Selecciona primero el texto que deseas cambiar.');return;}
   const r=range.cloneRange();
   try{
    if(['bold','foreColor','hiliteColor','backColor'].includes(command)){
-    const frag=r.extractContents();let wrapper=document.createElement('span');
-    if(command==='bold'){let parent=r.startContainer.nodeType===1?r.startContainer:r.startContainer.parentElement;const weight=parseInt(getComputedStyle(parent).fontWeight,10);wrapper.style.fontWeight=weight>=600?'400':'700';}
-    else if(command==='foreColor')wrapper.style.color=value;
-    else wrapper.style.backgroundColor=value;
-    wrapper.append(frag);r.insertNode(wrapper);selectNodeContents(wrapper);
+    const result=window.MauziTextSelection.applyInline(editor,r,command,value);if(result){range=result;restore();}
    }else if(command==='formatBlock'){
     const blocks=selectedBlocks(r);if(blocks.length){for(const el of blocks){const n=document.createElement(el.tagName==='H2'?'p':'h2');while(el.firstChild)n.append(el.firstChild);el.replaceWith(n);selectNodeContents(n);}}
     else {const el=document.createElement('h2');el.append(r.extractContents());r.insertNode(el);selectNodeContents(el);}
@@ -63,7 +60,8 @@
  }
  function setListStyle(list,style){list.style.listStyleType=style;list.dataset.mauziList=style;if(list.tagName==='OL')list.type=style==='upper-roman'?'I':style==='lower-alpha'?'a':'1';if(style==='lower-alpha')list.dataset.mauziSuffix=')';}
  const readFmt=button('formatFromReadBtn','Dar formato sin teclado',icons.format);$('editFromReadBtn').after(readFmt);
- readFmt.onclick=()=>{const id=A.currentReadId();if(!id)return;nextMode='format';A.close('noteReadModal');window.editNote(id);};
+ readFmt.addEventListener('pointerdown',e=>{incomingSelection=window.MauziTextSelection?.takeReader();e.preventDefault();});
+ readFmt.onclick=()=>{const id=A.currentReadId();if(!id)return;incomingSelection=incomingSelection||window.MauziTextSelection?.takeReader();nextMode='format';A.close('noteReadModal');window.editNote(id);};
  for(const el of [$('readHeaderTitle'),$('readNoteTitle')]){
   el.title='Toca para cambiar el título';el.setAttribute('role','button');el.tabIndex=0;
   let old='',saving=false;
@@ -71,5 +69,5 @@
   el.addEventListener('click',start);el.addEventListener('keydown',e=>{if(!el.isContentEditable&&(e.key==='Enter'||e.key===' ')){e.preventDefault();start();}else if(el.isContentEditable&&e.key==='Enter'){e.preventDefault();el.blur();}else if(el.isContentEditable&&e.key==='Escape'){el.textContent=old;el.contentEditable='false';el.blur();e.stopPropagation();}});
   el.addEventListener('blur',async()=>{if(!el.isContentEditable||saving)return;const t=el.textContent.trim().slice(0,90),id=A.currentReadId();el.contentEditable='false';if(t===old)return;saving=true;try{await A.renameNote(id,t);A.toast('Título guardado');}catch(e){el.textContent=old;A.toast(e.message);}finally{saving=false;}});
  }
- window.MauziEditorModes={opened,isFormat:()=>mode==='format',restore,apply,isDirty:()=>!!baseline&&baseline!==snap(),markSaved:()=>{baseline=snap();skipGuard=true;},beforeClose:()=>{if(skipGuard){skipGuard=false;return true;}if(baseline&&baseline!==snap())return confirm('Hay cambios sin guardar. ¿Cerrar y descartarlos?');return true;}};
+ window.MauziEditorModes={opened,selectionBold:()=>!!range&&window.MauziTextSelection.isBold(editor,range),isFormat:()=>mode==='format',restore,apply,isDirty:()=>!!baseline&&baseline!==snap(),markSaved:()=>{baseline=snap();skipGuard=true;},beforeClose:()=>{if(skipGuard){skipGuard=false;return true;}if(baseline&&baseline!==snap())return confirm('Hay cambios sin guardar. ¿Cerrar y descartarlos?');return true;}};
 })();

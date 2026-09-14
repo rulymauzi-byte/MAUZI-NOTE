@@ -1,0 +1,16 @@
+/* 4.7 — selección para negrita/color, sin diccionario ni bloqueo de manijas. */
+#noteReadModal #readNoteContent,#noteContent.rich-editor{
+  -webkit-user-select:text!important;user-select:text!important;
+  -webkit-touch-callout:default;touch-action:manipulation;
+}
+#noteReadModal #readNoteContent :is(p,div,span,strong,b,em,i,li,h1,h2,h3,h4),
+#noteContent.rich-editor :is(p,div,span,strong,b,em,i,li,h1,h2,h3,h4){
+  -webkit-user-select:text;user-select:text;
+}
+#noteContent.rich-editor::selection,#noteContent.rich-editor ::selection,
+#readNoteContent::selection,#readNoteContent ::selection{background:#93bfed;color:#122331;}
+#formatFromReadBtn.has-text-selection{border-color:#e0b462!important;box-shadow:0 0 0 1px #e0b46280;color:#f4cc78;}
+#formatModeHint{font-size:11px;line-height:1.45;}
+.editor-toolbar :is(button,label){-webkit-user-select:none;user-select:none;touch-action:manipulation;}
+/* Also makes stale dictionary nodes harmless if a prior script was cached. */
+#wordDictionary,.dictionary-popover,.biblical-dictionary-settings,.dictionary-setting{display:none!important;pointer-events:none!important;}
