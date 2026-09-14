@@ -1,0 +1,32 @@
+/* MAUZI NOTE 4.4 — compact archive bar; full width on desktop, touch-sized controls. */
+.archive-bar{display:flex;align-items:center;gap:7px;margin:0 0 12px;min-width:0;width:100%;}
+#archiveBrowseBtn{display:flex;align-items:center;gap:8px;max-width:100%;min-height:42px;min-width:0;border:1px solid #365169;background:linear-gradient(120deg,#153651,#0b1e2d);color:#e5c787;padding:7px 12px;border-radius:11px;text-align:left;}
+#archiveBrowseBtn>svg{width:20px;height:20px;flex:0 0 20px;}#archiveBrowseBtn>svg:last-child{width:16px;flex-basis:16px;}
+#archiveCurrentLocation{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.archive-filtered #archiveBrowseBtn{border-color:#d5aa53;box-shadow:inset 0 -2px #d5aa5355;}
+#archiveClearBtn{flex:0 0 40px;width:40px;height:40px;border:1px solid #374e62;background:#132637;color:#e8d7ae;border-radius:10px;font-size:24px;}
+#archiveClearBtn[hidden]{display:none;}
+#archiveBrowserModal{z-index:265!important;}.archive-sheet{width:min(100%,610px);padding:20px!important;background:#0b1824!important;}
+.archive-eyebrow{display:block;font-size:10px;letter-spacing:1.7px;color:#dcad5b;margin-bottom:4px;}
+.archive-help{font-size:13px;line-height:1.55;color:#aebdcb;}.archive-help.archive-fine{font-size:11px;}
+.archive-step{font-size:14px;color:#ebc978;margin:20px 0 10px;}
+.archive-all,.archive-folder,.archive-year{border:1px solid #32485b;background:#122638;color:#e4e9ed;border-radius:10px;min-height:42px;padding:8px 11px;text-align:left;font:inherit;font-size:13px;}
+.archive-all{width:100%;background:linear-gradient(105deg,#1b4364,#183444);}
+.archive-year-list{display:flex;gap:6px;flex-wrap:wrap;max-height:160px;overflow:auto;}
+.archive-year{min-width:66px;text-align:center;}.archive-year[aria-pressed=true],.archive-folder[aria-pressed=true],.archive-all[aria-pressed=true]{border-color:#e4b455;color:#ffe2a4;background:#24425a;box-shadow:inset 0 -2px #dca645;}
+.archive-folder-list{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:225px;overflow:auto;}
+.archive-folder{overflow-wrap:anywhere;}.archive-input-row{display:flex;gap:7px;margin:9px 0;}
+.archive-input-row input{min-width:0;flex:1;border-radius:9px;border:1px solid #36516a;background:#08121b;color:#eef3f8;padding:10px 11px;font-size:16px;}
+.archive-input-row button{flex:0 0 auto;border:1px solid #b8792d;background:#8c4918;color:#fff2d3;border-radius:9px;padding:8px 11px;font-size:12px;}
+.archive-note-properties{border-top:1px solid #4c5c6755;padding-top:10px;margin:14px 0 8px;}
+.archive-note-properties summary{cursor:pointer;color:#e1c37b;font-size:13px;font-weight:700;padding:4px 0;}
+#archiveNoteSummary{display:block;font-size:11px;font-weight:400;margin:4px 0 0;color:#b4c9da;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.archive-note-properties input.field{padding:10px 12px;min-height:44px;font-size:16px;}
+.archive-note-properties .secondary-btn{margin-top:12px;padding:10px;}
+#noteProperties{max-height:calc(var(--app-vh,100dvh) - 32px);overflow-y:auto;overscroll-behavior:contain;}
+.archive-account-section{border-top:1px solid #42526366;margin:20px 0 6px;padding-top:15px;}
+.archive-account-section h3{color:#e6c782;font-size:16px;}.archive-account-section p{font-size:13px;line-height:1.55;color:#b1c0cb;}
+.archive-account-section #archiveSyncStatus{color:#d0dfeb;}.archive-security{margin-top:15px;font-size:13px;color:#c8c3b5;}.archive-security summary{padding:7px 0;cursor:pointer;color:#dfba67;}.archive-security a{color:#95c4ed;}
+@media(min-width:1024px){.archive-bar{margin-bottom:16px;}#archiveBrowseBtn{min-height:43px;}#archiveCurrentLocation{font-size:14px;}.desktop-note-open #archiveCurrentLocation{font-size:12px;}}
+@media(max-width:420px){.archive-sheet{padding:18px 14px!important;}.archive-folder-list{grid-template-columns:1fr;}#archiveBrowseBtn{padding:7px 10px;}#archiveCurrentLocation{font-size:12px;}}
+@media(prefers-reduced-motion:reduce){.archive-bar *{animation:none!important;}}

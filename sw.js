@@ -2,11 +2,12 @@
    Deploy next to index.html. Relative URLs also work in /repository-name/.
    When publishing an update, change BUILD (or regenerate this package). */
 'use strict';
-const BUILD = '4.2.0-escritorio-seguro-20260913';
+const BUILD = '4.4.0-anos-carpetas-20260914';
 const CACHE_PREFIX = 'mauzi-note::'+self.registration.scope+'::';
 const CACHE_NAME = CACHE_PREFIX+BUILD;
 const ASSETS = [
   './index.html', './manifest.webmanifest', './favicon.ico',
+  './archive-core.js', './archive-ui.js', './archive-ui.css', './AYUDA_GOOGLE_Y_CARPETAS.html',
   './studio.js', './studio.css', './navigation.js', './media-sync.js',
   './editor-enhancements.js', './editor-enhancements.css', './note-experience.js', './note-experience.css', './drive-sync.js', './google-config.js', './CONFIGURAR_GOOGLE.html', './PRIVACIDAD.html',
   './ACTUALIZAR.html', './account-config.js', './account-access.css', './modules-store.js', './modules-ui.js', './modules.css', './editor-modes.js', './dictionary.js', './calendar-link.js', './lexico-biblico.json', './ACTIVAR_RECORDATORIOS.html',

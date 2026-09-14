@@ -1,45 +1,59 @@
-MAUZI NOTE 4.2 — COMPROBACIONES EJECUTADAS
-=========================================
-Todos los resultados de red/Google/IndexedDB e historial de navegación se obtuvieron
-con un servidor y almacenamiento SIMULADOS en un contexto de prueba aislado.
-No hay sesión de Google ni datos personales incluidos en este paquete.
+COMPROBACIONES DE MAUZI NOTE 4.4
+=================================
+Ejecutadas el 14 de septiembre de 2026.
 
-PASA — DOM y funciones ejecutadas en Chromium (Playwright, renderer aislado):
-- Apertura sin correo y creación/guardado/lectura de notas.
-- Distribuciones 1920×1080, 1440×1000, 820×1180, 390×844 y 320px.
-- Pantalla de PC amplia, lista y editor/lector a la derecha, módulos laterales.
-- Viewport reducido a 320×360 simulando el espacio disponible sobre teclado.
-- Desplegable superior de fondo/categoría; cambio y persistencia en lector/editor.
-- Selección de fe abre automáticamente popup, límite de 12 palabras y cierre.
-- Luz de Google sin cuenta y beneficios dentro del perfil.
-- Atrás desde nota, editor, opciones, cuenta y modo Solo nota.
-- Guardado al volver; fallo de guardado deja el editor y texto visibles.
-- Doble Atrás en raíz y recuperación del guard cuando no hay página precedente.
-- Biblioteca sin conexión: texto integrado, módulos de Biblia y Agenda.
-- Cuenta simulada: sube texto, negritas, lista romana e imagen incorporada.
-- Segundo cliente simulado recibe la imagen; cliente nuevo conserva los datos.
-- Eliminación desde visor de lectura y desde contenido del editor.
-- Se confirma versión saneada antes de eliminar archivo de imagen anterior.
-- No quedan bytes de la foto eliminada en las versiones remotas simuladas.
-- Cliente anterior sincroniza y pierde solo la imagen, no el texto de la nota.
-- Conservación del texto, negritas, números romanos, carpeta y otras notas.
-- Fallo temporal de eliminación remota: no confirma sincronización, conserva
-  el texto y completa la limpieza al reintentar.
-- Sin errores de JavaScript no controlados en las pruebas.
+ENTORNO Y LÍMITES
+Se ejecutó el código real del paquete en Chromium con tamaños de PC, tablet y móvil.
+La navegación de red de este entorno está restringida; se cargaron los archivos de
+la aplicación en una página de prueba, con Google, Drive e IndexedDB simulados.
+No se inició sesión en la cuenta del usuario ni se modificó su Google Drive real.
+No se probó la instalación en un teléfono físico ni su teclado/gestos del sistema.
+El service worker se ejecutó en un entorno simulado, no como una instalación real.
 
-PASA — Revisión estática:
-- node --check en todos los JS e inline scripts de index.html.
-- Todos los recursos locales referidos y las 31 rutas de caché existen.
-- google-config.js idéntico al paquete anterior y al ID vigente verificado.
-- Datos bíblicos integrados idénticos al paquete anterior.
-- Hash SHA256 de huellas coincide con implementación independiente (ASCII,
-  Unicode y textos largos).
+RESULTADOS FUNCIONALES
+APROBADO: acceso sin cuenta; conservación de notas al reabrir la copia de prueba.
+APROBADO: años 1998, 2100, 25000 y 99999, sin una lista de años predefinida.
+APROBADO: validación de años decimales largos y rechazo de valores/rutas inválidos.
+APROBADO: carpeta/subcarpeta, filtros por año, categoría, carpeta y mostrar todas.
+APROBADO: nota nueva hereda la ubicación seleccionada.
+APROBADO: traslado desde las opciones de lectura y desde el editor.
+APROBADO: una edición que solo cambia la ubicación activa la protección de borrador.
+APROBADO: Atrás guarda ese cambio en la simulación antes de volver a la lista.
+APROBADO: migración de una nota antigua según su año de creación, sin reescribir
+          el texto ni modificar el contenido de su archivo de versión.
+APROBADO: carpetas simuladas con la estructura MAUZI NOTE/año/ruta/nota/versiones.
+APROBADO: mover/renombrar conserva la misma carpeta de nota y todas sus versiones.
+APROBADO: migración reanudable de 31 versiones antiguas en lotes pequeños.
+APROBADO: repetir la organización no crea copias nuevas de las versiones probadas.
+APROBADO: organizar no emitió solicitudes DELETE. La eliminación de imágenes se
+          probó por separado, como una acción explícita del usuario.
+APROBADO: recuperación en otro dispositivo simulado, incluyendo imagen, formato,
+          año y carpeta.
+APROBADO: una edición de un cliente anterior que desconoce año/carpeta conserva
+          la asignación previa al reconstruir su cadena de versiones en 4.4.
+APROBADO: eliminación explícita de imagen tras organizar por carpetas: retirada de
+          la imagen en versiones administradas y recuperación sin imagen en otro
+          cliente, conservando texto y ubicación.
+APROBADO: guardado sin red conserva cambios pendientes; error 401 no borra la nota.
+APROBADO: reconectar envía los cambios que estaban pendientes.
+APROBADO: fallo temporal 503 se reintenta sin duplicar la versión.
+APROBADO: separación de datos y carpetas entre dos cuentas simuladas distintas.
+APROBADO: la consulta automática recibió un cambio de año/carpeta en otro cliente,
+          sin tocar Sincronizar en el receptor (aproximadamente 16 segundos en
+          esta simulación; NO es una medición de Google ni una garantía de plazo).
 
-PENDIENTE DE VALIDACIÓN REAL TRAS PUBLICAR:
-- Autorización real Google, Drive del usuario y recuperación en teléfonos reales.
-- Android/iOS, gestos físicos Atrás, pantalla completa y teclado nativo.
-- Instalación/actualización de service worker por HTTPS y notificaciones físicas.
-El navegador puede reservar cierres/gestos al sistema; no se garantiza interceptar
-cerrar pestaña, ventana, retirada de recientes ni cierre forzado del proceso.
+COMPROBACIONES DE ENTREGA
+- 16 archivos JavaScript y 5 bloques de JavaScript internos pasaron node --check.
+- Enlaces relativos a scripts, estilos y ayudas comprobados: archivos presentes.
+- Archivos de instalación y caché comprobados en simulación, también sin red.
+- Los cuatro textos bíblicos integrados no cambiaron respecto del ZIP 4.3.
+- Tampoco cambiaron google-config.js, logo/iconos, manifiesto ni glosario bíblico.
+- El paquete no contiene notas reales, credenciales privadas, tokens ni el entorno
+  de simulación usado para las pruebas.
+- SHA256_ARCHIVOS.txt permite comprobar los archivos distribuidos.
 
-No se incluye el simulador de pruebas en los archivos de la aplicación.
+PENDIENTE DE COMPROBAR POR EL USUARIO
+Autorizar su Google real tras publicar, crear una nota de prueba con año/carpeta,
+confirmar el guardado, revisar la ruta real en Drive y recuperarla en el otro
+celular/PC actualizado. Hacerlo antes de trasladar o borrar un dispositivo.
+No se garantiza conexión permanente; no cambió el modelo temporal de OAuth.

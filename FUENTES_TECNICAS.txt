@@ -1,25 +1,46 @@
-FUENTES Y ALCANCE
-Calendario secundario y permiso limitado:
-https://developers.google.com/workspace/calendar/api/v3/reference/calendars/insert
-Eventos y recordatorios:
-https://developers.google.com/workspace/calendar/api/v3/reference/events/insert
-Notificaciones del navegador:
-https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API
-API CORS de MediaWiki (Wikcionario):
-https://www.mediawiki.org/wiki/API:Cross-site_requests
-Permiso de Drive para archivos de la aplicación:
+FUENTES Y ALCANCE — MAUZI NOTE 4.3
+=================================
+Drive Changes API y paginación de cursores (permite drive.file):
+https://developers.google.com/workspace/drive/api/reference/rest/v3/changes/list
+https://developers.google.com/workspace/drive/api/reference/rest/v3/changes/getStartPageToken
+https://developers.google.com/workspace/drive/api/guides/manage-changes
+Errores y reintentos:
+https://developers.google.com/workspace/drive/api/guides/handle-errors
+Permisos de archivo limitados:
 https://developers.google.com/workspace/drive/api/guides/api-specific-auth
+Autorización temporal, obtenida mediante un gesto del usuario:
+https://developers.google.com/identity/oauth2/web/guides/use-token-model
+Suspensión de temporizadores en segundo plano:
+https://developer.chrome.com/blog/timer-throttling-in-chrome-88/
 
-El glosario: las fuentes por entrada están en lexico-biblico.json y en el cuadro
-emergente. Las explicaciones bíblicas son síntesis breves, no citas textuales.
-Las acepciones de Wikcionario se atribuyen en el cuadro bajo CC BY-SA 4.0.
-El texto de las Biblias se conservó del paquete aportado, sin descargar nuevas
-copias ni cambiar la división de sus versículos.
+Diccionario: cada ficha de lexico-biblico.json incluye sus pasajes y fuentes.
+Las definiciones son síntesis editoriales propias, no transcripciones literales.
+Algunas fuentes históricas consultadas, reproducidas en BibleHub:
+Thayer / Strong: https://biblehub.com/greek/2316.htm
+Fe / pistis: https://biblehub.com/greek/4102.htm
+BDB / Elohim: https://biblehub.com/hebrew/430.htm
+Easton / God: https://biblehub.com/topical/g/god.htm
+Matthew Henry / Salmo 90: https://biblehub.com/commentaries/mhc/psalms/90.htm
+No hay consulta a Wikcionario en la versión 4.3. No hay llamadas de IA.
+No se descargaron nuevas Biblias ni se alteró la división de sus versículos.
+Las cuatro versiones proceden del paquete anterior que aportó el usuario.
 
-Cambios 4.2:
-MDN — navegación y límites de cerrar ventanas
-https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
-https://developer.mozilla.org/en-US/docs/Web/API/Window/close
-Google — gestión y eliminación específica de archivos propios
-https://developers.google.com/workspace/drive/api/guides/delete
-https://developers.google.com/workspace/drive/api/reference/rest/v3/files/delete
+Funciones conservadas:
+Calendario: https://developers.google.com/workspace/calendar/api/v3/reference/calendars/insert
+Eventos: https://developers.google.com/workspace/calendar/api/v3/reference/events/insert
+Notificaciones: https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API
+Navegación: https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
+Cierre de ventana: https://developer.mozilla.org/en-US/docs/Web/API/Window/close
+Eliminación específica: https://developers.google.com/workspace/drive/api/reference/rest/v3/files/delete
+
+4.4 AÑOS Y CARPETAS / GOOGLE — revisado 14-09-2026
+- Público, límite máximo 100 testers, caducidad de prueba de 7 días:
+  https://support.google.com/cloud/answer/15549945?hl=es
+- Tokens del navegador, renovación mediante acción del usuario:
+  https://developers.google.com/identity/oauth2/web/guides/use-token-model
+- Estados de publicación/verificación de OAuth:
+  https://developers.google.com/identity/protocols/oauth2/production-readiness/overview
+- Carpetas reales y cambios de parents con files.update:
+  https://developers.google.com/workspace/drive/api/guides/folder
+- Alcance limitado drive.file:
+  https://developers.google.com/workspace/drive/api/guides/api-specific-auth

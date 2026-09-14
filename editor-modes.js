@@ -13,7 +13,7 @@
  head.insertBefore(writeBtn,close);head.insertBefore(fmtBtn,close);head.insertBefore(saveBtn,close);
  const hint=document.createElement('div');hint.id='formatModeHint';hint.textContent='Selecciona texto y toca un formato. Sin teclado.';head.after(hint);
  let mode='write',nextMode='write',range=null,baseline='',skipGuard=false;
- const snap=()=>JSON.stringify([title.value,editor.innerHTML,$('noteCategory').value,$('noteBgColorPicker').value]);
+ const snap=()=>JSON.stringify([title.value,editor.innerHTML,$('noteCategory').value,$('noteBgColorPicker').value,window.MauziArchive?.editorRaw()||null]);
  function remember(){const s=getSelection();if(s?.rangeCount&&editor.contains(s.anchorNode)&&editor.contains(s.focusNode))range=s.getRangeAt(0).cloneRange();}
  function restore(){if(!range||!editor.contains(range.startContainer)||!editor.contains(range.endContainer))return false;const s=getSelection();s.removeAllRanges();s.addRange(range);return true;}
  function setMode(value,focus=false){remember();mode=value;modal.dataset.editorMode=value;editor.setAttribute('contenteditable',String(value==='write'));editor.setAttribute('inputmode',value==='write'?'text':'none');editor.tabIndex=0;

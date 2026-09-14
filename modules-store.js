@@ -82,7 +82,7 @@
  const accountModal=document.getElementById('accountModal');if(accountModal){const e=document.createElement('p');e.id='modulesSyncStatus';e.className='module-status';accountModal.querySelector('.sheet').append(e);}
  window.addEventListener('mauzi:cloud-state',e=>setAccount(e.detail));
  channel?.addEventListener('message',async e=>{if(e.data?.key===active?.key){const d=await read(active.key);if(d?.key===active?.key){data=d;emit();}}});
- setInterval(()=>{if(!document.hidden)schedule(0);},60000);
+ setInterval(()=>{if(!document.hidden)schedule(0);},30000);
  window.addEventListener('online',()=>{active=C()?.account();schedule(0);});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){active=C()?.account();schedule();}});
  setAccount(C()?.account());

@@ -17,6 +17,7 @@
  function open(read,b){if(!pop.hidden&&positionButton===b){close();return;}fromReader=read;positionButton=b;
   if(read){const n=name();if(!n)return;window.setNoteBackground?.(n.bgColor||'#f8f5ed');$('noteCategory').value=n.categoryId;$('deleteNoteBtn').classList.add('hidden');}
   else {const s=getSelection();if(s?.rangeCount&&editor.contains(s.anchorNode))editorRange=s.getRangeAt(0).cloneRange();$('deleteNoteBtn').classList.toggle('hidden',!$('editingId').value);}
+  window.MauziArchive?.openProperties(read);
   bgBefore=$('noteBgColorPicker').value;catBefore=cat.value;pop.hidden=false;b.setAttribute('aria-expanded','true');place();
  }
  propBtn.onclick=()=>open(false,propBtn);readBtn.onclick=()=>open(true,readBtn);
@@ -42,5 +43,5 @@
   if(window.MauziEditorModes?.isDirty()){e.preventDefault();e.stopImmediatePropagation();A.toast('Guarda la nota con ✓ o vuelve con Atrás antes de cambiar.');return;}
   A.close('noteModal');if(target.matches('.module-nav button'))A.close('noteReadModal');
  },true);
- window.MauziStudio={propertiesOpen:()=>!pop.hidden,closeProperties:close,refresh:layout};
+ window.MauziStudio={placeProperties:place,propertiesOpen:()=>!pop.hidden,closeProperties:close,refresh:layout};
 })();
