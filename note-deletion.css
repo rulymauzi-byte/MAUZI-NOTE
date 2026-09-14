@@ -1,0 +1,36 @@
+/* 4.8: compact visible trash buttons, no new footer or changes to text selection. */
+#noteReadModal .note-delete-tool,#noteModal .note-delete-tool {color:#ffb2a0!important;border-color:#bc665c66!important;background:#451e234d!important;}
+.note-delete-tool:active{background:#84372e!important;}
+.note-delete-tool[hidden],.legacy-delete-control{display:none!important;}
+#noteDeleteModal {z-index:275!important;padding:16px 12px;align-items:center!important;justify-content:center;background:#040b13b5;}
+#noteDeleteModal .delete-dialog {width:min(100%,460px)!important;height:auto!important;max-height:calc(var(--app-vh,100dvh) - 30px)!important;padding:20px!important;margin:0!important;border-radius:22px!important;background:linear-gradient(145deg,#142c41,#0b1724)!important;border:1px solid #5c798850;box-shadow:0 24px 80px #0009;overflow:auto!important;}
+.delete-dialog-head{display:flex;align-items:center;gap:10px;}
+.delete-dialog-head h2{font-size:20px;margin:0;flex:1;}
+.delete-symbol{display:grid;place-items:center;width:34px;height:34px;color:#ffb19d;}
+.delete-symbol svg{width:25px;height:25px;}
+.delete-note-name{font-size:17px;font-weight:750;color:#f4d291;line-height:1.4;overflow-wrap:anywhere;margin:16px 0 5px;}
+.delete-account-hint{font-size:12px;color:#aebfce;line-height:1.55;margin:0 0 15px;overflow-wrap:anywhere;}
+#noteDeleteModal .delete-choice{display:flex;align-items:flex-start;gap:10px;padding:13px;border:1px solid #56718570;border-radius:12px;background:#0c1b2a;margin:8px 0;cursor:pointer;font-size:14px;}
+.delete-choice:has(input:checked){border-color:#d6b471!important;background:#18374d!important;}
+.delete-choice input{margin:3px 0 0;accent-color:#cf9744;flex:0 0 17px;width:17px;height:17px;}
+.delete-choice strong{display:block;color:#f4e9d3;font-size:14px;line-height:1.45;}
+.delete-choice small{display:block;font-weight:400;color:#adbdcb;font-size:12px;line-height:1.5;margin-top:4px;}
+.delete-warning{font-size:12px;line-height:1.5;color:#ffd4bb;background:#52292260;padding:10px;border-radius:9px;}
+.delete-dialog-actions{display:flex;align-items:stretch;gap:9px;margin-top:18px;}
+#noteDeleteModal .delete-dialog-actions button{margin:0;min-height:44px;padding:11px 10px;flex:1;line-height:1.3;font-size:13px;}
+#noteDeleteModal .danger-btn{background:#93382a;border:1px solid #dd877b;color:#fff2ed;}
+.delete-error{color:#ffc0a7;line-height:1.5;font-size:13px;}
+.delete-error:empty{display:none;}
+.delete-status,.delete-pending-summary{font-size:12px;color:#edd09b;line-height:1.5;white-space:pre-line;}
+.recovery-item .delete-forever-action{margin-top:8px!important;background:#4c232a!important;color:#ffb4a5!important;border:1px solid #915158!important;}
+#noteDeleteModal [disabled]{opacity:.65;cursor:wait;}
+#noteDeleteModal :focus-visible{outline:2px solid #e6be77;outline-offset:3px;}
+/* Retain a single row, even on narrow phones, and keep the complete title in the note. */
+@media(max-width:480px){
+ #noteReadModal .sheet-head{gap:2px!important;padding-inline:7px!important;}
+ #noteReadModal .sheet-head :is(.reader-tool,.reader-focus-enter){flex:0 0 31px!important;width:31px!important;height:39px!important;padding:6px!important;}
+ #noteReadModal .sheet-head #readHeaderTitle{min-width:0!important;margin-inline:2px!important;font-size:13px!important;}
+ #noteModal .note-editor-head{gap:3px!important;}
+ #noteModal .note-editor-head .reader-tool{width:31px!important;flex-basis:31px!important;padding:6px!important;}
+}
+@media(max-width:350px){#noteReadModal .sheet-head :is(.reader-tool,.reader-focus-enter){width:28px!important;flex-basis:28px!important;padding:5px!important;}#noteDeleteModal .delete-dialog{padding:16px!important;}}

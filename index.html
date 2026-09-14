@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="mauzi-google-client-id" content="516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com" />
-  <meta name="mauzi-build" content="4.7.0-instalacion-seleccion" />
+  <meta name="mauzi-build" content="4.8.0-eliminar-notas" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#0a2947" />
   <title>MAUZI NOTE</title>
@@ -1475,6 +1475,7 @@
 <link rel="stylesheet" href="./quick-sync.css">
 <link rel="stylesheet" href="./install-manager.css">
 <link rel="stylesheet" href="./text-selection.css">
+<link rel="stylesheet" href="./note-deletion.css">
 </head>
 <body>
 
@@ -2528,7 +2529,7 @@ THE SOFTWARE.
       if($('noteReadModal').classList.contains('hidden')||!$('noteModal').classList.contains('hidden'))return;
       if($('readHeaderTitle')?.isContentEditable||$('readNoteTitle')?.isContentEditable)return;
       const note=notes.find(n=>n.id===activeReadNoteId);
-      if(!note){closeModal('noteReadModal');showToast('Esta nota pasó a la papelera en el otro dispositivo.');return;}
+      if(!note){closeModal('noteReadModal');if(!window.MauziNoteDeletionUI?.isDeleting(activeReadNoteId))showToast('Esta nota fue eliminada. La lista está actualizada.');return;}
       const stamp=JSON.stringify([note.title,note.contentHtml,note.content,note.bgColor,note.categoryId]);
       if(stamp===renderedReadStamp)return;
       renderedReadStamp=stamp;
@@ -2664,13 +2665,7 @@ THE SOFTWARE.
     }
     $("saveNoteBtn").addEventListener("click",saveEditorNote);
 
-    $("deleteNoteBtn").addEventListener("click", async ()=>{
-      const id=$("editingId").value;
-      if(!id || !confirm("¿Mover esta nota a la papelera? Podrás recuperarla desde Mi cuenta.")) return;
-      const before=structuredClone(notes);
-      try { notes=notes.filter(n=>n.id!==id); await saveAll(); renderNotes(); closeModal("noteModal"); showToast("Nota movida a la papelera"); }
-      catch(error){notes=before;showToast(error.message);}
-    });
+    $("deleteNoteBtn").addEventListener("click",()=>window.MauziNoteDeletionUI?.open($("editingId").value));
 
     $("searchInput").addEventListener("input", renderNotes);
     function renderCategoryManager(){
@@ -2908,7 +2903,7 @@ THE SOFTWARE.
    This block manages installation and local export. drive-sync.js manages user-authorized Google Drive access. */
 (() => {
   'use strict';
-  const APP_VERSION = '4.7.0-instalacion-seleccion';
+  const APP_VERSION = '4.8.0-eliminar-notas';
   const $p = id => document.getElementById(id);
   let registration = null;
   let reloadAfterUpdate = false;
@@ -3145,6 +3140,7 @@ THE SOFTWARE.
 <script src="./google-config.js"></script>
 <script src="./account-config.js"></script>
 <script src="./media-sync.js"></script>
+<script src="./note-deletion-core.js"></script>
 <script src="./drive-sync.js"></script>
 <script src="./modules-store.js"></script>
 <script src="./text-selection.js"></script>
@@ -3156,6 +3152,7 @@ THE SOFTWARE.
 <script src="./archive-ui.js"></script>
 <script src="./welcome-access.js"></script>
 <script src="./quick-sync.js"></script>
+<script src="./note-deletion-ui.js"></script>
 <script src="./navigation.js"></script>
 </body>
 </html>

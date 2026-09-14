@@ -1,4 +1,4 @@
-/* MAUZI NOTE 4.4 — Google Drive de CADA USUARIO, sin Firebase ni servidor propio.
+/* MAUZI NOTE 4.8 — Google Drive de CADA USUARIO, sin Firebase ni servidor propio.
    Google Identity Services authorizes browser REST requests with drive.file.
    Access tokens live only in memory; refresh requires a user gesture, never a secret in GitHub.
    Immutable revision files + durable IndexedDB outbox; a successful Drive response is required
@@ -7,7 +7,7 @@
    The same OAuth project/client must be retained after deployment. */
 (() => {
   'use strict';
-  const A=window.MauziApp, $=id=>document.getElementById(id);
+  const A=window.MauziApp, $=id=>document.getElementById(id), ND=window.MauziNoteDeletionCore;
   if(!A)return;
   const embeddedId=document.querySelector('meta[name="mauzi-google-client-id"]')?.content||'';
   const isClientId=v=>/^\d+-[a-z0-9_-]+\.apps\.googleusercontent\.com$/i.test(String(v||'').trim());
@@ -46,6 +46,7 @@
 
   function cleanNote(n){
     if(!n||typeof n!=='object')throw new Error('La nota no tiene un formato válido.');
+    if(ND.isPurged(n))return ND.tombstone(n.id,n.updatedAt);
     n=window.MauziMedia?.redactNote(n,state?.mediaRedactions)||n;
     const contentHtml=A.sanitize(typeof n.contentHtml==='string'?n.contentHtml:A.oldText(String(n.content||'')));
     const note={id:safeId(n.id),title:String(n.title||'').slice(0,90),content:A.plain(contentHtml),contentHtml,
@@ -79,7 +80,7 @@
     const d=await openStorage();
     const result=await new Promise((resolve,reject)=>{
       const t=d.transaction('workspaces','readwrite'),o=t.objectStore('workspaces'),r=o.get(key);let next,reason;
-      r.onsuccess=()=>{try{next=r.result;if(!next)throw new Error('No se encontró la copia local.');fn(next);o.put(next);}catch(e){reason=e;t.abort();}};
+      r.onsuccess=()=>{try{next=r.result;if(!next)throw new Error('No se encontró la copia local.');fn(next);ND.enforce(next);o.put(next);}catch(e){reason=e;t.abort();}};
       t.oncomplete=()=>resolve(next);t.onerror=()=>reject(reason||new Error('No hay espacio para guardar. Conserva el texto y exporta tus notas.'));
       t.onabort=()=>reject(reason||new Error('No se completó el guardado local. Tu texto sigue en el editor.'));
     });
@@ -95,6 +96,7 @@
   }
   function applyState(){
     if(!state)return;
+    ND.enforce(state);
     A.activate(state.email,{notes:visibleNotes(),categories:state.categories});
     $('activeEmail').textContent=state.local?'Sin cuenta · En este dispositivo':state.email;
     $('activeAccountLabel').textContent=state.local?'Estás usando MAUZI NOTE sin cuenta':'Tu cuenta Google';
@@ -125,6 +127,7 @@
     else if(!state)kind='info';
     else if(!navigator.onLine)message=state.queue.length?'Sin internet · cambios pendientes de subir':'Sin internet · copia del dispositivo';
     else if(!validToken())message=state.queue.length?'Cambios pendientes · conecta Google para subirlos':'Conecta Google para sincronizar. Puedes seguir usando tus notas.';
+    else if(ND.pending(state))message='Eliminación definitiva pendiente de confirmar en Drive';
     else if(state.mediaQueue?.length||state.mediaPurgePending)message='Eliminación de imagen pendiente de confirmar en Drive';
     else if(flushing||state.queue.length)message='Guardado en el dispositivo · sincronizando con tu Drive…';
     else if(state.lastScanAt){message='Guardado en tu Google Drive ✓';kind='synced';}
@@ -133,7 +136,7 @@
     if(account){
       let indicator='offline';
       if(cloudError)indicator='error';else if(authPending||googleLoading)indicator='syncing';
-      else if(navigator.onLine&&validToken())indicator=flushing||state?.queue.length?'syncing':state?.lastScanAt?'online':'syncing';
+      else if(navigator.onLine&&validToken())indicator=flushing||state?.queue.length||ND.pending(state)?'syncing':state?.lastScanAt?'online':'syncing';
       account.dataset.driveState=indicator;
       account.setAttribute('aria-label','Mi cuenta y respaldo. '+(indicator==='online'?'Conectado a Google Drive':indicator==='syncing'?'Preparando Google':indicator==='error'?'Revisar sincronización':state?.local?'Sin cuenta':'Sin conexión activa a Google Drive'));
       account.title='Mi cuenta y respaldo';
@@ -162,6 +165,7 @@
     return e?.message||'No se confirmó el guardado en Drive. La copia local se conserva.';
   }
   function addOperation(s,n,baseRev){
+    if(s.notePurges?.[n.id]&&!ND.isPurged(n))throw Error('Esta nota fue eliminada definitivamente. Copia el contenido en una nota nueva si deseas conservarlo.');
     n=window.MauziMedia?.redactNote(n,s.mediaRedactions)||n;
     const op={opId:id(),kind:'note',entityId:n.id,baseRev:baseRev||'',data:n,queuedAt:Date.now()};
     s.notes[n.id]={...n,rev:op.opId};
@@ -184,6 +188,27 @@
     if(!state.local&&!validToken()&&!localWarningShown){localWarningShown=true;A.toast('Guardada aquí. Conecta Google en Mi cuenta para enviarla al otro equipo.');}
 
   }
+
+  async function removeNote(nid,{permanent=false,accountKey}={}){
+    if(!state||!validId(nid))throw Error('No se encontró la nota para eliminar.');
+    const key=state.key;
+    if(accountKey&&accountKey!==key)throw Error('La cuenta cambió. No se eliminó ninguna nota.');
+    await mutate(s=>{
+      const original=s.notes[nid];
+      if(!original)throw Error('La nota ya no está disponible.');
+      if(s.notePurges?.[nid])return;
+      if(permanent){
+        const n=ND.tombstone(nid,Date.now()),base=original.rev||'';
+        s.queue=s.queue.filter(o=>o.kind!=='note'||o.entityId!==nid);
+        addOperation(s,n,base);
+        s.notePurges||={};s.notePurges[nid]={at:n.updatedAt,pending:!s.local,confirmed:false};
+        ND.enforce(s);
+      }else if(!original.deleted){addOperation(s,{...cleanNote(original),deleted:true,updatedAt:Date.now()},original.rev||'');}
+    },{key});
+    editorBase.delete(nid);scheduleFlush(0,'eliminar nota');
+    return {local:!!state?.local,pending:!state?.local,permanent};
+  }
+  function deletionState(){return {pending:ND.pending(state),local:!!state?.local,lastCompleted:state?.lastDeleteCompleted||0};}
 
   /* All network calls are bound to ONE verified account/token/session. A switch cannot
      send one user's queued data with another user's credentials. No tokens in storage or URLs. */
@@ -243,7 +268,7 @@
       if(!groups.has(e.entityId))groups.set(e.entityId,[]);groups.get(e.entityId).push(e);
     }
     const work=[];
-    for(const [nid,events]of groups){const note=s.notes[nid];if(!note)continue;
+    for(const [nid,events]of groups){const note=s.notes[nid];if(!note||s.notePurges?.[nid])continue;
       const sig=window.MauziArchiveCore.signature(note),old=s.archivePlacement?.[nid];
       if(!old||old.signature!==sig||events.some(e=>!old.files?.[e.fileId]))work.push({note,events,signature:sig});
     }
@@ -331,6 +356,7 @@
   /* Reconstruct heads from revision ancestry. Concurrent leaves never overwrite each other's
      files. The selected head is deterministic, all alternatives remain in Historial. */
   function rebuild(s){
+    ND.enforce(s);
     const groups=new Map();for(const e of Object.values(s.events||{})){const key=e.kind+':'+e.entityId;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);}
     const pending=new Set(s.queue.map(o=>o.kind+':'+o.entityId));
     for(const [key,events] of groups){
@@ -338,6 +364,7 @@
       const leaves=events.filter(e=>!referenced.has(e.opId));if(!leaves.length)throw new Error('Se detectó un historial inconsistente. No se borró ninguna nota.');
       leaves.sort((a,b)=>a.serverAt-b.serverAt||a.opId.localeCompare(b.opId));
       const head=leaves[leaves.length-1];
+      if(head.kind==='note'&&s.notePurges?.[head.entityId])continue;
       // A device from before 4.4 cannot know these fields. Inherit an explicitly
       // assigned location through its revision ancestry instead of losing it.
       // Raw event payloads are NEVER changed; retry/dedup comparisons stay valid.
@@ -391,6 +418,7 @@
     for(const meta of list){assertContext(c);fresh=await getWorkspace(c.key);if(fresh.mediaCleaned?.[meta.id]===signature)continue;
       const raw=await(await driveFetch('https://www.googleapis.com/drive/v3/files/'+meta.id+'?alt=media',{},c)).json();
       if(raw.format!==APP||raw.owner!==c.uid)throw Error('No se puede limpiar una imagen fuera de tu cuenta.');
+      if(fresh.notePurges?.[raw.entityId])continue;
       if(raw.kind!=='note'||!rules[raw.entityId]?.length){await mutate(s=>{(s.mediaCleaned||={})[meta.id]=signature;},{key:c.key,render:false,notify:false});continue;}
       const clean=MM.redactNote(raw.data,rules);
       if(clean===raw.data){await mutate(s=>{(s.mediaCleaned||={})[meta.id]=signature;},{key:c.key,render:false,notify:false});continue;}
@@ -467,7 +495,7 @@
   }
   async function commit(op,c,folder){
     assertContext(c);
-    if(op.kind==='note')folder=await archiveNoteFolder(op.data,c,folder);
+    if(op.kind==='note'&&!ND.isPurged(op.data))folder=await archiveNoteFolder(op.data,c,folder);
     // A pre-generated Drive file ID makes POST retry safe even if the response was lost.
     if(!op.driveId){
       const d=await(await driveFetch('https://www.googleapis.com/drive/v3/files/generateIds?count=1&space=drive&type=files',{},c)).json();
@@ -477,7 +505,7 @@
     }
     if(!op.driveId)throw new Error('No se guardó el identificador de subida.');
     const payload={format:APP,owner:c.uid,...op};delete payload.driveId;
-    const metadata={id:op.driveId,name:'version-'+op.opId+'.json',mimeType:'application/json',parents:[folder],appProperties:{mauziNote:APP,opId:op.opId,...(op.kind==='note'?{noteId:op.entityId}:{})},description:'Versión de una nota MAUZI NOTE. Recuperar desde la aplicación.'};
+    const metadata={id:op.driveId,name:(ND.isPurged(op.data)?'eliminacion-':'version-')+op.opId+'.json',mimeType:'application/json',parents:[folder],appProperties:{mauziNote:APP,opId:op.opId,...(op.kind==='note'?{noteId:op.entityId,...(ND.isPurged(op.data)?{permanentDelete:'1'}:{})}:{})},description:ND.isPurged(op.data)?'Registro técnico de eliminación: sin título original, texto ni imágenes. Evita que una copia antigua vuelva a crear la nota.':'Versión de una nota MAUZI NOTE. Recuperar desde la aplicación.'};
     const boundary='mauzi_'+id(),body='--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(metadata)+'\r\n--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(payload)+'\r\n--'+boundary+'--';
     let meta;
     try{meta=await(await driveFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,createdTime,appProperties',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body},c)).json();}
@@ -488,7 +516,49 @@
     }
     return cleanEvent(payload,meta,c);
   }
-  function syncState(){return {ready:storageReady,authPending,googleLoading,transferBusy,mediaPending:(state?.mediaQueue?.length||0)+(state?.mediaPurgePending?1:0),authorized:validToken()&&navigator.onLine,requiresConnection:!!state&&!state.local&&!validToken(),local:!!state?.local,email:state?.email||'',pending:state?.queue.length||0,busy:flushing,error:cloudError,pollSeconds:20,lastCheckedAt:state?.lastCheckedAt||0,lastUploadAt:state?.lastUploadAt||0,lastDownloadAt:state?.lastDownloadAt||0,...syncMetrics};}
+  async function purgeDeletedNotes(c,full=false){
+    let fresh=await getWorkspace(c.key);assertContext(c);ND.enforce(fresh);
+    const jobs=Object.entries(fresh.notePurges||{}).filter(([,j])=>j.confirmed&&(j.pending||full));
+    if(!jobs.length)return;
+    if(full)await mutate(s=>{for(const [nid]of jobs)if(s.notePurges?.[nid])s.notePurges[nid].pending=true;},{key:c.key,render:false});
+    // Include trashed versions too, but never empty the user's Drive trash.
+    const query="'me' in owners and appProperties has {key='mauziNote' and value='"+APP+"'}";
+    const files=await listDrive(query,c,'id,name,createdTime,appProperties,trashed');
+    let budget=30;
+    for(const [nid]of jobs){
+      fresh=await getWorkspace(c.key);assertContext(c);
+      const job=fresh.notePurges?.[nid];if(!job?.confirmed)continue;
+      let remaining=false;
+      for(const meta of files){
+        const hint=meta.appProperties||{};
+        if(hint.noteId&&hint.noteId!==nid)continue;
+        if(hint.permanentDelete==='1'||meta.id===job.markerFile)continue;
+        if(!budget){remaining=true;break;}
+        let raw;try{raw=await(await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(meta.id)+'?alt=media',{},c)).json();}
+        catch(e){if(e.status===404)continue;throw e;}
+        if(raw.format!==APP||raw.owner!==c.uid||raw.kind!=='note'||raw.entityId!==nid||raw.data?.id!==nid)continue;
+        if(ND.isPurged(raw.data))continue;
+        // Only delete after a content-free tombstone was acknowledged by Drive.
+        assertContext(c);
+        try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(meta.id),{method:'DELETE'},c);}catch(e){if(e.status!==404)throw e;}
+        budget--;
+      }
+      if(!remaining){
+        const dirs=await listDrive("'me' in owners and mimeType = 'application/vnd.google-apps.folder' and appProperties has {key='mauziNote' and value='"+ARCH_NOTE+"'} and appProperties has {key='noteId' and value='"+nid+"'}",c,'id,appProperties');
+        for(const dir of dirs){
+          // No recursive folder deletion: a user may have placed unrelated files here.
+          if(dir.appProperties?.mauziNote!==ARCH_NOTE||dir.appProperties?.noteId!==nid)continue;
+          const children=await listDrive("'"+dir.id+"' in parents",c,'id');
+          if(children.length)continue;
+          try{await driveFetch('https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(dir.id),{method:'DELETE'},c);}catch(e){if(e.status!==404)throw e;}
+        }
+      }
+      await mutate(s=>{const j=s.notePurges?.[nid];if(j){j.pending=remaining;j.hintFiles=[];if(!remaining){j.finishedAt=Date.now();s.lastDeleteCompleted=Date.now();}}ND.enforce(s);},{key:c.key,render:false});
+      if(!budget)break;
+    }
+  }
+
+  function syncState(){return {deletePending:ND.pending(state),lastDeleteCompleted:state?.lastDeleteCompleted||0,ready:storageReady,authPending,googleLoading,transferBusy,mediaPending:(state?.mediaQueue?.length||0)+(state?.mediaPurgePending?1:0),authorized:validToken()&&navigator.onLine,requiresConnection:!!state&&!state.local&&!validToken(),local:!!state?.local,email:state?.email||'',pending:state?.queue.length||0,busy:flushing,error:cloudError,pollSeconds:20,lastCheckedAt:state?.lastCheckedAt||0,lastUploadAt:state?.lastUploadAt||0,lastDownloadAt:state?.lastDownloadAt||0,...syncMetrics};}
   function scheduleFlush(delay=250,reason='cambio'){
     if(!state||state.local)return;
     const now=Date.now(),due=Math.max(now+Math.max(0,delay),retryNotBefore);
@@ -517,7 +587,8 @@
       // A new device must recover existing categories before creating defaults.
       const bootstrap=await getWorkspace(c.key);
       if(!bootstrap.categoryRev&&batch.full){await pull(c,batch.files);batch.files=[];}
-      // Upload local saved edits before downloading a potentially large old history.
+      // 4.8 Read the deletion journal before sending an old offline revision.
+      await pull(c,batch.files);batch.files=[];
       let fresh=await getWorkspace(c.key);
       if(!fresh.categoryRev&&!fresh.queue.some(o=>o.kind==='categories'))await mutate(s=>addCategories(s,s.categories),{key:c.key,render:false});
       fresh=await getWorkspace(c.key);
@@ -529,12 +600,13 @@
       await pull(c,batch.files);
       fresh=await getWorkspace(c.key);
       if(fresh.mediaPurgePending||fresh.mediaQueue?.length){await syncMediaMarkers(c,[]);await purgeRemovedMedia(c);}
+      await purgeDeletedNotes(c,batch.full);
       assertContext(c);
       try{await reconcileArchive(c,batch.full);}catch(e){if(c.session===session){archiveError=messageFor(e);if(e.status===401)throw e;}}
       await mutate(s=>{
         s.driveChangeToken=batch.next;s.lastCheckedAt=Date.now();s.lastScanAt=Date.now();
         if(batch.full)s.lastFullScanAt=Date.now();
-        if(!s.queue.length&&!s.mediaQueue?.length&&!s.mediaPurgePending)s.lastSyncedAt=Date.now();
+        if(!s.queue.length&&!s.mediaQueue?.length&&!s.mediaPurgePending&&!ND.pending(s))s.lastSyncedAt=Date.now();
       },{key:c.key,render:false,notify:false});
       cloudError='';retryAttempt=0;retryNotBefore=0;
       if(Object.values(state.notes).some(n=>n.conflict))txt($('driveStatus'),'Hay ediciones simultáneas. Ambas se conservan: abre la nota → Historial.');
@@ -575,7 +647,7 @@
     if(!navigator.onLine){A.toast('Necesitas internet para verificar Google. La copia del teléfono sigue disponible.');return;}
     if(!$('noteModal').classList.contains('hidden')){A.toast('Guarda y cierra la nota antes de conectar o cambiar de cuenta.');return;}
     if(!window.google?.accounts?.oauth2){prepareGoogle();return;}
-    if(choose&&state?.queue.length&&!confirm('Hay cambios pendientes en esta cuenta. Se conservarán en este teléfono, pero aún no están en Drive. ¿Cambiar de cuenta?'))return;
+    if(choose&&(state?.queue.length||ND.pending(state))&&!confirm('Hay cambios pendientes en esta cuenta. Se conservarán en este teléfono, pero aún no están en Drive. ¿Cambiar de cuenta?'))return;
     if(!storageReady||!state)return;
     if(transferBusy)return;
     const sourceLocal=state.local?state.key:'';
@@ -629,7 +701,7 @@
   async function logout(){
     if(authPending||transferBusy){A.toast('Termina la operación antes de salir.');return;}
     if(!$('noteModal').classList.contains('hidden')){A.toast('Guarda la nota antes de salir.');return;}
-    if(state?.queue.length&&!confirm('Hay cambios que todavía no llegaron a Drive. Se conservarán en la cuenta de este dispositivo. ¿Salir de Google y abrir las notas sin cuenta?'))return;
+    if((state?.queue.length||ND.pending(state))&&!confirm('Hay cambios que todavía no llegaron a Drive. Se conservarán en la cuenta de este dispositivo. ¿Salir de Google y abrir las notas sin cuenta?'))return;
     clearConnection();state=null;editorBase.clear();A.closeSession();
     try{await enterLocal();A.toast('Ahora usas MAUZI NOTE sin cuenta. Las notas de Google se conservan.');}
     catch(e){authMessage(messageFor(e),true);}
@@ -641,7 +713,7 @@
   async function localPayload(key){
     const source=await getWorkspace(key);if(!source?.local)return null;
     const modules=await window.MauziModules?.exportForKey?.(source.key);
-    return {email:source.email,notes:visibleNotes(source),trash:Object.values(source.notes||{}).filter(n=>n.deleted).map(cleanNote),categories:clone(source.categories),modules:modules||null};
+    return {email:source.email,notes:visibleNotes(source),trash:Object.values(source.notes||{}).filter(n=>n.deleted&&!ND.isPurged(n)).map(cleanNote),categories:clone(source.categories),modules:modules||null};
   }
   async function offerGuestTransfer(sourceKey){
     const destination=state?.key;const payload=await localPayload(sourceKey);
@@ -681,7 +753,7 @@
     await mutate(s=>{
       const cats=clone(s.categories),mapping=new Map();for(const cat of cs){const eq=cats.find(c=>c.name===cat.name&&c.color===cat.color);if(eq){mapping.set(cat.id,eq.id);continue;}const old=cat.id;if(cats.some(c=>c.id===cat.id))cat.id=id();mapping.set(old,cat.id);cats.push(cat);}
       if(cats.length>200)throw new Error('La copia contiene demasiadas categorías.');if(JSON.stringify(cats)!==JSON.stringify(s.categories))addCategories(s,cats);
-      for(const n of ns){const original=n.id;n.categoryId=mapping.get(n.categoryId)||s.categories[0].id;const same=Object.values(s.notes).find(x=>x.title===n.title&&x.contentHtml===n.contentHtml&&x.bgColor===n.bgColor&&x.deleted===n.deleted&&JSON.stringify(window.MauziArchiveCore.location(x))===JSON.stringify(window.MauziArchiveCore.location(n)));if(same){idMap[original]=same.id;continue;}if(s.notes[n.id])n.id=id();idMap[original]=n.id;addOperation(s,n,'');}
+      for(const n of ns){const original=n.id;if(ND.isPurged(n))continue;if(s.notePurges?.[n.id])n.id=id();n.categoryId=mapping.get(n.categoryId)||s.categories[0].id;const same=Object.values(s.notes).find(x=>x.title===n.title&&x.contentHtml===n.contentHtml&&x.bgColor===n.bgColor&&x.deleted===n.deleted&&JSON.stringify(window.MauziArchiveCore.location(x))===JSON.stringify(window.MauziArchiveCore.location(n)));if(same){idMap[original]=same.id;continue;}if(s.notes[n.id])n.id=id();idMap[original]=n.id;addOperation(s,n,'');}
     });scheduleFlush();return {idMap};
   }
   async function oldWorkspaces(){
@@ -702,9 +774,20 @@
     for(const data of candidates)recoveryCard({title:data.email||'Copia local',details:'Importar a '+state.email,content:'Incluye notas y colores de una versión anterior.',action:'Importar esta copia',run:async()=>{if(!confirm('¿Importar estas notas a '+state.email+'?'))return;await window.MauziCloud.importPayload(data);A.close('cloudRecoveryModal');A.toast('Importadas al teléfono. Espera la confirmación de Drive.');}});
   }
   function recoveryStart(title,hint){txt($('recoveryTitle'),title);txt($('recoveryHint'),hint);$('recoveryItems').replaceChildren();A.open('cloudRecoveryModal');}
-  function recoveryCard({title,details,content,action,run}){const box=document.createElement('div');box.className='recovery-item';const h=document.createElement('h3'),small=document.createElement('small'),p=document.createElement('p'),button=document.createElement('button');h.textContent=title;small.textContent=details||'';p.textContent=content||'';button.className='secondary-btn';button.textContent=action;button.addEventListener('click',async()=>{button.disabled=true;try{await run();}catch(e){A.toast(messageFor(e));}finally{button.disabled=false;}});box.append(h,small,p,button);$('recoveryItems').append(box);}
-  async function restoreNote(n){if(!confirm('¿Restaurar esta versión? El historial anterior se conserva.'))return;await mutate(s=>addOperation(s,{...cleanNote(n),deleted:false,updatedAt:Date.now()},s.notes[n.id]?.rev||''));scheduleFlush();A.close('cloudRecoveryModal');A.toast('Restaurada en el teléfono. Revisa la confirmación de Drive.');}
-  async function showTrash(){if(!state)return;state=await getWorkspace(state.key);recoveryStart('Papelera','Estas notas no se eliminan automáticamente. Recuperar crea una nueva versión.');const rows=Object.values(state.notes).filter(n=>n.deleted);if(!rows.length)txt($('recoveryHint'),'La papelera está vacía.');for(const n of rows)recoveryCard({title:n.title||'Sin título',content:n.content,action:'Recuperar',run:()=>restoreNote(n)});}
+  function recoveryCard({title,details,content,action,run}){const box=document.createElement('div');box.className='recovery-item';const h=document.createElement('h3'),small=document.createElement('small'),p=document.createElement('p'),button=document.createElement('button');h.textContent=title;small.textContent=details||'';p.textContent=content||'';button.className='secondary-btn';button.textContent=action;button.addEventListener('click',async()=>{button.disabled=true;try{await run();}catch(e){A.toast(messageFor(e));}finally{button.disabled=false;}});box.append(h,small,p,button);$('recoveryItems').append(box);return box;}
+  async function restoreNote(n){if(state?.notePurges?.[n.id])throw Error('La nota se eliminó definitivamente y no puede restaurarse.');if(!confirm('¿Restaurar esta versión? El historial anterior se conserva.'))return;await mutate(s=>addOperation(s,{...cleanNote(n),deleted:false,updatedAt:Date.now()},s.notes[n.id]?.rev||''));scheduleFlush();A.close('cloudRecoveryModal');A.toast('Restaurada en el teléfono. Revisa la confirmación de Drive.');}
+  async function showTrash(){
+    if(!state)return;const key=state.key,loaded=await getWorkspace(key);if(state?.key!==key||!loaded)return;state=loaded;ND.enforce(state);
+    recoveryStart('Papelera','Las notas aquí están ocultas en todos los dispositivos al sincronizar. Puedes recuperarlas o eliminar definitivamente su contenido e historial de Drive.');
+    const rows=Object.values(state.notes).filter(n=>n.deleted&&!ND.isPurged(n));
+    if(!rows.length)txt($('recoveryHint'),'La papelera está vacía.');
+    for(const n of rows){
+      const box=recoveryCard({title:n.title||'Sin título',content:n.content,action:'Recuperar',run:()=>restoreNote(n)});
+      const button=document.createElement('button');button.type='button';button.className='delete-forever-action';button.textContent='Eliminar definitivamente';
+      button.addEventListener('click',()=>window.MauziNoteDeletionUI?.open(n.id,{permanent:true,title:n.title}));box.append(button);
+    }
+    const count=ND.pending(state);if(count){const p=document.createElement('p');p.className='delete-pending-summary';p.textContent=count+' eliminación(es) definitiva(s) pendientes de confirmar en Drive. Conecta Google y sincroniza.';$('recoveryItems').prepend(p);}
+  }
   async function showHistory(){
     if(!state||!A.currentReadId())return;const nid=A.currentReadId();state=await getWorkspace(state.key);
     const versions=state.local?(state.localHistory[nid]||[]):(state.localHistory['note:'+nid]||[]);
@@ -714,7 +797,7 @@
     if(!rows.length)txt($('recoveryHint'),'Aún no hay versiones. Guarda la nota y sincroniza.');
     for(const n of rows)recoveryCard({title:n.title||'Sin título',details:new Date(n.serverAt||n.updatedAt).toLocaleString('es-GT')+(n.pending?' · Solo en el teléfono':n.conflict?' · Edición simultánea conservada':''),content:n.content,action:'Restaurar versión',run:()=>restoreNote(n)});
   }
-  async function showAllHistory(){if(!state)return;recoveryStart('Recuperar de Google Drive','Las notas de Drive se recuperan automáticamente al conectar la misma cuenta. Aquí puedes abrir el historial de las notas descargadas.');for(const n of Object.values(state.notes))recoveryCard({title:n.title||'Sin título',content:n.deleted?'En papelera':n.content,action:n.deleted?'Recuperar nota':'Abrir nota',run:async()=>{if(n.deleted)await restoreNote(n);else{A.close('cloudRecoveryModal');window.openNoteReader(n.id);}}});}
+  async function showAllHistory(){if(!state)return;recoveryStart('Recuperar de Google Drive','Las notas de Drive se recuperan automáticamente al conectar la misma cuenta. Aquí puedes abrir el historial de las notas descargadas.');for(const n of Object.values(state.notes).filter(n=>!ND.isPurged(n)))recoveryCard({title:n.title||'Sin título',content:n.deleted?'En papelera':n.content,action:n.deleted?'Recuperar nota':'Abrir nota',run:async()=>{if(n.deleted)await restoreNote(n);else{A.close('cloudRecoveryModal');window.openNoteReader(n.id);}}});}
   async function openDriveFolder(){if(!validToken()){login();return;}try{const c=context(),folder=await getFolder(c);txt($('driveStatus'),'Tus archivos están en Mi unidad → MAUZI NOTE. No los compartas ni los borres.');const a=$('openDriveLink');a.href='https://drive.google.com/drive/folders/'+encodeURIComponent(folder);a.classList.remove('hidden');}catch(e){txt($('driveStatus'),messageFor(e));}}
 
   channel?.addEventListener('message',async e=>{if(e.data?.key!==state?.key)return;const key=state.key;try{const s=await getWorkspace(key);if(state?.key===key&&s){state=s;applyState();}}catch(_){};});
@@ -741,7 +824,7 @@
   $('driveRestoreBtn').addEventListener('click',()=>showAllHistory().catch(e=>A.toast(messageFor(e))));
   const syncInfo=document.createElement('section');syncInfo.className='sync-diagnostics';syncInfo.innerHTML='<h3>Sincronización automática</h3><p id="syncConnectionHelp"></p><div id="syncProgressDetails" role="status"></div><small>Usa la misma cuenta en ambos dispositivos. Los cambios sin guardar, la app cerrada o un permiso vencido no se sincronizan hasta guardar y reconectar.</small>';
   $('accountSyncStatus').after(syncInfo);
-  window.MauziCloud={save,login,logout,flush,prepareConnection:prepareGoogle,syncState,archiveState,organizeNow,requestSync:()=>scheduleFlush(0,'manual'),importPayload,localOnly,config:()=>({clientId:CLIENT_ID,configured}),account:moduleAccount,moduleBridge,beginEdit(nid){editorBase.clear();if(nid)editorBase.set(nid,state?.notes[nid]?.rev||'');},getExport:()=>state?{notes:visibleNotes(),categories:clone(state.categories),trash:Object.values(state.notes).filter(n=>n.deleted).map(cleanNote),modules:window.MauziModules?.exportData()||null}:null};
+  window.MauziCloud={removeNote,showTrash,deletionState,save,login,logout,flush,prepareConnection:prepareGoogle,syncState,archiveState,organizeNow,requestSync:()=>scheduleFlush(0,'manual'),importPayload,localOnly,config:()=>({clientId:CLIENT_ID,configured}),account:moduleAccount,moduleBridge,beginEdit(nid){editorBase.clear();if(nid)editorBase.set(nid,state?.notes[nid]?.rev||'');},getExport:()=>state?{notes:visibleNotes(),categories:clone(state.categories),trash:Object.values(state.notes).filter(n=>n.deleted&&!ND.isPurged(n)).map(cleanNote),modules:window.MauziModules?.exportData()||null}:null};
   async function startApp(){
     try{
       await openStorage();let key='';try{key=localStorage.getItem(ACTIVE_KEY)||'';if(!key){const fallback=localStorage.getItem(ACTIVE_FALLBACK)||'';if(fallback.startsWith('local:')||fallback.startsWith(CLIENT_ID+':'))key=fallback;}}catch(_){}

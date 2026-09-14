@@ -42,3 +42,11 @@ https://developer.mozilla.org/en-US/docs/Web/API/Selection
 
 Apple — instalar como app web en iPhone:
 https://support.apple.com/es-es/guide/iphone/iphea86e5236/ios
+
+
+ELIMINACIÓN 4.8
+Google Drive: trash vs permanent deletion, alcance por archivo.
+https://developers.google.com/workspace/drive/api/guides/delete
+https://developers.google.com/workspace/drive/api/reference/rest/v3/files/delete
+Se usa files.delete solo para las versiones verificadas de la nota confirmada
+y sus carpetas exclusivas vacías. No se usa files.emptyTrash.

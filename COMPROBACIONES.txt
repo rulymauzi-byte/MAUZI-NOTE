@@ -1,86 +1,77 @@
-MAUZI NOTE 4.7 — COMPROBACIONES REALIZADAS
+MAUZI NOTE 4.8 — COMPROBACIONES REALIZADAS
 ========================================
-Fecha del paquete: 14 de septiembre de 2026.
-Entorno: Chromium 144.0.7559.96, Playwright y Node.js.
+Fecha: 14 de septiembre de 2026.
 
-ALCANCE Y LÍMITES
-El navegador de pruebas de este entorno bloquea navegaciones externas y locales
-con ERR_BLOCKED_BY_ADMINISTRATOR. Por eso las pruebas cargaron el DOM, estilos y
-código reales mediante set_content, con un adaptador EXTERNO al paquete que
-simula dirección HTTPS, almacenamiento local/IndexedDB y señales de instalación.
-Se preservaron los archivos de producción: el adaptador no se entrega.
-No se modificó la política administrada del navegador.
+ALCANCE
+Se ejecutó el HTML, estilos y código reales en Chromium mediante Playwright.
+El navegador administrado de este entorno bloqueó la navegación con
+ERR_BLOCKED_BY_ADMINISTRATOR. Las pruebas se realizaron mediante set_content,
+con un adaptador externo al paquete para dirección HTTPS, almacenamiento
+local/IndexedDB, identidad y respuestas de Google Drive.
+No se cambiaron las políticas del navegador. El adaptador NO se entrega.
 
-Se probaron la selección nativa con ratón/teclado y los cambios del DOM de texto
-real. Los eventos de doble toque y de instalación, el modo standalone y la
-API getInstalledRelatedApps se simularon. No se probó la aparición real de
-los tiradores de selección en un teléfono físico. Las capturas usan tamaños
-360, 390, 768 y 1440 píxeles.
-No se inició sesión en Google, no se enviaron notas a Drive ni WhatsApp, no se
-instaló la PWA en un teléfono y no se ejecutó la descarga real del service worker.
-Las cuatro Biblias se consultaron desde los datos integrados sin solicitudes
-externas. El código de Drive no se cambió.
+Las pruebas de disposición usan anchos de 320, 360, 390, 768, 1440 y 1920 píxeles.
+La selección, modales y botones operan sobre DOM real; el almacenamiento y Drive
+son simulados. No se accedió a una cuenta real, no se eliminó contenido real de
+Google ni se modificó el repositorio. No se probó instalación real, service worker
+real o gestos de un teléfono físico. Las pruebas no garantizan disponibilidad,
+permisos vigentes ni velocidad del servidor de Google.
 
-RESULTADOS: 44 verificaciones aprobadas
-Los nombres siguientes corresponden a los casos ejecutados; «fixture» significa
-el adaptador simulado descrito arriba, no un dispositivo real.
-01. OK — Public link: installation invitation opens
-02. OK — Continue without installation: invitation closes
-03. OK — Google choices remain accessible
-04. OK — Free local entry works
-05. OK — Does not reopen automatically after dismissal
-06. OK — Native dismissal does not mark installed
-07. OK — Browser prompt requested exactly once
-08. OK — Double click selects a word in reader
-09. OK — No dictionary UI/function after selection
-10. OK — Native keyboard selection can expand to more words
-11. OK — Selection survives reader -> format
-12. OK — Format mode does not use editable host
-13. OK — Bold applied to selected range
-14. OK — Color applied without losing range
-15. OK — Selected color preserved in note HTML
-16. OK — Mixed selection can become bold
-17. OK — Bold can be removed including preexisting strong
-18. OK — Formatting preserves paragraphs and Roman list
-19. OK — Writing mode remains editable
-20. OK — Double-touch fallback selects word
-21. OK — Saved formatting reopens in a fresh session fixture
-22. OK — Standalone installed app: no installation offer
-23. OK — Standalone installed app: all install entries hidden
-24. OK — Full-screen reading does not mark app installed
-25. OK — Offline Bible RVR1960
-26. OK — Offline Bible NVI
-27. OK — Offline Bible NTV
-28. OK — Offline Bible TLA
-29. OK — No dictionary/network requests in local tests
-30. OK — Installed-related-app evidence hides browser offer
-31. OK — Accepted request alone does not fake installation
-32. OK — Confirmed appinstalled hides offer and entries
-33. OK — Reopening with known installation does not ask again
-34. OK — Fresh beforeinstallprompt clears stale installed flag after uninstall
-35. OK — Installation card fits 360
-36. OK — Installation card fits 768
-37. OK — Installation card fits 1440
-38. OK — No uncaught script errors in all test contexts
-39. OK — iPhone fallback shows Add to Home Screen inside offer
-40. OK — No browser tab opened for installation guidance
-41. OK — iPhone standalone signal hides installation offer
-42. OK — Image and formatting kept after save
-43. OK — Bible references still open without dictionary
-44. OK — Favorites and agenda remain available
+RESULTADOS: 51 comprobaciones aprobadas
+01. OK — Inicio local sin cuenta y sin errores
+02. OK — Papelera visible arriba en celular
+03. OK — Cancelar no elimina ni cierra la nota
+04. OK — Error de disco no borra la nota y conserva el diálogo
+05. OK — Papelera local quita de lista
+06. OK — Papelera local guarda formato para recuperar
+07. OK — Recuperar devuelve la nota local
+08. OK — Papelera también visible en edición
+09. OK — Advierte sobre cambios sin guardar
+10. OK — Eliminar desde editor cierra sin resguardar el borrador eliminado
+11. OK — Eliminación definitiva local retira también la papelera
+12. OK — Conexión existente sigue funcionando
+13. OK — Nota, imagen y versiones subidas al Drive simulado
+14. OK — Otro dispositivo recupera nota, formato e imagen
+15. OK — Año y carpeta se conservan
+16. OK — Mover a papelera sincroniza y quita en ambos dispositivos
+17. OK — Papelera recuperable también llega al otro dispositivo
+18. OK — Restauración sincronizada con imagen conservada
+19. OK — Fallo temporal de Drive mantiene eliminación pendiente
+20. OK — Marca técnica existe antes de borrar archivos
+21. OK — La marca no conserva texto original ni imágenes
+22. OK — Reintento elimina todas las versiones de la nota
+23. OK — Eliminación confirmada solo después del éxito
+24. OK — Archivo ajeno y su carpeta no se borran
+25. OK — Otra nota se conserva
+26. OK — Eliminación definitiva llega al otro equipo
+27. OK — Una revisión atrasada no resucita la nota
+28. OK — Un dispositivo nuevo no recupera contenido eliminado
+29. OK — Sin internet elimina local y deja trabajo pendiente
+30. OK — Al reconectar completa la eliminación
+31. OK — 401 no marca confirmada la eliminación
+32. OK — Renovar Google termina la eliminación pendiente
+33. OK — Aislamiento de cuentas: conserva nota con igual ID en otro usuario
+34. OK — No resucita un borrador sobre una nota eliminada
+35. OK — Papelera visible y alcanzable a 320px
+36. OK — Papelera visible y alcanzable a 360px
+37. OK — Papelera visible y alcanzable a 390px
+38. OK — Papelera visible y alcanzable a 768px
+39. OK — Papelera visible y alcanzable a 1440px
+40. OK — Papelera visible y alcanzable a 1920px
+41. OK — No hay errores JavaScript en las pruebas
+42. OK — No borra archivos si se perdió la confirmación del registro
+43. OK — Reintento idempotente confirma la marca y completa el borrado
+44. OK — Elimina la carpeta vacía exclusiva de la nota
+45. OK — El borrado continúa por lotes cuando hay muchas versiones
+46. OK — Una confirmación de otra cuenta no elimina la nota
+47. OK — Biblia integrada sigue funcionando: RVR1960
+48. OK — Biblia integrada sigue funcionando: NVI
+49. OK — Biblia integrada sigue funcionando: NTV
+50. OK — Biblia integrada sigue funcionando: TLA
+51. OK — Sin errores JavaScript en pruebas adicionales
 
-CONTROLES ESTÁTICOS
-- node --check para todos los archivos JavaScript y scripts ejecutables inline.
-- Los 41 recursos indicados en sw.js existen y no se repiten.
-- dictionary.js no se carga; el léxico vacío no se solicita ni se cachea.
-- Datos bíblicos integrados idénticos a los de la entrega 4.6.
-- google-config.js, drive-sync.js, media-sync.js, archive-core.js, archive-ui.js,
-  modules-store.js, calendar-link.js y quick-sync.js idénticos a la entrega 4.6.
-- ZIP comprobado por CRC y rutas relativas, sin carpeta exterior, secretos o
-  archivos de pruebas. SHA256_ARCHIVOS.txt permite verificar su contenido.
-
-COMPROBACIÓN PENDIENTE DESPUÉS DE PUBLICAR
-Probar el enlace HTTPS en Chrome/Edge y en Safari/iPhone; confirmar la instalación
-real y abrir desde el icono. Comprobar la ampliación nativa de selección en su
-celular y guardar una nota de prueba para verificar su sincronización real.
-No borrar datos ni desinstalar para actualizar.
+Revisión adicional estática: sintaxis de todos los JS y scripts inline;
+recursos de index.html y del service worker presentes; ID de Google preservado;
+textos bíblicos integrados sin modificación; ZIP íntegro y completo.
+La recuperación real y el borrado deben verificarse tras publicar con una nota
+de prueba, antes de eliminar información importante.

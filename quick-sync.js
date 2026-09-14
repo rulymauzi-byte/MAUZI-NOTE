@@ -36,7 +36,7 @@
     const modules = window.MauziModules;
     const moduleState = modules?.syncState?.() || {};
     const moduleBusy = !!modules?.isSyncing?.();
-    const pending = (state.pending || 0) + (state.mediaPending || 0) + (moduleState.pending || 0);
+    const pending = (state.pending || 0) + (state.deletePending || 0) + (state.mediaPending || 0) + (moduleState.pending || 0);
     const preparing = state.authPending || state.googleLoading;
     if (recentAuthAttempt && !state.authPending && Date.now() - recentAuthAttempt < 120000) {
       const message = authMessage?.dataset.state === 'error' ? authMessage.textContent.trim() : '';
