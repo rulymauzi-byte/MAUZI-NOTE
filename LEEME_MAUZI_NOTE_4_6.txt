@@ -1,0 +1,66 @@
+MAUZI NOTE 4.6 — BOTÓN SINCRONICE
+================================
+PAQUETE COMPLETO para https://rulymauzi-byte.github.io/MAUZI-NOTE/
+
+NOVEDAD
+Junto a Año/Carpeta hay un solo botón: «Sincronice», con un icono de
+sincronización. No necesita abrir Mi cuenta para usarlo.
+
+- Google autorizado: intenta enviar y recibir cambios inmediatamente.
+- Permiso vencido en una cuenta ya vinculada: solicita renovar Google desde
+  el toque. Tras la autorización se retoma la sincronización automática.
+- Primer acceso sin cuenta: conserva la pantalla de validación y WhatsApp.
+- Sin internet: conserva los cambios guardados; no afirma haberlos subido.
+- Verde: conexión autorizada y sin cambios guardados pendientes.
+- Dorado/animación: preparando, sincronizando o esperando confirmación.
+- Rojizo: renovar la conexión o revisar un error.
+- Gris: sin cuenta o sin internet.
+El texto permanece «Sincronice». Los detalles largos siguen en Mi cuenta.
+
+La ventana de Google puede pedir elegir cuenta o aceptar el permiso. No se
+oculta ni se salta. Si Google no cargó por un problema de internet, el botón
+prepara la conexión y le pide tocar cuando termine; no abre una ventana tarde
+sin un nuevo gesto suyo. Un error o cancelación no elimina sus notas.
+
+Se conservan la consulta automática cada 20 segundos con la app activa,
+la subida al guardar, la organización por años/carpetas y las mismas cuentas.
+Esta actualización facilita reconectar. NO convierte el permiso en permanente,
+NO añade Firebase, NO incorpora un servidor y NO contrata servicios de pago.
+
+SUBIR SIN PERDER LA CONFIGURACIÓN
+1. Guarde cualquier nota abierta y genere una copia de respaldo desde Mi cuenta.
+   NO suba ese respaldo personal con sus notas al repositorio público.
+2. Descomprima TODO el ZIP en su carpeta de MAUZI NOTE y acepte reemplazar los
+   archivos del mismo nombre. Mantenga los archivos dentro de icons/.
+3. En el MISMO repositorio MAUZI-NOTE: Add file → Upload files. Suba todo el
+   contenido descomprimido → Commit changes. index.html va en la raíz,
+   NO dentro de una carpeta adicional ni como un ZIP cerrado.
+4. Conserve los demás archivos del repositorio. No borre notas ni Drive.
+5. Después de la publicación, actualice en PC y celular: Mi cuenta → Estado
+   de la aplicación / actualizaciones → Aplicar actualización.
+   También puede abrir /MAUZI-NOTE/ACTUALIZAR.html desde su sitio publicado.
+   Debe indicar: 4.6.0-sincronice-directo.
+
+GOOGLE
+google-config.js está incluido y NO está vacío. Conserva el mismo ID público:
+516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com
+Puede reemplazarlo por el incluido. No cree otro ID ni otro proyecto.
+No se incluyen claves privadas, contraseñas, tokens ni notas de personas.
+No necesita repetir la configuración de Google Cloud.
+
+ARCHIVOS DE ESTA MEJORA
+Nuevos: quick-sync.js, quick-sync.css y este LEEME.
+Actualizados: index.html, drive-sync.js, sw.js, ACTUALIZAR.html y documentos.
+En drive-sync.js SOLO se exponen indicadores de estado para el nuevo botón.
+No se cambian permisos, archivos remotos, base de datos ni protocolo de guardado.
+Los demás archivos de la entrega 4.5 están incluidos sin quitarlos.
+
+IMPORTANTE
+No desinstale ni borre los datos del navegador para actualizar. Si una nota no
+ha llegado a Drive, sigue solo en el dispositivo. Conecte la misma cuenta en
+PC y celular. No se garantiza recepción con la app cerrada/suspendida.
+
+PRUEBAS
+Consulte COMPROBACIONES.txt. Se usó Chromium con Google y almacenamiento
+simulados, sin entrar a su cuenta real. Las pruebas NO sustituyen verificar
+el permiso real de Google y una nota de prueba después de publicar.

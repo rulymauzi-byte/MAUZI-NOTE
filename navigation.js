@@ -12,6 +12,7 @@
  function topModal(){return [...document.querySelectorAll('.modal-backdrop:not(.hidden)')].filter(e=>getComputedStyle(e).display!=='none').sort((a,b)=>(parseInt(getComputedStyle(b).zIndex)||50)-(parseInt(getComputedStyle(a).zIndex)||50)).find(e=>e.id!=='noteReadModal'&&e.id!=='noteModal');}
  function hasSurface(){return window.MauziImages?.isOpen()||window.MauziStudio?.propertiesOpen()||window.MauziDictionary?.isOpen?.()||window.MauziReader?.active||visible('noteModal')||visible('noteReadModal')||topModal()||($('mainApp').dataset.section||'notes')!=='notes'||visible('compactSearchPanel');}
  async function backInside(){
+  if(window.MauziAccess?.isOpen()){window.MauziAccess.goBack();return;}
   if(window.MauziDictionary?.isOpen?.()){window.MauziDictionary.hide();return;}
   if(window.MauziStudio?.propertiesOpen()){window.MauziStudio.closeProperties();return;}
   if(window.MauziImages?.isOpen()){window.MauziImages.close({fromHistory:true});return;}

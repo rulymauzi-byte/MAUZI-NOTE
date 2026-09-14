@@ -488,7 +488,7 @@
     }
     return cleanEvent(payload,meta,c);
   }
-  function syncState(){return {authorized:validToken()&&navigator.onLine,requiresConnection:!!state&&!state.local&&!validToken(),local:!!state?.local,email:state?.email||'',pending:state?.queue.length||0,busy:flushing,error:cloudError,pollSeconds:20,lastCheckedAt:state?.lastCheckedAt||0,lastUploadAt:state?.lastUploadAt||0,lastDownloadAt:state?.lastDownloadAt||0,...syncMetrics};}
+  function syncState(){return {ready:storageReady,authPending,googleLoading,transferBusy,mediaPending:(state?.mediaQueue?.length||0)+(state?.mediaPurgePending?1:0),authorized:validToken()&&navigator.onLine,requiresConnection:!!state&&!state.local&&!validToken(),local:!!state?.local,email:state?.email||'',pending:state?.queue.length||0,busy:flushing,error:cloudError,pollSeconds:20,lastCheckedAt:state?.lastCheckedAt||0,lastUploadAt:state?.lastUploadAt||0,lastDownloadAt:state?.lastDownloadAt||0,...syncMetrics};}
   function scheduleFlush(delay=250,reason='cambio'){
     if(!state||state.local)return;
     const now=Date.now(),due=Math.max(now+Math.max(0,delay),retryNotBefore);
@@ -741,7 +741,7 @@
   $('driveRestoreBtn').addEventListener('click',()=>showAllHistory().catch(e=>A.toast(messageFor(e))));
   const syncInfo=document.createElement('section');syncInfo.className='sync-diagnostics';syncInfo.innerHTML='<h3>Sincronización automática</h3><p id="syncConnectionHelp"></p><div id="syncProgressDetails" role="status"></div><small>Usa la misma cuenta en ambos dispositivos. Los cambios sin guardar, la app cerrada o un permiso vencido no se sincronizan hasta guardar y reconectar.</small>';
   $('accountSyncStatus').after(syncInfo);
-  window.MauziCloud={save,login,logout,flush,syncState,archiveState,organizeNow,requestSync:()=>scheduleFlush(0,'manual'),importPayload,localOnly,config:()=>({clientId:CLIENT_ID,configured}),account:moduleAccount,moduleBridge,beginEdit(nid){editorBase.clear();if(nid)editorBase.set(nid,state?.notes[nid]?.rev||'');},getExport:()=>state?{notes:visibleNotes(),categories:clone(state.categories),trash:Object.values(state.notes).filter(n=>n.deleted).map(cleanNote),modules:window.MauziModules?.exportData()||null}:null};
+  window.MauziCloud={save,login,logout,flush,prepareConnection:prepareGoogle,syncState,archiveState,organizeNow,requestSync:()=>scheduleFlush(0,'manual'),importPayload,localOnly,config:()=>({clientId:CLIENT_ID,configured}),account:moduleAccount,moduleBridge,beginEdit(nid){editorBase.clear();if(nid)editorBase.set(nid,state?.notes[nid]?.rev||'');},getExport:()=>state?{notes:visibleNotes(),categories:clone(state.categories),trash:Object.values(state.notes).filter(n=>n.deleted).map(cleanNote),modules:window.MauziModules?.exportData()||null}:null};
   async function startApp(){
     try{
       await openStorage();let key='';try{key=localStorage.getItem(ACTIVE_KEY)||'';if(!key){const fallback=localStorage.getItem(ACTIVE_FALLBACK)||'';if(fallback.startsWith('local:')||fallback.startsWith(CLIENT_ID+':'))key=fallback;}}catch(_){}

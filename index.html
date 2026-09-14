@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="mauzi-google-client-id" content="516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com" />
-  <meta name="mauzi-build" content="4.4.0-anos-carpetas" />
+  <meta name="mauzi-build" content="4.6.0-sincronice-directo" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#0a2947" />
   <title>MAUZI NOTE</title>
+<script id="mauziWelcomeBoot">
+(()=>{let fresh=true;try{fresh=localStorage.getItem('mauzi-note:access-pending-v1')==='1'||(!localStorage.getItem('mauzi-note:access-choice-v1')&&!localStorage.getItem('mauzi-note:last-workspace')&&!localStorage.getItem('mauzi_notes_email'));if(fresh)localStorage.setItem('mauzi-note:access-pending-v1','1');}catch(_){}window.MauziWelcomeFirstRun=fresh;if(fresh){document.documentElement.classList.add('mauzi-welcome-pending');setTimeout(()=>document.documentElement.classList.remove('mauzi-welcome-pending'),8000);}})();
+</script>
   <meta name="application-name" content="MAUZI NOTE" />
   <meta name="description" content="Tus notas a tu estilo. Editor de texto, categorías y lectura bíblica sin conexión." />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -1468,6 +1471,8 @@
 <link rel="stylesheet" href="./account-access.css">
 <link rel="stylesheet" href="./studio.css">
 <link rel="stylesheet" href="./archive-ui.css">
+<link rel="stylesheet" href="./welcome-access.css">
+<link rel="stylesheet" href="./quick-sync.css">
 </head>
 <body>
 
@@ -2900,7 +2905,7 @@ THE SOFTWARE.
    This block manages installation and local export. drive-sync.js manages user-authorized Google Drive access. */
 (() => {
   'use strict';
-  const APP_VERSION = '4.4.0-anos-carpetas';
+  const APP_VERSION = '4.6.0-sincronice-directo';
   const $p = id => document.getElementById(id);
   const installButtons = [...document.querySelectorAll('[data-install-open]')];
   const standaloneQuery = window.matchMedia('(display-mode: standalone)');
@@ -3207,6 +3212,8 @@ THE SOFTWARE.
 <script src="./calendar-link.js"></script>
 <script src="./studio.js"></script>
 <script src="./archive-ui.js"></script>
+<script src="./welcome-access.js"></script>
+<script src="./quick-sync.js"></script>
 <script src="./navigation.js"></script>
 </body>
 </html>

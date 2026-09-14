@@ -1,0 +1,34 @@
+/* MAUZI NOTE 4.6 — a compact, touch-sized sync button in the archive row. */
+.archive-bar.has-quick-sync{gap:7px;flex-wrap:nowrap;align-items:center;}
+.archive-bar.has-quick-sync #archiveBrowseBtn{flex:0 1 auto;min-width:0;max-width:640px;min-height:44px;}
+.archive-bar.has-quick-sync #archiveCurrentLocation{min-width:0;}
+.archive-bar.has-quick-sync #archiveClearBtn{flex:0 0 34px;width:34px;min-height:44px;font-size:21px;}
+#quickSyncBtn.quick-sync{
+  --sync-accent:#a9bac9;
+  position:relative;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:44px;padding:8px 11px;border:1px solid #49617a;border-radius:11px;
+  background:linear-gradient(125deg,#173b59,#0c1f30);color:#f6e3bd;
+  box-shadow:inset 0 1px rgba(255,255,255,.06),0 3px 10px rgba(0,0,0,.15);
+  font:700 12px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;
+  white-space:nowrap;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:background .15s,border-color .15s,transform .1s;
+}
+#quickSyncBtn .quick-sync-icon{display:block;width:18px;height:18px;flex:0 0 18px;color:var(--sync-accent);}
+#quickSyncBtn .quick-sync-dot{width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:var(--sync-accent);box-shadow:0 0 7px color-mix(in srgb,var(--sync-accent) 35%,transparent);}
+#quickSyncBtn[data-state="connected"]{--sync-accent:#5dd99b;border-color:#376757;}
+#quickSyncBtn[data-state="syncing"],#quickSyncBtn[data-state="loading"],#quickSyncBtn[data-state="pending"]{--sync-accent:#edbf5d;border-color:#92723c;}
+#quickSyncBtn[data-state="reconnect"],#quickSyncBtn[data-state="error"]{--sync-accent:#ff927e;border-color:#b66b43;}
+#quickSyncBtn[data-state="reconnect"]{background:linear-gradient(115deg,#50301c,#16344b);}
+#quickSyncBtn[data-state="offline"],#quickSyncBtn[data-state="local"]{--sync-accent:#a9bac9;}
+#quickSyncBtn[data-state="syncing"] .quick-sync-icon,#quickSyncBtn[data-state="loading"] .quick-sync-icon{animation:mauzi-quick-spin 1.25s linear infinite;}
+#quickSyncBtn[data-state="reconnect"] .quick-sync-dot,#quickSyncBtn[data-state="pending"] .quick-sync-dot{animation:mauzi-quick-pulse 1.7s ease-in-out infinite;}
+#quickSyncBtn:disabled{cursor:default;}
+#quickSyncBtn:focus-visible{outline:2px solid #efc97b;outline-offset:3px;}
+#quickSyncBtn:not(:disabled):active{transform:scale(.97);}
+.quick-sync-live{position:absolute!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important;}
+@media(hover:hover){#quickSyncBtn:not(:disabled):hover{border-color:#ddb568;box-shadow:inset 0 1px rgba(255,255,255,.08),0 3px 12px rgba(0,0,0,.2);}}
+@media(max-width:560px){.archive-bar.has-quick-sync #archiveBrowseBtn{flex:1 1 auto;gap:6px;padding-inline:9px;}.archive-bar.has-quick-sync{gap:5px;}#quickSyncBtn.quick-sync{padding-inline:9px;gap:6px;}}
+@media(min-width:1024px){.desktop-note-open .archive-bar.has-quick-sync #archiveBrowseBtn{flex:1 1 auto;padding-inline:8px;gap:6px;}.desktop-note-open #quickSyncBtn.quick-sync{padding-inline:8px;gap:5px;}}
+@keyframes mauzi-quick-spin{to{transform:rotate(360deg);}}
+@keyframes mauzi-quick-pulse{50%{opacity:.42;}}
+@media(prefers-reduced-motion:reduce){#quickSyncBtn,#quickSyncBtn *{animation:none!important;transition:none!important;}}

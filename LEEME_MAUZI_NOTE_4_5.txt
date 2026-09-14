@@ -1,0 +1,66 @@
+MAUZI NOTE 4.5 — BIENVENIDA Y VALIDACIÓN DE ACCESO
+================================================
+PAQUETE COMPLETO · Conserva Drive personal. NO activa Firebase.
+Sitio: https://rulymauzi-byte.github.io/MAUZI-NOTE/
+
+QUÉ CAMBIA
+- En un navegador nuevo se muestran dos opciones:
+  «Usar sin vincular correo» y «Vincular mi correo».
+- La pantalla explica lo que se guarda localmente, lo que respalda Drive y los
+  límites de recuperación. No promete conservar para siempre lo no sincronizado.
+- Para vincular por primera vez: escribir el correo y solicitar su validación
+  al administrador por WhatsApp +502 5848 4682. El enlace abre un mensaje preparado.
+- La persona debe revisarlo y pulsar Enviar en WhatsApp. MAUZI NOTE NO envía el
+  mensaje automáticamente ni confirma que fue recibido.
+- Después de la confirmación del administrador: «Ya validaron mi correo:
+  conectar Google». Google verifica la cuenta y sus permisos; pulsar el botón
+  no aprueba al usuario por sí solo.
+- Quien ya usa una cuenta vinculada no repite la bienvenida para renovar Google.
+- Mi cuenta → Opciones de acceso y WhatsApp permite ver las opciones de nuevo.
+- La entrada sin cuenta sigue disponible, incluso cuando Google no autoriza.
+- No se incluyen listas públicas de usuarios, contraseñas, secretos ni tokens.
+
+IMPORTANTE: ESTA ACTUALIZACIÓN NO CAMBIA EL MÉTODO DE SINCRONIZACIÓN
+Se mantienen la subida al guardar, consulta cada 20 segundos y organización
+por años y carpetas, con la app activa, internet y autorización válida.
+El permiso temporal de Drive todavía puede requerir renovar la conexión.
+No se ocultó esa condición ni se hizo permanente una luz verde.
+No se movieron notas a Firebase ni se agregó un servidor de renovación.
+Firebase/Firestore o Drive con renovación en servidor son una decisión posterior.
+
+CÓMO SUBIR EL PAQUETE COMPLETO
+1. Guarda las notas abiertas y genera una copia independiente desde Mi cuenta.
+   El respaldo de tus notas NO se sube al repositorio público.
+2. Descomprime TODO este ZIP en tu carpeta de MAUZI NOTE, reemplazando los
+   archivos del mismo nombre. Incluye la carpeta icons.
+3. En el mismo repositorio: Add file → Upload files → sube TODO el contenido
+   descomprimido → Commit changes. index.html debe estar en la raíz.
+   No subas solo el ZIP, ni una carpeta exterior que lo envuelva.
+4. Conserva los demás archivos. No borres datos del navegador ni archivos de Drive.
+5. Cuando GitHub termine de publicar, aplica la actualización en cada equipo:
+   Mi cuenta → Estado de la aplicación / actualizaciones.
+   También puedes abrir /MAUZI-NOTE/ACTUALIZAR.html después de publicar.
+   Versión de esta entrega: 4.5.0-bienvenida-validacion.
+
+GOOGLE NO SE VUELVE A CONFIGURAR
+Incluye google-config.js con el mismo ID público vigente:
+516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com
+No está vacío. No uses el ID antiguo 565407... ni crees otro proyecto.
+Se incluyen todos los archivos: Drive, módulos, años/carpetas, diccionario,
+editores, navegación, iconos, manifest y las cuatro Biblias integradas.
+Los archivos nuevos de interfaz son welcome-access.js y welcome-access.css.
+En drive-sync.js únicamente se expone el método de preparación de Google para
+que el botón de bienvenida pueda preparar el acceso; no se modifica el protocolo
+ni el guardado de las notas.
+
+PARA VALIDAR A UNA PERSONA (ADMINISTRADOR)
+Consulta VALIDAR_USUARIOS.txt. La autorización debe hacerse realmente en Google,
+en el mismo proyecto de tu ID. El mensaje de WhatsApp es una solicitud, no es
+una autorización. Un acceso denegado no se salta desde el código público.
+La app dice «validación de acceso»; los avisos oficiales de Google no se alteran.
+
+PRUEBAS
+COMPROBACIONES.txt distingue las verificaciones realizadas de las no realizadas.
+Se probaron las nuevas pantallas y el guardado local con almacenamiento e
+identidad simulados; no se accedió al Google real ni se envió WhatsApp a nadie.
+No desinstales MAUZI NOTE ni elimines la copia local para actualizar.

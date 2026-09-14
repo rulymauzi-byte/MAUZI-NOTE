@@ -1,0 +1,69 @@
+/* MAUZI NOTE 4.5 · bienvenida accesible y adaptable; sin fuentes remotas. */
+html.access-is-open,html.access-is-open body{overflow:hidden!important;}
+html.mauzi-welcome-pending #mainApp{visibility:hidden;}
+#accessWelcome{z-index:230;position:fixed;inset:0;height:100dvh;height:var(--app-vh,100dvh);min-height:0;display:block;overflow:auto!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:clamp(12px,3vw,40px);padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 12% 0%,#133d61 0,transparent 50%),radial-gradient(ellipse at 100% 100%,#322617 0,transparent 44%),#070d15;backdrop-filter:none;}
+#accessWelcome [hidden]{display:none!important;}
+#accessWelcome .access-surface{width:100%;max-width:1040px;margin:0 auto;color:#eff3f7;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+#accessWelcome button,#accessWelcome a{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+#accessWelcome button:focus-visible,#accessWelcome a:focus-visible,#accessWelcome input:focus-visible{outline:3px solid #f0bf69;outline-offset:3px;}
+#accessWelcome svg{width:21px;height:21px;flex:0 0 21px;vertical-align:middle;pointer-events:none;}
+#accessWelcome .access-top{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+#accessWelcome .access-brand{display:flex;align-items:center;gap:12px;}
+#accessWelcome .access-brand img{border-radius:13px;border:1px solid #977239;}
+#accessWelcome .access-brand strong{font-size:19px;letter-spacing:.6px;font-weight:800;}
+#accessWelcome .access-brand span{display:block;color:#a7bbcf;font-size:12px;margin-top:3px;}
+#accessWelcome .access-close{width:44px;height:44px;padding:0;flex-shrink:0;border-radius:13px;border:1px solid #375069;background:#12273b;color:#f6dc9c;display:grid;place-items:center;}
+#accessWelcome .access-hero{padding:28px 0 20px;}
+#accessWelcome .access-eyebrow{font-size:11px;font-weight:750;letter-spacing:1.5px;color:#dfad55;margin:0 0 8px;}
+#accessWelcome h1{font-size:clamp(26px,3.5vw,40px);font-weight:780;line-height:1.14;letter-spacing:-.8px;margin:0 0 10px;}
+#accessWelcome h1:focus{outline:none;}
+#accessWelcome .access-hero>p:last-child{font-size:15px;color:#b3c4d5;margin:0;line-height:1.5;}
+#accessWelcome .access-options{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+#accessWelcome .access-option{min-width:0;padding:22px;border:1px solid #385064;border-radius:22px;display:flex;flex-direction:column;background:linear-gradient(150deg,#102233,#0b151e);box-shadow:0 18px 38px #0003;}
+#accessWelcome .access-linked{border-color:#866438;background:linear-gradient(150deg,#152838,#131c22 65%,#252115);}
+#accessWelcome .access-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+#accessWelcome .access-emblem{width:42px;height:42px;background:#143756;color:#d8ac60;border:1px solid #3b5871;border-radius:13px;display:grid;place-items:center;}
+#accessWelcome .access-emblem svg{width:25px;height:25px;}
+#accessWelcome .access-tag{font-size:10px;line-height:1.4;font-weight:650;color:#d0c2a5;text-align:right;}
+#accessWelcome h2{font-size:23px;line-height:1.2;margin:0 0 10px;letter-spacing:-.4px;}
+#accessWelcome .access-option>p{font-size:14px;line-height:1.55;color:#beccda;margin:0 0 16px;}
+#accessWelcome .access-caution{border-left:3px solid #bb7933;background:#c4963710;padding:12px;margin:0 0 19px;border-radius:3px 11px 11px 3px;}
+#accessWelcome .access-caution strong{font-size:12px;color:#ebca8b;}
+#accessWelcome .access-caution p{font-size:12px;line-height:1.55;color:#c6bdaf;margin:5px 0 0;}
+#accessWelcome .access-button{min-height:48px;padding:12px 14px;display:flex;align-items:center;justify-content:center;gap:9px;width:100%;border:1px solid transparent;border-radius:12px;text-decoration:none;font-family:inherit;font-size:14px;font-weight:750;text-align:center;line-height:1.4;cursor:pointer;box-sizing:border-box;}
+#accessWelcome .access-button-blue{background:linear-gradient(110deg,#235779,#123853);color:#f8f1df;border-color:#456982;}
+#accessWelcome .access-button-gold{background:linear-gradient(105deg,#e0b75d,#e69a48);color:#1b1c1d;border-color:#edc47a;}
+#accessWelcome .access-button-outline{background:transparent;color:#e3c588;border-color:#617082;}
+#accessWelcome .access-option>.access-button{margin-top:auto;}
+#accessWelcome .access-button:active{transform:translateY(1px);filter:brightness(1.08);}
+#accessWelcome .access-button:disabled{opacity:.55;cursor:wait;}
+#accessWelcome .access-option small{font-size:11px;color:#9badbd;line-height:1.5;margin-top:10px;text-align:center;}
+#accessWelcome .access-benefits{display:grid;gap:10px;margin:0 0 16px;}
+#accessWelcome .access-benefits p{margin:0;display:flex;gap:10px;align-items:flex-start;line-height:1.5;font-size:14px;color:#d2dce6;}
+#accessWelcome .access-benefits svg{color:#e0b558;width:18px;height:18px;flex-basis:18px;margin-top:2px;}
+#accessWelcome p.access-approval{font-size:12px;color:#ceb98d;padding-top:2px;}
+#accessWelcome .access-footnote{font-size:12px;line-height:1.6;color:#9eb1c2;max-width:850px;margin:18px 0 0;}
+#accessWelcome .access-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:11px;color:#8f9eaa;padding:18px 0 2px;}
+#accessWelcome .access-footer a{color:#d0b77e;text-underline-offset:3px;padding:10px;}
+#accessWelcome #accessValidationPanel{max-width:640px;margin:0 auto;}
+#accessWelcome .access-text-button{background:transparent;border:0;color:#bbcedc;font-family:inherit;font-size:13px;min-height:44px;padding:6px 0;margin:18px 0 10px;display:flex;align-items:center;gap:5px;cursor:pointer;}
+#accessWelcome .access-text-button svg{width:18px;height:18px;}
+#accessWelcome .access-lead{font-size:14px;color:#c0d0dc;line-height:1.65;margin:12px 0 20px;}
+#accessWelcome .access-request-box{border:1px solid #695739;border-radius:17px;background:#121f2b;padding:18px;}
+#accessWelcome label{font-size:13px;color:#ebd7ae;margin:0 0 9px;display:block;}
+#accessWelcome input{font-family:inherit;font-size:16px;line-height:1.5;background:#08131e;color:#f5f7f9;border:1px solid #4a6476;border-radius:10px;padding:12px;width:100%;margin:0 0 13px;min-height:46px;}
+#accessWelcome .access-contact{display:block;text-align:center;color:#dac494;font-size:12px;line-height:1.55;margin-top:12px;}
+#accessWelcome .access-micro{font-size:11px;line-height:1.55;color:#99adbd;margin:12px 0 0;}
+#accessWelcome .access-approved-box{padding:19px 0 15px;}
+#accessWelcome .access-approved-box>strong{font-size:16px;color:#f0d396;}
+#accessWelcome .access-approved-box>p{color:#b7c7d6;font-size:13px;line-height:1.55;margin:8px 0 12px;}
+#accessWelcome .access-message{font-size:12px;line-height:1.6;color:#d2c49f;margin:10px 0 0;overflow-wrap:anywhere;}
+#accessWelcome .access-message:empty{display:none;}
+#accessWelcome .access-message[data-state="error"]{color:#ffb58b;}
+.access-account-block{margin:15px 0;padding:14px;border:1px solid #506378;border-radius:14px;background:#102336;}
+.access-account-block h3{font-size:14px;color:#e8c17a;margin:0 0 7px;}
+.access-account-block p{font-size:12px;line-height:1.6;color:#c0cdd9;margin:0 0 10px;}
+.access-account-block small{display:block;font-size:11px;line-height:1.6;color:#adb8c4;margin-top:10px;}
+@media(min-width:1000px){#accessWelcome{padding-top:36px;}#accessWelcome .access-hero{padding-top:40px;}#accessWelcome .access-option{padding:27px;}#accessWelcome .access-caution p{font-size:13px;}}
+@media(max-width:650px){#accessWelcome .access-options{grid-template-columns:1fr;gap:12px;}#accessWelcome .access-option{padding:17px;border-radius:18px;}#accessWelcome .access-hero{padding:23px 0 17px;}#accessWelcome h2{font-size:21px;}#accessWelcome .access-card-head{margin-bottom:11px;}#accessWelcome .access-caution{margin-bottom:13px;padding:10px;}#accessWelcome .access-option>p{font-size:13px;margin-bottom:12px;}#accessWelcome .access-benefits{gap:8px;margin-bottom:13px;}#accessWelcome .access-benefits p{font-size:13px;}#accessWelcome .access-footer{padding-top:10px;}#accessWelcome .access-button{font-size:13px;}#accessWelcome .access-brand strong{font-size:17px;}#accessWelcome .access-surface{max-width:540px;}#accessWelcome .access-request-box{padding:14px;}#accessWelcome .access-lead{margin-bottom:14px;}}
+@media(prefers-reduced-motion:reduce){#accessWelcome *{animation:none!important;transition:none!important;}}

@@ -1,0 +1,40 @@
+MAUZI NOTE · VALIDAR EL ACCESO DE SUS USUARIOS
+============================================
+Esta guía es para el administrador. En la bienvenida se utiliza «validación
+ de acceso», no se presenta al usuario como participante de una prueba.
+
+1. Reciba en su WhatsApp +502 5848 4682 el correo Google que la persona desea usar.
+   No solicite su contraseña, códigos de acceso ni sus notas privadas.
+2. En Google Cloud abra el MISMO proyecto de MAUZI NOTE (cliente 516673485096-...).
+3. Mientras mantenga ese proyecto en Prueba:
+   Google Auth Platform → Público → Usuarios de prueba → Añadir usuarios.
+   Añada exactamente el correo recibido y guarde.
+4. Cuando realmente haya completado el alta, confirme al usuario por WhatsApp:
+   «Tu correo ya está autorizado para MAUZI NOTE. Abre la aplicación, toca
+   Vincular mi correo y luego Ya validaron mi correo: conectar Google.
+   Elige exactamente la cuenta autorizada. No envíes contraseñas ni códigos».
+5. El usuario completa la autorización de Google. Sus notas siguen en SU Drive.
+   Si tenía notas sin cuenta, la app ofrece añadirlas a esa cuenta conservando
+   la copia original del dispositivo; debe confirmar esa importación.
+
+NO CONFUNDIR
+- El enlace de WhatsApp abre un mensaje editable; el usuario debe enviarlo.
+- La aplicación no puede saber que usted ya aprobó un correo hasta que Google
+  autoriza efectivamente el acceso. No contiene una lista de correos en GitHub.
+- El botón «Ya validaron mi correo» inicia Google; NO da acceso sin permiso.
+- Google puede mostrar su propio aviso de aplicación sin verificación/en pruebas.
+  La redacción de MAUZI NOTE no oculta ni sustituye esos avisos oficiales.
+- En pruebas el máximo es 100 usuarios, no una obligación de reunir 100.
+  Con 20 cuentas está dentro de ese máximo. La autorización con Drive de los
+  usuarios de prueba caduca a los siete días del consentimiento.
+- Un permiso de acceso del navegador puede necesitar renovación antes. Validar
+  un correo no convierte ese permiso en permanente.
+
+Si se migra más adelante a Firebase/Firestore, la lista de autorizados deberá
+aplicarse mediante reglas privadas del servidor, no confiando en un botón del
+navegador. Esta entrega NO realiza esa migración ni solicita facturación.
+
+Fuentes oficiales, consultadas el 14 de septiembre de 2026:
+https://support.google.com/cloud/answer/15549945?hl=es
+https://developers.google.com/identity/oauth2/web/guides/use-token-model
+https://firebase.google.com/docs/firestore/security/rules-conditions
