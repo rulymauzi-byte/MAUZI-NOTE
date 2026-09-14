@@ -1,0 +1,444 @@
+{
+  "format": "mauzi-lexicon-v4",
+  "reviewed": "2026-09-13",
+  "note": "Síntesis propias breves; no equivalencias automáticas para cada ocurrencia española. Fuentes enlazadas. No descarga comentarios completos.",
+  "entries": {
+    "fe": {
+      "term": "fe",
+      "definition": "Pístis: confianza, convicción y fidelidad; especialmente hacia Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4102.htm"
+        },
+        {
+          "label": "M. Henry · Heb. 11",
+          "url": "https://biblehub.com/commentaries/mhc/hebrews/11.htm"
+        }
+      ]
+    },
+    "pistis": {
+      "term": "fe",
+      "definition": "Pístis: confianza, convicción y fidelidad; especialmente hacia Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4102.htm"
+        },
+        {
+          "label": "M. Henry · Heb. 11",
+          "url": "https://biblehub.com/commentaries/mhc/hebrews/11.htm"
+        }
+      ]
+    },
+    "amor": {
+      "term": "amor",
+      "definition": "Agápē: amor que busca el bien del otro.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/26.htm"
+        }
+      ]
+    },
+    "agape": {
+      "term": "amor",
+      "definition": "Agápē: amor que busca el bien del otro.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/26.htm"
+        }
+      ]
+    },
+    "gracia": {
+      "term": "gracia",
+      "definition": "Cháris: favor y bondad recibidos gratuitamente de Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/5485.htm"
+        }
+      ]
+    },
+    "charis": {
+      "term": "gracia",
+      "definition": "Cháris: favor y bondad recibidos gratuitamente de Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/5485.htm"
+        }
+      ]
+    },
+    "esperanza": {
+      "term": "esperanza",
+      "definition": "Elpís: expectativa confiada del bien prometido por Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1680.htm"
+        }
+      ]
+    },
+    "elpis": {
+      "term": "esperanza",
+      "definition": "Elpís: expectativa confiada del bien prometido por Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1680.htm"
+        }
+      ]
+    },
+    "arrepentimiento": {
+      "term": "arrepentimiento",
+      "definition": "Metánoia: cambio de mente que abandona el pecado.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/3341.htm"
+        }
+      ]
+    },
+    "metanoia": {
+      "term": "arrepentimiento",
+      "definition": "Metánoia: cambio de mente que abandona el pecado.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/3341.htm"
+        }
+      ]
+    },
+    "paz": {
+      "term": "paz",
+      "definition": "Eirḗnē: tranquilidad, reconciliación y bienestar en relación con Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1515.htm"
+        }
+      ]
+    },
+    "shalom": {
+      "term": "shalom",
+      "definition": "Shalom: paz, integridad y bienestar; más que ausencia de conflicto.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / BDB",
+          "url": "https://biblehub.com/hebrew/7965.htm"
+        }
+      ]
+    },
+    "pecado": {
+      "term": "pecado",
+      "definition": "Hamartía: transgresión de la voluntad de Dios, por acción u omisión.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/266.htm"
+        }
+      ]
+    },
+    "pecados": {
+      "term": "pecado",
+      "definition": "Hamartía: transgresión de la voluntad de Dios, por acción u omisión.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/266.htm"
+        }
+      ]
+    },
+    "hamartia": {
+      "term": "pecado",
+      "definition": "Hamartía: transgresión de la voluntad de Dios, por acción u omisión.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/266.htm"
+        }
+      ]
+    },
+    "iglesia": {
+      "term": "iglesia",
+      "definition": "Ekklēsía: asamblea; en contexto cristiano, comunidad de creyentes.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1577.htm"
+        }
+      ]
+    },
+    "iglesias": {
+      "term": "iglesia",
+      "definition": "Ekklēsía: asamblea; en contexto cristiano, comunidad de creyentes.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1577.htm"
+        }
+      ]
+    },
+    "ekklesia": {
+      "term": "iglesia",
+      "definition": "Ekklēsía: asamblea; en contexto cristiano, comunidad de creyentes.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1577.htm"
+        }
+      ]
+    },
+    "evangelio": {
+      "term": "evangelio",
+      "definition": "Euangélion: buena noticia de la salvación anunciada en Jesucristo.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/2098.htm"
+        }
+      ]
+    },
+    "espiritu": {
+      "term": "espíritu",
+      "definition": "Pneûma: espíritu, aliento o viento; el contexto precisa su sentido.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4151.htm"
+        }
+      ]
+    },
+    "pneuma": {
+      "term": "espíritu",
+      "definition": "Pneûma: espíritu, aliento o viento; el contexto precisa su sentido.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4151.htm"
+        }
+      ]
+    },
+    "verdad": {
+      "term": "verdad",
+      "definition": "Alḗtheia: lo verdadero, conforme a la realidad y sin engaño.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/225.htm"
+        }
+      ]
+    },
+    "justicia": {
+      "term": "justicia",
+      "definition": "Dikaiosýnē: rectitud; actuar y vivir conforme a lo justo.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1343.htm"
+        }
+      ]
+    },
+    "santidad": {
+      "term": "santidad",
+      "definition": "Hagiasmós: consagración y separación del mal para pertenecer a Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/38.htm"
+        }
+      ]
+    },
+    "santificacion": {
+      "term": "santidad",
+      "definition": "Hagiasmós: consagración y separación del mal para pertenecer a Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/38.htm"
+        }
+      ]
+    },
+    "redencion": {
+      "term": "redención",
+      "definition": "Apolýtrōsis: liberación mediante rescate; en Cristo, libertad del pecado.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/629.htm"
+        }
+      ]
+    },
+    "perdon": {
+      "term": "perdón",
+      "definition": "Áphesis: remisión, liberación o cancelación de una deuda u ofensa.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/859.htm"
+        }
+      ]
+    },
+    "misericordia": {
+      "term": "misericordia",
+      "definition": "Éleos: compasión que auxilia a quien está en necesidad.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/1656.htm"
+        }
+      ]
+    },
+    "gozo": {
+      "term": "gozo",
+      "definition": "Chará: alegría y deleite; en la fe, proceden de Dios.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/5479.htm"
+        }
+      ]
+    },
+    "paciencia": {
+      "term": "paciencia",
+      "definition": "Hypomonḗ: perseverancia firme al enfrentar pruebas y dificultades.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/5281.htm"
+        }
+      ]
+    },
+    "perseverancia": {
+      "term": "paciencia",
+      "definition": "Hypomonḗ: perseverancia firme al enfrentar pruebas y dificultades.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/5281.htm"
+        }
+      ]
+    },
+    "humildad": {
+      "term": "humildad",
+      "definition": "Tapeinophrosýnē: modestia y ausencia de orgullo en la propia valoración.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/5012.htm"
+        }
+      ]
+    },
+    "sabiduria": {
+      "term": "sabiduría",
+      "definition": "Sophía: comprensión y discernimiento para vivir y actuar correctamente.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4678.htm"
+        }
+      ]
+    },
+    "oracion": {
+      "term": "oración",
+      "definition": "Proseuchḗ: oración dirigida a Dios, individual o comunitaria.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4335.htm"
+        }
+      ]
+    },
+    "oraciones": {
+      "term": "oración",
+      "definition": "Proseuchḗ: oración dirigida a Dios, individual o comunitaria.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/4335.htm"
+        }
+      ]
+    },
+    "discipulo": {
+      "term": "discípulo",
+      "definition": "Mathētḗs: aprendiz y seguidor de un maestro; especialmente de Jesús.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/3101.htm"
+        }
+      ]
+    },
+    "discipulos": {
+      "term": "discípulo",
+      "definition": "Mathētḗs: aprendiz y seguidor de un maestro; especialmente de Jesús.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/3101.htm"
+        }
+      ]
+    },
+    "resurreccion": {
+      "term": "resurrección",
+      "definition": "Anástasis: levantamiento; en contexto cristiano, retorno de los muertos a vida.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / Thayer",
+          "url": "https://biblehub.com/greek/386.htm"
+        }
+      ]
+    },
+    "pacto": {
+      "term": "pacto",
+      "definition": "Berit: alianza o acuerdo que establece compromisos entre partes.",
+      "context": "Sentido bíblico general; el pasaje determina el matiz.",
+      "sources": [
+        {
+          "label": "Strong / BDB",
+          "url": "https://biblehub.com/hebrew/1285.htm"
+        }
+      ]
+    }
+  }
+}

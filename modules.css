@@ -1,0 +1,88 @@
+/* MAUZI NOTE 4: compact navigation, readable ivory Bible, and touch-sized agenda. */
+:root{--module-ink:#172433;--module-paper:#f8f5ed;--module-blue:#183e64;--module-gold:#e5bd67;--module-orange:#da812c;}
+.module-section{padding:12px 14px 100px;min-height:70vh;}
+#mainApp{padding-bottom:100px;}
+.module-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,560px);display:flex;background:#0b1725f7;border-top:1px solid #7e602e;padding:5px 10px max(7px,env(safe-area-inset-bottom));z-index:35;backdrop-filter:blur(14px);}
+.module-nav button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border:0;background:transparent;color:#a3b1c0;border-radius:13px;font:700 12px system-ui;}
+.module-nav button svg{width:22px;height:22px;}
+.module-nav button.active{background:linear-gradient(110deg,#123f65,#172536);color:#f3d49a;box-shadow:inset 0 -2px #dc8430;}
+#addNoteBtn{bottom:calc(79px + env(safe-area-inset-bottom))!important;}
+#mainApp:not([data-section="notes"]) #cycleViewBtn,#mainApp:not([data-section="notes"]) #toggleSearchBtn,#mainApp:not([data-section="notes"]) #filterCategoriesBtn{display:none;}
+#mainApp:not([data-section]) #cycleViewBtn,#mainApp:not([data-section]) #toggleSearchBtn,#mainApp:not([data-section]) #filterCategoriesBtn{display:grid;}
+.module-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:5px 0 14px;}
+.module-heading h1{margin:3px 0 0;font-size:26px;letter-spacing:-.8px;}
+.module-heading small{color:#d5af68;letter-spacing:1.8px;font-size:9px;font-weight:700;}
+.heading-actions{display:flex;gap:6px;}
+.module-icon{height:40px;width:40px;flex:0 0 40px;padding:9px;display:grid;place-items:center;border:1px solid #42607a;background:#132b43;color:#f2d59b;border-radius:12px;cursor:pointer;}
+.module-icon svg{height:100%;width:100%;}
+.module-icon.active,.module-icon[aria-pressed="true"]{border-color:#efba57;background:#224b70;}
+.module-icon:disabled{opacity:.35;cursor:default;}
+.bible-version-pills{display:flex;gap:4px;background:#0b1722;border:1px solid #253749;border-radius:13px;padding:4px;margin:0 0 12px;}
+.bible-version-pills button{flex:1;height:35px;background:transparent;color:#bdc8d2;border:0;border-radius:9px;font-weight:800;font-size:12px;}
+.bible-version-pills button.active{color:#ffe1a0;background:#1f4768;box-shadow:inset 0 -2px #d78129;}
+.bible-selectors{display:flex;gap:8px;margin:8px 0;}.bible-selectors select{padding:10px 12px;min-width:0;border:1px solid #3a5064;border-radius:11px;background:#0c1d2d;color:#f3e8d0;font:600 15px system-ui;}
+#libraryBook{flex:1;}#libraryChapter{width:78px;}
+.reference-search{display:flex;gap:6px;margin:8px 0;}.reference-search input{width:100%;min-width:0;background:#101d2a;color:#fff;border:1px solid #334659;border-radius:10px;padding:10px 12px;font-size:14px;}
+.reference-search button{border:0;background:#b46525;color:white;border-radius:10px;padding:0 15px;font-weight:800;}
+.chapter-controls{display:flex;justify-content:space-between;align-items:center;padding:8px 0 12px;gap:8px;}.chapter-controls strong{font-size:18px;}
+.library-paper{background:var(--module-paper);color:var(--module-ink);padding:17px 12px 24px 17px;border-radius:18px;border:1px solid #e6d9bc;box-shadow:0 8px 35px #0003;}
+.library-verse{display:flex;align-items:flex-start;gap:5px;border-radius:10px;padding:5px 0;scroll-margin:110px;}
+.library-verse p{flex:1;min-width:0;margin:0;font-size:18px;line-height:1.8;text-wrap:pretty;}
+.library-verse sup{color:#a56719;font-size:11px;line-height:1;margin-right:6px;font-weight:800;}
+.favorite-star{color:#957438;background:none;border:0;border-radius:10px;width:34px;height:38px;flex:0 0 34px;padding:8px;display:grid;place-items:center;}
+.favorite-star svg{width:20px;height:20px;}.favorite-star.saved{color:#bf7918;}.favorite-star.saved svg{fill:#e6b03c;}
+.highlight-verse{background:#ffe6a7;box-shadow:0 0 0 4px #ffe6a7;}
+.combined-verses{border-top:1px solid #d7c9aa;padding-top:10px;color:#706759;font-size:11px;line-height:1.5;}
+.favorite-card{display:flex;align-items:center;gap:6px;background:#112336;border:1px solid #3a5064;border-radius:14px;padding:9px;margin:8px 0;}
+.favorite-open{flex:1;text-align:left;border:0;background:transparent;color:#f3e8ce;padding:5px;min-height:43px;}.favorite-open strong{display:block;font-size:16px;}.favorite-open span{font-size:11px;color:#c7ac75;}
+.module-empty{text-align:center;font-size:13px;line-height:1.6;padding:28px 15px;border:1px dashed #38516b;border-radius:16px;color:#9dabbb;}
+.month-nav{display:flex;gap:7px;align-items:center;margin-bottom:14px;}.month-nav strong{flex:1;text-align:center;text-transform:capitalize;font-size:17px;}
+#agendaToday,#allAgendaEvents{border:0;background:#133455;color:#e6c283;border-radius:8px;padding:8px;font-size:12px;font-weight:700;}
+.calendar-week,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;}
+.calendar-week span{text-align:center;color:#cba963;font-size:11px;padding:6px;}
+.calendar-day{height:43px;position:relative;border:1px solid #263e52;border-radius:11px;background:#102338;color:#f5eacf;font-size:14px;}
+.calendar-day.outside{opacity:.35;}.calendar-day.today{border-color:#c59843;}.calendar-day.selected{background:#da9035;color:#15120e;font-weight:900;border-color:#f6cf76;}
+.calendar-day.has-events::after{content:"";width:4px;height:4px;border-radius:50%;background:#efb34e;position:absolute;left:calc(50% - 2px);bottom:5px;}.calendar-day.selected::after{background:#153e65;}
+.agenda-date{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:22px;margin-bottom:11px;}.agenda-date h2{font-size:15px;margin:0;text-transform:capitalize;}
+.agenda-card{display:flex;flex-wrap:wrap;align-items:center;gap:7px;background:#112237;border:1px solid #2f455b;border-left:3px solid #d98b36;border-radius:12px;padding:9px 10px;margin:9px 0;}
+.agenda-open{flex:1;background:none;color:#f7efd9;min-width:0;padding:3px;border:0;text-align:left;}.agenda-open strong{display:block;font-size:15px;line-height:1.3;overflow-wrap:anywhere;margin:4px 0;}.agenda-open small,.agenda-time{display:block;color:#b4c0ca;font-size:11px;}.agenda-time{color:#e1b767;}
+.agenda-card.completed .agenda-open strong{text-decoration:line-through;opacity:.6;}.complete-event{width:34px;height:34px;flex-basis:34px;}
+.agenda-note-link{width:100%;font-size:12px;padding:7px;border:1px solid #335771;color:#cfe3f2;background:#122e48;border-radius:8px;}
+.agenda-help{padding:14px;background:#0c1926;border:1px solid #334351;border-radius:12px;margin:20px 0;font-size:12px;color:#aeb9c2;line-height:1.6;}.agenda-help summary{color:#ddbd7d;font-weight:700;cursor:pointer;}.agenda-help a{color:#b4d9f6;}
+.module-dialog{z-index:180!important;}.module-dialog .module-sheet{width:min(100%,560px);padding:18px 18px 28px;max-height:calc(var(--app-vh,100dvh) - 8px)!important;overflow:auto!important;}
+.module-dialog-head{display:flex;align-items:center;gap:8px;justify-content:space-between;}.module-dialog-head h2{font-size:19px;}
+.event-row{display:flex;gap:9px;align-items:flex-end;}.event-row>div,.event-row>button{flex:1;min-width:0;}.event-row input{min-width:0;width:100%;}
+.module-sheet .field{font-size:16px;padding:12px;}.module-sheet textarea{min-height:80px;resize:vertical;}.module-sheet select{width:100%;color:#f6eee0;}
+.check-row{display:flex;align-items:center;gap:8px;font-weight:400;font-size:12px;line-height:1.5;}.check-row input{width:18px;height:18px;flex-shrink:0;accent-color:#d28c39;}
+.module-status{font-size:12px;color:#d4b26d;line-height:1.5;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere;}
+.event-disclosure{font-size:11px;color:#aab5c3;line-height:1.5;}
+.reminder-banner{position:fixed;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(95vw,520px);padding:13px 12px;background:#113856;color:#fff4d9;border:1px solid #e8b559;border-radius:14px;z-index:290;box-shadow:0 8px 35px #0008;display:flex;align-items:center;gap:9px;}
+.reminder-banner>div{flex:1;min-width:0;}.reminder-banner strong,.reminder-banner span{display:block;}.reminder-banner span{font-size:13px;margin-top:3px;overflow-wrap:anywhere;}.reminder-banner button{background:#dd9a38;color:#17140d;border:0;padding:10px;border-radius:9px;font-weight:700;}
+/* Compact typing title. The title only becomes editable after a tap. */
+#noteModal .note-editor-head{position:relative;min-height:54px;display:flex;gap:5px;padding:5px 0 9px;align-items:center;}
+#noteModalTitle[hidden]{display:none!important;}
+#noteTitle.inline-note-title{flex:1;min-width:0;margin:0;padding:7px 5px;border:0;background:transparent;box-shadow:none;font-size:17px;height:40px;color:#f4dfba;border-radius:5px;}
+#noteTitle.inline-note-title[readonly]{cursor:pointer;text-overflow:ellipsis;}
+#noteTitle.inline-note-title:not([readonly]){background:#163752;outline:1px solid #ba8e41;}
+#noteModal .note-editor-head .reader-tool{flex:0 0 35px;width:35px;height:36px;padding:8px;background:#183954;border:1px solid #415973;color:#f5d597;border-radius:9px;}
+#noteModal .note-editor-head .reader-tool[aria-pressed="true"]{background:#dca746;color:#151e2a;}
+#noteModal .note-editor-head svg{width:100%;height:100%;}
+#noteModal .note-editor-head .close{flex:0 0 33px;width:33px;height:36px;}
+#noteModal .note-editor-sheet{padding-top:9px!important;}
+#noteModal .note-editor-sheet>.grab{display:none;}
+#noteModal[data-editor-mode="write"] .editor-toolbar{display:none;}
+#noteModal[data-editor-mode="format"] #noteContent{user-select:text!important;-webkit-user-select:text!important;cursor:text;}
+#noteModal[data-editor-mode="format"] .editor-toolbar{position:sticky;top:0;box-shadow:0 3px 10px #0003;}
+#formatModeHint{font-size:11px;color:#cfb378;padding:0 2px 6px;}
+#formatModeHint[hidden]{display:none;}
+#saveNoteBtn{display:none;}
+#readHeaderTitle[contenteditable="true"],#readNoteTitle[contenteditable="true"]{outline:1px solid #d09b42;background:#e5c47d25;border-radius:5px;white-space:normal!important;}
+#noteReadModal .sheet-head{gap:4px!important;padding-left:8px!important;padding-right:8px!important;}
+#noteReadModal .sheet-head :is(.reader-tool,.reader-focus-enter){width:35px!important;height:37px!important;flex:0 0 35px!important;padding:7px!important;}
+#readHeaderTitle{min-width:15px!important;flex:1;}
+@media(max-width:380px){#noteReadModal .sheet-head{gap:2px!important;}#noteReadModal .sheet-head :is(.reader-tool,.reader-focus-enter){width:31px!important;flex-basis:31px!important;}#readHeaderTitle{font-size:14px!important;}.calendar-grid{gap:4px;}.calendar-day{height:39px;}.library-paper{padding:12px 9px 18px 13px;}.library-verse p{font-size:17px;}.module-section{padding-inline:11px;}.event-row{gap:6px;}.month-nav{gap:4px;}.month-nav strong{font-size:15px;}}
+@media(min-width:850px){.module-section{padding-inline:24px;}.library-paper{padding:25px;}}
+/* Context dictionary: nonmodal popover closes on any outside touch. */
+.dictionary-popover{position:fixed;z-index:270;background:#102c46;color:#f8f1e1;border:1px solid #d2a550;border-radius:14px;padding:13px 14px;box-shadow:0 9px 34px #0006;width:min(320px,calc(100vw - 24px));user-select:text;}
+.dictionary-popover h3{font-size:16px;margin:0 24px 6px 0;text-transform:capitalize;}.dictionary-popover p{font-size:15px;line-height:1.45;margin:0 0 8px;}.dictionary-popover small{font-size:10px;color:#b6c4ce;line-height:1.4;display:block;}.dictionary-sources{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}.dictionary-sources a{font-size:11px;color:#f5d291;text-decoration:underline;}.dictionary-close{position:absolute;top:7px;right:8px;width:27px;height:27px;background:none;border:0;color:#f0dbae;font-size:23px;}
+.dictionary-setting{display:flex;align-items:center;gap:8px;padding:9px 0;color:#cfd7dd;font-size:13px;}.dictionary-setting input{width:18px;height:18px;accent-color:#d7a03b;}

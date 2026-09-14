@@ -1461,6 +1461,8 @@
 #accountSyncStatus{white-space:pre-line}
 </style>
   <link rel="stylesheet" href="./editor-enhancements.css" />
+  <link rel="stylesheet" href="./note-experience.css" />
+<link rel="stylesheet" href="./modules.css">
 </head>
 <body>
 
@@ -1496,35 +1498,24 @@
           <div class="hello">
             <strong class="app-name">MAUZI NOTE</strong>
             <small id="welcomeName">Mis notas</small>
+            <span id="cloudStatusChip" hidden aria-hidden="true"></span>
           </div>
         </div>
-        <div class="topbar-actions">
-          <button class="install-icon" type="button" data-install-open title="Instalar MAUZI NOTE" aria-label="Instalar MAUZI NOTE">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button id="accountBtn" class="avatar" title="Perfil y respaldo">M</button>
+        <div class="topbar-actions" aria-label="Herramientas de notas">
+          <button id="cycleViewBtn" class="compact-icon" type="button" title="Cambiar presentación" aria-label="Cambiar presentación"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+          <button id="toggleSearchBtn" class="compact-icon" type="button" title="Buscar notas" aria-label="Buscar notas" aria-expanded="false" aria-controls="compactSearchPanel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></button>
+          <button id="filterCategoriesBtn" class="compact-icon" type="button" title="Filtrar por categoría" aria-label="Filtrar por categoría" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg></button>
+          <button id="accountBtn" class="avatar" data-drive-state="offline" title="Mi cuenta y respaldo" aria-label="Mi cuenta y respaldo">M</button>
         </div>
       </div>
 
-      <button id="cloudStatusChip" class="cloud-chip" type="button" aria-live="polite">Google Drive pendiente de configurar</button>
-      <div class="search-wrap">
-        <input id="searchInput" class="search" placeholder="Buscar en tus notas...">
-        <span>⌕</span>
+      <div id="compactSearchPanel" class="compact-search hidden">
+        <input id="searchInput" class="search" type="search" placeholder="Buscar en tus notas…" aria-label="Buscar en tus notas" enterkeyhint="search" autocomplete="off">
+        <button id="clearSearchBtn" type="button" class="compact-icon" title="Limpiar y cerrar búsqueda" aria-label="Limpiar y cerrar búsqueda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
     </header>
 
     <div class="content">
-      <div class="section-head">
-        <h2>Mis notas</h2>
-        <button id="manageCategoriesBtn">Categorías</button>
-      </div>
-
-      <div class="view-switcher" aria-label="Cambiar vista">
-        <button class="view-btn active" data-view="cards" title="Cuadros compactos">▤</button>
-        <button class="view-btn" data-view="grid" title="Cuadrícula">▦</button>
-        <button class="view-btn" data-view="list" title="Lista">☷</button>
-      </div>
-
       <div id="notesList" class="notes view-cards"></div>
     </div>
 
@@ -1545,20 +1536,24 @@
         <label>Título de la nota</label>
         <input id="noteTitle" class="field note-title-input" maxlength="90" placeholder="Ejemplo: Reflexiones">
 
-        <div class="editor-toolbar" aria-label="Formato de texto">
+        <input id="noteImageFile" type="file" accept="image/*" multiple hidden>
+        <div class="editor-toolbar" role="toolbar" aria-label="Formato de texto">
           <button type="button" class="fmt-btn" data-format="formatBlock" data-value="h2" title="Título dentro de la nota">T</button>
           <button type="button" class="fmt-btn fmt-bold" data-format="bold" title="Negrita"><b>B</b></button>
           <button type="button" class="fmt-btn" data-format="insertUnorderedList" title="Viñetas">•≡</button>
           <button type="button" class="fmt-btn" data-format="insertOrderedList" title="Numeración">1≡</button>
+          <button type="button" class="fmt-btn" data-format="mauziList" data-value="alpha" title="Incisos: a), b), c)">a)</button>
+          <button type="button" class="fmt-btn" data-format="mauziList" data-value="roman" title="Numeración romana: I, II, III">I.</button>
 
+          <button id="insertImageBtn" type="button" class="image-insert-btn" title="Insertar imagen" aria-label="Insertar imagen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.4"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg></button>
           <label class="fmt-color" title="Color de texto">
             <span>A</span>
-            <input id="textColorPicker" type="color" value="#faf7ee">
+            <input id="textColorPicker" type="color" value="#18150f" aria-label="Color del texto">
           </label>
 
           <label class="fmt-color fmt-highlight" title="Resaltado">
             <span>▰</span>
-            <input id="highlightColorPicker" type="color" value="#7f641b">
+            <input id="highlightColorPicker" type="color" value="#ffe6a6" aria-label="Resaltar texto">
           </label>
         </div>
 
@@ -1567,7 +1562,7 @@
                class="rich-editor"
                contenteditable="true"
                role="textbox"
-               aria-multiline="true"
+               aria-multiline="true" aria-label="Contenido de la nota" spellcheck="true"
                data-placeholder="Escribe aquí tu nota..."></div>
         </div>
 
@@ -1575,14 +1570,15 @@
           <div class="note-option-block">
             <span class="option-caption">Fondo</span>
             <div class="note-bg-palette" id="noteBgPalette">
-              <button type="button" class="bg-swatch active" data-bg="#080808" style="--sw:#080808" title="Negro"></button>
+              <button type="button" class="bg-swatch active" data-bg="#f8f5ed" style="--sw:#f8f5ed" title="Blanco hueso"></button>
+              <button type="button" class="bg-swatch" data-bg="#080808" style="--sw:#080808" title="Negro"></button>
               <button type="button" class="bg-swatch" data-bg="#0b2947" style="--sw:#0b2947" title="Azul oscuro"></button>
               <button type="button" class="bg-swatch" data-bg="#b55218" style="--sw:#b55218" title="Naranja"></button>
               <button type="button" class="bg-swatch" data-bg="#a48026" style="--sw:#a48026" title="Dorado oscuro"></button>
               <button type="button" class="bg-swatch" data-bg="#f4ead0" style="--sw:#f4ead0" title="Papel claro"></button>
               <label class="bg-swatch custom-bg" style="--sw:linear-gradient(135deg,#d5ad3a,#c41f2e)" aria-label="Color personalizado">
                 <span>+</span>
-                <input id="noteBgColorPicker" type="color" value="#080808">
+                <input id="noteBgColorPicker" type="color" value="#f8f5ed">
               </label>
             </div>
           </div>
@@ -1602,20 +1598,35 @@
     <div class="sheet note-read-sheet">
       <div class="grab"></div>
       <div class="sheet-head">
+        <button class="reader-tool" type="button" data-close="noteReadModal" title="Volver a mis notas" aria-label="Volver a mis notas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 5-7 7 7 7M7 12h14"/></svg></button>
         <h2 id="readHeaderTitle">Nota</h2>
-        <button class="close" data-close="noteReadModal">×</button>
+        <button id="historyNoteBtn" class="reader-tool" type="button" title="Historial" aria-label="Historial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.6 7M3 4v7h7"/><path d="M12 7v5l3 2"/></svg></button>
+        <button id="editFromReadBtn" class="reader-tool" type="button" title="Editar nota" aria-label="Editar nota"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 4.5 5 5M4 20l5-1L20 8a3.5 3.5 0 0 0-5-5L4 14z"/></svg></button>
+        <button id="readFocusBtn" class="reader-focus-enter" type="button" title="Pantalla completa: solo la nota" aria-label="Pantalla completa: solo la nota" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
       </div>
 
+      <button id="exitReadFocusBtn" class="reader-focus-exit" type="button" title="Salir de pantalla completa" aria-label="Salir de pantalla completa" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h5V3m13 5h-5V3M3 16h5v5m13-5h-5v5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <div id="readNotePaper" class="read-note-paper">
         <div id="readNoteCategory" class="note-read-category"></div>
         <h2 id="readNoteTitle" class="note-read-title"></h2>
         <div id="readNoteContent" class="note-read-content"></div>
       </div>
 
-      <div class="note-read-actions">
-        <button id="historyNoteBtn" class="secondary-btn">Historial</button>
-        <button id="editFromReadBtn" class="secondary-btn">Editar nota</button>
-      </div>
+
+    </div>
+  </div>
+
+  <div id="categoryFilterModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="categoryFilterTitle">
+    <div class="sheet category-filter-sheet">
+      <div class="grab"></div>
+      <div class="sheet-head"><h2 id="categoryFilterTitle">Filtrar categorías</h2><button class="close" data-close="categoryFilterModal" aria-label="Cerrar filtro">×</button></div>
+      <div id="categoryFilterOptions" class="category-filter-options" role="group" aria-label="Elige una categoría"></div>
+      <button id="manageCategoriesBtn" type="button" class="secondary-btn category-manage">Administrar categorías y colores</button>
     </div>
   </div>
 
@@ -1729,6 +1740,17 @@
   <div class="sheet"><div class="sheet-head"><h2 id="recoveryTitle">Recuperar notas</h2><button class="close" data-close="cloudRecoveryModal" aria-label="Cerrar">×</button></div>
   <p id="recoveryHint" class="cloud-message"></p><div id="recoveryItems" class="recovery-items"></div></div>
 </div>
+  <div id="noteImageViewer" class="note-image-viewer hidden" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+    <div id="imageStage" class="image-stage"><img id="largeNoteImage" alt="" draggable="false"></div>
+    <div class="image-viewer-tools" role="toolbar" aria-label="Imagen">
+      <button id="deletePreviewImageBtn" class="image-tool hidden" type="button" title="Quitar de la nota" aria-label="Quitar imagen de la nota"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg></button>
+      <button id="imageZoomOut" class="image-tool" type="button" title="Alejar" aria-label="Alejar imagen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+      <button id="imageFit" class="image-tool" type="button" title="Ajustar a la pantalla" aria-label="Ajustar a la pantalla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button>
+      <button id="imageZoomIn" class="image-tool" type="button" title="Acercar" aria-label="Acercar imagen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button>
+      <button id="closeNoteImage" class="image-tool" type="button" title="Cerrar imagen" aria-label="Cerrar imagen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
 
@@ -1858,6 +1880,8 @@ THE SOFTWARE.
       document.body.classList.add("has-modal");
     }
     function closeModal(id){
+      if(id==="noteModal" && window.MauziEditorModes?.beforeClose()===false) return;
+      if(id === "noteReadModal") window.MauziReader?.exit();
       $(id).classList.add("hidden");
       if(id === "noteModal"){
         $(id).classList.remove("keyboard-open");
@@ -1867,8 +1891,8 @@ THE SOFTWARE.
       if(!document.querySelector(".modal-backdrop:not(.hidden)")) document.body.classList.remove("has-modal");
     }
     document.addEventListener("keydown", e=>{
-      if(e.key!=="Escape") return;
-      const order=["cloudRecoveryModal","bibleModal","installModal","noteModal","categoriesModal","accountModal","noteReadModal"];
+      if(e.key!=="Escape" || window.MauziImages?.isOpen()) return;
+      const order=["categoryFilterModal","cloudRecoveryModal","bibleModal","installModal","noteModal","categoriesModal","accountModal","noteReadModal"];
       const id=order.find(id=>!$(id).classList.contains("hidden"));
       if(id){ e.preventDefault(); closeModal(id); }
     });
@@ -1897,6 +1921,7 @@ THE SOFTWARE.
     $("accountBtn").addEventListener("click", ()=>openModal("accountModal"));
     $("addNoteBtn").addEventListener("click", ()=>openNote());
     $("manageCategoriesBtn").addEventListener("click", ()=>{
+      closeModal("categoryFilterModal");
       renderCategoryManager();
       openModal("categoriesModal");
     });
@@ -2233,7 +2258,8 @@ THE SOFTWARE.
     });
 
 
-    let currentNoteBackground = "#080808";
+    const DEFAULT_NOTE_BACKGROUND = "#f8f5ed";
+    let currentNoteBackground = DEFAULT_NOTE_BACKGROUND;
     let savedEditorRange = null;
 
     function hexToRgb(hex){
@@ -2297,7 +2323,7 @@ THE SOFTWARE.
     }
 
     function setNoteBackground(color){
-      currentNoteBackground = color || "#080808";
+      currentNoteBackground = color || DEFAULT_NOTE_BACKGROUND;
       const fg = readableTextColor(currentNoteBackground);
       const paper = document.querySelector(".note-paper-wrap");
       const editor = $("noteContent");
@@ -2328,37 +2354,98 @@ THE SOFTWARE.
     }
 
     function restoreEditorSelection(){
+      if(window.MauziEditorModes?.isFormat()) return window.MauziEditorModes.restore();
       const editor = $("noteContent");
+      const valid = savedEditorRange && editor.contains(savedEditorRange.startContainer) && editor.contains(savedEditorRange.endContainer);
+      const range = valid ? savedEditorRange.cloneRange() : document.createRange();
+      if(!valid){ range.selectNodeContents(editor); range.collapse(false); }
       editor.focus({preventScroll:true});
-      if(!savedEditorRange) return;
-
       const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(savedEditorRange);
+      sel.removeAllRanges(); sel.addRange(range);
     }
 
-    function applyEditorCommand(command,value=null){
-      restoreEditorSelection();
-      try{
-        document.execCommand("styleWithCSS",false,true);
-      }catch(e){}
-
-      if(command === "formatBlock"){
-        document.execCommand(command,false,value || "p");
-      }else{
-        document.execCommand(command,false,value);
+    function editorListAtSelection(){
+      const sel=window.getSelection();
+      const node=sel?.anchorNode;
+      const el=node?.nodeType===1?node:node?.parentElement;
+      const list=el?.closest('ol,ul');
+      return list && $("noteContent").contains(list) ? list : null;
+    }
+    function refreshEditorToolbar(){
+      const editor=$("noteContent"),sel=window.getSelection();
+      if(!sel?.rangeCount || !editor.contains(sel.anchorNode)) return;
+      const list=editorListAtSelection();
+      const listStyle=list?.style.listStyleType || ({a:'lower-alpha',A:'upper-alpha',I:'upper-roman',i:'lower-roman'}[list?.getAttribute('type')] || 'decimal');
+      const anchor=sel.anchorNode.nodeType===1?sel.anchorNode:sel.anchorNode.parentElement;
+      for(const btn of document.querySelectorAll('.fmt-btn')){
+        let active=false;
+        try{
+          if(btn.dataset.format==='bold') active=document.queryCommandState('bold');
+          if(btn.dataset.format==='formatBlock') active=!!anchor?.closest('h2');
+          if(btn.dataset.format==='insertUnorderedList') active=list?.tagName==='UL';
+          if(btn.dataset.format==='insertOrderedList') active=list?.tagName==='OL' && listStyle==='decimal';
+          if(btn.dataset.value==='alpha') active=list?.tagName==='OL' && listStyle==='lower-alpha';
+          if(btn.dataset.value==='roman') active=list?.tagName==='OL' && listStyle==='upper-roman';
+        }catch(_){}
+        btn.classList.toggle('active',!!active);
+        btn.setAttribute('aria-pressed',String(!!active));
+        btn.setAttribute('aria-label',btn.title);
       }
-      saveEditorSelection();
+    }
+    function editorContentChanged(){
+      const editor=$("noteContent");
+      editor.dataset.empty=String(!editor.textContent.trim());
+      editor.dispatchEvent(new Event('input',{bubbles:true}));
+      saveEditorSelection(); refreshEditorToolbar();
+      window.MauziRich?.refresh();
+    }
+    function applyEditorCommand(command,value=null){
+      if(window.MauziEditorModes?.isFormat()) return window.MauziEditorModes.apply(command,value);
+      restoreEditorSelection();
+      const editor=$("noteContent");
+      try{
+        document.execCommand('styleWithCSS',false,true);
+        if(command==='mauziList' || command==='insertOrderedList'){
+          const style=value==='alpha'?'lower-alpha':value==='roman'?'upper-roman':'decimal';
+          let list=editorListAtSelection();
+          const previous=list?.style.listStyleType || ({a:'lower-alpha',I:'upper-roman'}[list?.getAttribute('type')] || 'decimal');
+          // Same button turns the list off. A different style changes only its markers.
+          if(list?.tagName==='OL' && previous===style){
+            document.execCommand('insertOrderedList',false,null);
+          }else{
+            if(list?.tagName!=='OL') document.execCommand('insertOrderedList',false,null);
+            list=editorListAtSelection();
+            const sel=window.getSelection(),range=sel?.rangeCount?sel.getRangeAt(0):null;
+            const lists=new Set(list?[list]:[]);
+            if(range && !range.collapsed) for(const item of editor.querySelectorAll('ol')){
+              try{if(range.intersectsNode(item))lists.add(item);}catch(_){}
+            }
+            for(const item of lists){
+              if(item.tagName!=='OL')continue;
+              item.style.listStyleType=style;
+              item.setAttribute('type',style==='upper-roman'?'I':style==='lower-alpha'?'a':'1');
+              item.dataset.mauziList=style;
+              if(style==='lower-alpha')item.dataset.mauziSuffix=')';else item.removeAttribute('data-mauzi-suffix');
+              item.removeAttribute('data-mauzi-prefix');
+            }
+          }
+        }else if(command==='formatBlock'){
+          const sel=window.getSelection(),n=sel?.anchorNode,el=n?.nodeType===1?n:n?.parentElement;
+          document.execCommand('formatBlock',false,el?.closest(value||'h2')?'p':(value||'h2'));
+        }else{
+          document.execCommand(command,false,value);
+        }
+        editorContentChanged();
+      }catch(error){showToast('No se aplicó el formato. Selecciona el texto y vuelve a tocar el botón.');}
     }
 
-    document.querySelectorAll(".fmt-btn").forEach(btn=>{
-      btn.addEventListener("pointerdown", e=>{
-        e.preventDefault();
-        saveEditorSelection();
-      });
-      btn.addEventListener("click", ()=>{
-        applyEditorCommand(btn.dataset.format,btn.dataset.value || null);
-      });
+    document.querySelectorAll('.fmt-btn').forEach(btn=>{
+      // Prevent touch/mouse from moving the caret into a toolbar button.
+      btn.addEventListener('pointerdown',e=>{saveEditorSelection();e.preventDefault();});
+      btn.addEventListener('mousedown',e=>e.preventDefault());
+      btn.addEventListener('click',()=>applyEditorCommand(btn.dataset.format,btn.dataset.value||null));
+      btn.setAttribute('aria-label',btn.title);
+      btn.setAttribute('aria-pressed','false');
     });
 
     ["textColorPicker","highlightColorPicker"].forEach(id=>{
@@ -2371,6 +2458,7 @@ THE SOFTWARE.
     });
 
     $("highlightColorPicker").addEventListener("input", e=>{
+      if(window.MauziEditorModes?.isFormat()){window.MauziEditorModes.apply("hiliteColor",e.target.value);return;}
       restoreEditorSelection();
       const ok = document.execCommand("hiliteColor",false,e.target.value);
       if(!ok) document.execCommand("backColor",false,e.target.value);
@@ -2386,6 +2474,7 @@ THE SOFTWARE.
     document.addEventListener("selectionchange",()=>{
       if(document.activeElement === $("noteContent") || $("noteContent").contains(document.activeElement)){
         saveEditorSelection();
+        refreshEditorToolbar();
       }
     });
 
@@ -2416,6 +2505,7 @@ THE SOFTWARE.
       const paper = $("readNotePaper");
       paper.style.setProperty("--read-bg",bg);
       paper.style.setProperty("--read-fg",fg);
+      $("noteReadModal").style.setProperty("--focus-bg",bg);
 
       paper.scrollTop = 0;
       openModal("noteReadModal");
@@ -2431,6 +2521,8 @@ THE SOFTWARE.
     });
 
     function renderNotes(){
+      if(selectedCategory!=="all" && !categories.some(c=>c.id===selectedCategory)) selectedCategory="all";
+      window.dispatchEvent(new Event("mauzi:notes-render"));
       const q = $("searchInput").value.trim().toLowerCase();
       const list = $("notesList");
 
@@ -2452,7 +2544,7 @@ THE SOFTWARE.
         list.innerHTML = `
           <div class="empty">
             <div style="font-size:34px;margin-bottom:8px">📝</div>
-            No hay notas aquí todavía.
+            ${q || selectedCategory!=="all" ? "No hay notas que coincidan con este filtro." : "No hay notas aquí todavía."}
           </div>`;
         return;
       }
@@ -2489,15 +2581,20 @@ THE SOFTWARE.
         : oldTextToHtml(note?.content || "");
 
       $("noteContent").innerHTML = initialHtml;
-      $("noteCategory").value = note?.categoryId || categories[0]?.id || "";
+      $("noteCategory").value = note?.categoryId || (selectedCategory!=="all" ? selectedCategory : categories[0]?.id) || "";
       $("noteModalTitle").textContent = note ? "Editar nota" : "Nueva nota";
       $("deleteNoteBtn").classList.toggle("hidden", !note);
 
-      setNoteBackground(note?.bgColor || "#080808");
+      // Only NEW notes get ivory. Existing notes retain their original background.
+      setNoteBackground(note ? (note.bgColor || "#080808") : DEFAULT_NOTE_BACKGROUND);
+      $("textColorPicker").value = readableTextColor(currentNoteBackground);
+      $("noteContent").dataset.empty = String(!plainTextFromHTML(initialHtml));
       savedEditorRange = null;
+      document.querySelectorAll(".fmt-btn").forEach(btn=>{btn.classList.remove("active");btn.setAttribute("aria-pressed","false");});
 
       openModal("noteModal");
-      setTimeout(()=>$("noteTitle").focus(),120);
+      window.dispatchEvent(new Event("mauzi:editor-opened"));
+      window.MauziEditorModes?.opened();
     }
 
     window.editNote = function(id){
@@ -2505,42 +2602,32 @@ THE SOFTWARE.
       if(note) openNote(note);
     }
 
+    let savingNote=false;
     $("saveNoteBtn").addEventListener("click", async ()=>{
-      const id = $("editingId").value;
-      const title = $("noteTitle").value.trim();
-      const contentHtml = sanitizeRichHTML($("noteContent").innerHTML).trim();
-      const content = plainTextFromHTML(contentHtml);
-      const categoryId = $("noteCategory").value;
-      const bgColor = currentNoteBackground || "#080808";
-
-      if(!title && !content){
-        showToast("Escribe un título o contenido");
-        return;
-      }
-
-      if(id){
-        const n = notes.find(x=>x.id===id);
-        if(n){
-          n.title=title;
-          n.content=content;
-          n.contentHtml=contentHtml;
-          n.bgColor=bgColor;
-          n.categoryId=categoryId;
-          n.updatedAt=Date.now();
+      if(savingNote || window.MauziImages?.isImporting()) return;
+      const before=structuredClone(notes);
+      savingNote=true; $("saveNoteBtn").disabled=true;
+      try {
+        const id=$("editingId").value;
+        const title=$("noteTitle").value.trim();
+        const contentHtml=sanitizeRichHTML($("noteContent").innerHTML).trim();
+        const content=plainTextFromHTML(contentHtml);
+        const categoryId=$("noteCategory").value;
+        const bgColor=currentNoteBackground || DEFAULT_NOTE_BACKGROUND;
+        if(!title && !content && !contentHtml.includes('<img ')) {
+          showToast("Escribe un título, contenido o agrega una imagen");return;
         }
-      }else{
-        notes.push({
-          id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-          title,content,contentHtml,bgColor,categoryId,
-          createdAt:Date.now(),updatedAt:Date.now()
-        });
-      }
-
-      try { await saveAll(); }
-      catch(error) { showToast(error.message || "No se pudo guardar. Tu texto sigue abierto."); return; }
-      renderNotes();
-      closeModal("noteModal");
-      showToast("Guardada en este teléfono. Revisa el estado de nube.");
+        const data={title,content,contentHtml,bgColor,categoryId,updatedAt:Date.now()};
+        if(id){
+          const n=notes.find(x=>x.id===id);
+          if(!n) throw new Error("No se encontró la nota. Tu contenido sigue en el editor.");
+          Object.assign(n,data);
+        } else notes.push({id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),createdAt:Date.now(),...data});
+        await saveAll();
+        window.MauziEditorModes?.markSaved();renderNotes();closeModal("noteModal");showToast("Nota guardada");
+      } catch(error) {
+        notes=before;renderNotes();showToast(error.message || "No se pudo guardar. Tu nota sigue abierta.");
+      } finally {savingNote=false;$("saveNoteBtn").disabled=false;}
     });
 
     $("deleteNoteBtn").addEventListener("click", async ()=>{
@@ -2624,16 +2711,15 @@ THE SOFTWARE.
 
 
     function applyView(view){
+      if(!["cards","grid","list"].includes(view)) view="cards";
       currentView = view;
-      localStorage.setItem("mauzi_notes_view", view);
+      try {localStorage.setItem("mauzi_notes_view", view);} catch(_) {}
       const notesList = $("notesList");
       if(notesList){
         notesList.classList.remove("view-cards","view-grid","view-list");
         notesList.classList.add("view-" + view);
       }
-      document.querySelectorAll(".view-btn").forEach(btn=>{
-        btn.classList.toggle("active", btn.dataset.view === view);
-      });
+      window.dispatchEvent(new Event("mauzi:view-change"));
     }
 
     document.querySelectorAll(".view-btn").forEach(btn=>{
@@ -2751,9 +2837,24 @@ THE SOFTWARE.
       legacyEmail:()=>localStorage.getItem(STORAGE.email)||"",
       open:openModal,close:closeModal,toast:showToast,sanitize:sanitizeRichHTML,plain:plainTextFromHTML,oldText:oldTextToHtml,
       currentReadId:()=>activeReadNoteId,
+      note:(id)=>structuredClone(notes.find(n=>n.id===id)||null),
+      createNote(title,html){openNote({id:"",title,contentHtml:html,categoryId:categories[0]?.id,bgColor:DEFAULT_NOTE_BACKGROUND});$("deleteNoteBtn").classList.add("hidden");},
+      async renameNote(id,title){
+        const n=notes.find(n=>n.id===id);if(!n)throw new Error("No se encontró la nota.");
+        const previous=structuredClone(n);n.title=String(title).trim().slice(0,90);n.updatedAt=Date.now();
+        try{await saveAll();renderNotes();if(activeReadNoteId===id)openNoteReader(id);}
+        catch(e){Object.assign(n,previous);throw e;}
+      },
+      persist:saveAll,
+
+      view:()=>currentView,setView:applyView,
+      filter:()=>selectedCategory,
+      filterCategories:()=>structuredClone(categories),
+      setFilter(id){selectedCategory=(id==="all" || categories.some(c=>c.id===id)) ? id : "all";renderNotes();},
       replace(data){notes=data.notes;categories=data.categories;renderNotes();renderCategorySelect();}
     };
 
+    window.MauziBible={books:BIBLE_USFM,names:BIBLE_VERSION_NAMES,book:getBibleBookData,select:selectOfflineVerses,parse:parseCanonicalPassage,label:verseLabel,open:openBibleReader};
     boot();
     applyView(currentView);
   </script>
@@ -2762,7 +2863,7 @@ THE SOFTWARE.
    This block manages installation and local export. drive-sync.js manages user-authorized Google Drive access. */
 (() => {
   'use strict';
-  const APP_VERSION = '3.1.0-drive';
+  const APP_VERSION = '4.0.0-biblia-agenda';
   const $p = id => document.getElementById(id);
   const installButtons = [...document.querySelectorAll('[data-install-open]')];
   const standaloneQuery = window.matchMedia('(display-mode: standalone)');
@@ -3057,7 +3158,13 @@ THE SOFTWARE.
 })();
 
 </script>
+<script src="./note-experience.js"></script>
 <script src="./google-config.js"></script>
 <script src="./drive-sync.js"></script>
+<script src="./modules-store.js"></script>
+<script src="./editor-modes.js"></script>
+<script src="./modules-ui.js"></script>
+<script src="./dictionary.js"></script>
+<script src="./calendar-link.js"></script>
 </body>
 </html>

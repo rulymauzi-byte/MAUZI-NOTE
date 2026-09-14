@@ -1,32 +1,67 @@
-MAUZI NOTE 3.1 — ALCANCE DE LAS COMPROBACIONES
+COMPROBACIONES — MAUZI NOTE 4.0
+==============================
+ENTORNO: navegador Chromium con documento local de prueba. La política administrada
+del navegador no permite navegación de sitios, por lo que se cargó el DOM y se
+simularon explícitamente almacenamiento, OAuth, respuestas Drive/Calendar y el
+proveedor del diccionario. No son pruebas reales con la cuenta del usuario.
+No se deshabilitaron ni alteraron las políticas del navegador.
 
-Cambios de esta entrega:
-- Renglones medidos debajo de cada fila real de texto (lectura y edición).
-- Pegado de HTML con formato y listas de Office, sin fuentes o librerías remotas.
-- Listas romanas, incisos, listas anidadas y comienzo distinto de 1 conservados.
-- Asistente CONFIGURAR_GOOGLE actualizado y generador de contacto de privacidad.
-- Service worker actualizado para conservar también los archivos nuevos offline.
+El JavaScript de la aplicación se ejecutó en el navegador. Solo el entorno de
+prueba sustituye los servicios externos; esas simulaciones NO se incluyen en la app.
 
-Pruebas realizadas en Chromium con vistas móviles 390x844 y 360x640:
-- Pegado mediante eventos ClipboardEvent con fragmentos HTML y Office de prueba.
-- Lectura tras guardar, negritas, cursivas, color, tamaños, numeración y listas anidadas.
-- Sanitización repetida conserva el formato; scripts, controladores de eventos y URLs
-  ejecutables se descartan. No se cargan imágenes remotas pegadas.
-- Renglones sin intersección con los rectángulos de texto en la nota de prueba.
-- Ajuste de líneas al variar el ancho y el tamaño de los títulos.
-- Citas bíblicas después de pegar texto con formato; datos bíblicos sin modificaciones.
-- Archivos del logo y drive-sync.js idénticos al paquete v3.
-- Comprobación de sintaxis y existencia de archivos del manifiesto/caché.
+Comprobaciones completadas:
+OK  image_persisted
+OK  automatic_dictionary
+OK  dictionary_outside_dismiss
+OK  inline_title_saved
+OK  format_no_keyboard
+OK  roman_format
+OK  offline_bible_RVR1960
+OK  offline_bible_NVI
+OK  offline_bible_NTV
+OK  offline_bible_TLA
+OK  bible_no_network
+OK  offline_favorite_queued
+OK  favorite_synced
+OK  verse_popup_default_RV60
+OK  verse_popup_content
+OK  popup_favorite
+OK  calendar_confirmed
+OK  calendar_no_note_content
+OK  calendar_popup_minutes
+OK  calendar_retry_no_duplicate
+OK  online_dictionary_parsed
+OK  all_definitions_max12
+OK  device_recovery_note_image
+OK  device_recovery_favs_agenda
+OK  accounts_isolated
+OK  offline_user2_pending
+OK  bible_width_360
+OK  reader_width_360
+OK  focus_mode_360
+OK  bible_width_768
+OK  reader_width_768
+OK  focus_mode_768
+OK  bible_width_1440
+OK  reader_width_1440
+OK  focus_mode_1440
+OK  foreground_reminder
+OK  no_runtime_errors
 
-Límites de esta prueba:
-El entorno impide navegar a un servidor, incluso localhost. Se ejecutó la interfaz
-como documento de prueba. El guardado/cuenta se sustituyó por un adaptador de prueba.
-No se ha verificado OAuth con Google real, IndexedDB persistente, service worker
-publicado ni una instalación física Android/iPhone en esta sesión.
-El pegado real depende del HTML que la app de origen y el navegador pongan en el
-portapapeles; las fuentes ausentes en el teléfono utilizan una fuente de reemplazo.
-No se incorporan scripts, objetos de Office ni imágenes remotas al pegar.
+OK  Importación de PNG real en modo formato sin habilitar contenteditable.
+OK  Respaldo/restauración de nota con imagen y favoritos.
+OK  Restauración reasigna correctamente la nota vinculada de la actividad.
+OK  Sintaxis de todos los scripts de la entrega.
+OK  Todas las dependencias del service worker existen en el ZIP.
+OK  google-config.js coincide exactamente con el ID vigente del usuario.
+OK  Payload de Biblias idéntico al de la versión 3.3 (SHA-256 verificado).
+OK  Iconos, logo, manifiesto y favicon conservados sin cambios.
+OK  Capturas revisadas en anchos de 360, 390, 768 y 1440 px.
 
-La configuración debe completarse con el ID público del creador y verificarse
-con dos dispositivos antes de confiar información importante a la sincronización.
-Los archivos de prueba, notas ficticias y adaptadores no se incluyen en este paquete.
+Pruebas pendientes fuera de este entorno:
+- OAuth/Drive real en dos cuentas y dos dispositivos físicos.
+- Activación de Google Calendar API, permiso calendar.app.created y aviso real.
+- Instalación y actualización con service worker en GitHub Pages.
+- Teclado virtual real de iOS/Android y selección táctil del sistema.
+- Consulta en vivo al endpoint CORS de Wikcionario.
+No se afirma que estas pruebas pendientes hayan pasado.

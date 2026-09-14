@@ -1,0 +1,199 @@
+/* MAUZI NOTE 3.2 — writing margins, readable paper and distraction-free reading. */
+#cloudStatusChip { display:none!important; }
+#accountBtn { position:relative; overflow:visible; }
+#accountBtn::after {
+  content:""; position:absolute; right:-2px; bottom:-2px;
+  width:10px; height:10px; border:2px solid #0b1420; border-radius:50%;
+  background:#778393; pointer-events:none;
+}
+#accountBtn[data-drive-state="online"]::after { background:#37d879; box-shadow:0 0 7px #37d87965; }
+#accountBtn[data-drive-state="syncing"]::after { background:#d9aa46; }
+#accountBtn[data-drive-state="error"]::after { background:#e67e38; }
+/* Keep the existing compact list/cards and brand colors. Only the paper changes. */
+.note-paper-wrap { --paper-bg:#f8f5ed; --paper-fg:#18150f; }
+#noteContent.rich-editor {
+  padding:22px clamp(22px,4vw,34px) 110px!important;
+  font-size:18px; line-height:1.85!important;
+  caret-color:var(--paper-fg)!important; min-height:340px;
+  font-weight:400; text-rendering:optimizeLegibility;
+}
+#noteModal.keyboard-open #noteContent.rich-editor { padding-bottom:100px!important; }
+#noteContent.rich-editor:empty::before { color:var(--paper-fg)!important; opacity:.5; }
+#noteReadModal #readNotePaper {
+  padding:24px clamp(24px,5vw,72px) 88px!important;
+  min-height:0!important; scrollbar-gutter:stable;
+  scroll-padding-top:48px; overscroll-behavior:contain;
+}
+#noteReadModal #readNotePaper > :is(#readNoteTitle,#readNoteContent) {
+  width:100%; max-width:960px; margin-inline:auto!important;
+}
+#noteReadModal #readNoteTitle { margin-block:5px 18px!important; line-height:1.4; }
+#noteReadModal #readNoteContent {
+  padding:0 0 38px!important; font-size:19px; line-height:1.85!important; font-weight:400;
+}
+/* Semantic emphasis and real lists survive save/reopen and Drive's sanitizer. */
+#noteContent.rich-editor :is(b,strong),#noteReadModal #readNoteContent :is(b,strong) { font-weight:700; }
+#noteContent.rich-editor :is(ul,ol),#noteReadModal #readNoteContent :is(ul,ol) {
+  margin-block:.18em .4em; padding-left:2.25em; list-style-position:outside;
+}
+#noteContent.rich-editor ul,#noteReadModal #readNoteContent ul { list-style-type:disc; }
+#noteContent.rich-editor li,#noteReadModal #readNoteContent li { display:list-item; padding-inline-start:.22em; }
+#noteContent.rich-editor ol[type="a"],#noteReadModal #readNoteContent ol[type="a"] { list-style-type:lower-alpha; }
+#noteContent.rich-editor ol[type="A"],#noteReadModal #readNoteContent ol[type="A"] { list-style-type:upper-alpha; }
+#noteContent.rich-editor ol[type="i"],#noteReadModal #readNoteContent ol[type="i"] { list-style-type:lower-roman; }
+#noteContent.rich-editor ol[type="I"],#noteReadModal #readNoteContent ol[type="I"] { list-style-type:upper-roman; }
+#noteContent.rich-editor table,#noteReadModal #readNoteContent table { width:auto; max-width:100%; }
+.editor-toolbar { flex-wrap:wrap; overflow:visible; position:sticky; top:0; z-index:4; }
+.editor-toolbar .fmt-btn,.editor-toolbar .fmt-color { flex:0 0 34px; width:34px; height:34px; font-size:13px; }
+.editor-toolbar .fmt-btn.active {
+  color:#102b42; background:#f2d797; border-color:#f8e4b9;
+  box-shadow:inset 0 -2px 0 #bd802b;
+}
+.editor-toolbar .fmt-btn:focus-visible { outline:2px solid #e1a44b; outline-offset:2px; }
+#noteReadModal .reader-focus-enter {
+  flex:0 0 38px; width:38px; height:38px; display:grid; place-items:center;
+  background:rgba(255,255,255,.08); color:#f3d592; border:1px solid rgba(220,184,100,.27);
+  border-radius:9px; padding:8px; cursor:pointer;
+}
+.reader-focus-enter svg,.reader-focus-exit svg { width:22px; height:22px; }
+.reader-focus-exit[hidden] { display:none!important; }
+.reader-focus-exit {
+  position:fixed; top:max(8px,env(safe-area-inset-top)); right:max(10px,env(safe-area-inset-right));
+  z-index:65; width:40px; height:40px; display:grid; place-items:center; padding:8px;
+  color:#173653; background:rgba(248,245,237,.93); border:1px solid #b6ada0;
+  border-radius:11px; box-shadow:0 2px 8px #0002; cursor:pointer; touch-action:manipulation;
+}
+#noteReadModal .note-read-actions { background:linear-gradient(180deg,transparent,var(--focus-bg,#070a0f) 55%); }
+/* Class-based mode always works, including browsers without Element fullscreen. */
+html.mauzi-note-focus,html.mauzi-note-focus body { overflow:hidden!important; background:var(--focus-bg,#f8f5ed); }
+html.mauzi-note-focus #noteReadModal {
+  top:var(--vv-top,0px)!important; bottom:auto!important; height:var(--app-vh,100dvh)!important;
+  width:100%; border:0!important; background:var(--focus-bg,#f8f5ed)!important;
+}
+html.mauzi-note-focus #noteReadModal .note-read-sheet {
+  height:100%!important; max-height:100%!important; width:100%!important;
+  padding:0!important; margin:0!important; border:0!important; border-radius:0!important;
+  background:var(--focus-bg,#f8f5ed)!important; box-shadow:none!important;
+}
+html.mauzi-note-focus #noteReadModal :is(.sheet-head,.grab,.note-read-actions,#readNoteCategory),
+html.mauzi-note-focus #mainApp,html.mauzi-note-focus #toast { display:none!important; }
+html.mauzi-note-focus #noteReadModal #readNotePaper {
+  flex:1 1 100%; height:100%; max-height:100%; margin:0!important; border:0!important;
+  border-radius:0!important; padding:56px clamp(24px,5vw,80px) max(30px,env(safe-area-inset-bottom))!important;
+}
+html.mauzi-note-focus #noteReadModal #readNoteContent { padding-bottom:24px!important; }
+html.mauzi-note-focus #noteReadModal #readNoteTitle { margin-top:0!important; }
+html.mauzi-note-focus #bibleModal { z-index:90; }
+@media(max-width:360px){
+  .editor-toolbar { gap:3px; padding:4px; }
+  .editor-toolbar .fmt-btn,.editor-toolbar .fmt-color { width:31px; flex-basis:31px; height:33px; }
+  #noteReadModal #readNotePaper { padding-left:21px!important; padding-right:21px!important; }
+  #noteContent.rich-editor { padding-left:20px!important; padding-right:20px!important; }
+}
+@media(prefers-reduced-motion:reduce){ .reader-focus-exit { transition:none; } }
+/* A single scrolling region: the paper grows with the note, never clips it
+   behind an old vh limit when the keyboard is open. */
+#noteModal #noteContent.rich-editor,
+#noteModal.keyboard-open #noteContent.rich-editor {
+  height:auto!important; max-height:none!important; overflow:visible!important;
+}
+
+/* MAUZI NOTE 3.3 — compact navigation. No counters, tabs, or permanent search row. */
+#mainApp > header { padding:calc(9px + env(safe-area-inset-top)) 12px 9px; background:linear-gradient(115deg,#123b60,#0b1726 72%); border-bottom:1px solid #b7803260; box-shadow:0 3px 14px #0003; }
+#mainApp .topbar { display:flex; flex-wrap:nowrap; align-items:center; gap:8px; min-width:0; }
+#mainApp .app-brand { flex:1 1 auto; gap:7px; min-width:0; }
+#mainApp .app-logo { width:30px; height:30px; border-radius:8px; flex:0 0 30px; }
+#mainApp .hello { min-width:0; }
+#mainApp .hello .app-name { font-size:14px; letter-spacing:.3px; line-height:1.15; white-space:nowrap; }
+#mainApp #welcomeName { display:none!important; }
+#mainApp .topbar-actions { gap:4px; flex:0 0 auto; }
+#mainApp .topbar-actions .install-icon { display:none!important; }
+#mainApp .compact-icon,#mainApp #accountBtn {
+  display:grid; place-items:center; width:40px; height:40px; flex:0 0 40px;
+  margin:0; padding:9px; border:1px solid #59708755; border-radius:11px;
+  background:linear-gradient(145deg,#19364e,#102333); color:#ecd19a; box-shadow:0 2px 6px #0002;
+  touch-action:manipulation; transition:background .14s,transform .14s; cursor:pointer;
+}
+#mainApp #accountBtn { font-size:16px; font-weight:800; background:linear-gradient(130deg,#215783,#163653); }
+.compact-icon svg,.reader-tool svg,.image-insert-btn svg,.image-tool svg { display:block; width:21px; height:21px; pointer-events:none; }
+#mainApp .compact-icon:active,#mainApp #accountBtn:active,.reader-tool:active { transform:scale(.95); background:#24527a; }
+#mainApp .compact-icon:focus-visible,.reader-tool:focus-visible,.image-tool:focus-visible,.image-insert-btn:focus-visible { outline:2px solid #e9bb61; outline-offset:2px; }
+#mainApp .compact-icon.has-filter { border-color:#e2b961; box-shadow:inset 0 -3px 0 var(--selected-category-color,#e2b961); background:#274865; }
+#mainApp .compact-icon.has-query { border-color:#e2b961; background:#274865; }
+#mainApp .content { padding-top:0; }
+#mainApp .notes { margin-top:10px; }
+#mainApp .compact-search { display:flex; align-items:center; gap:6px; padding-top:8px; }
+#mainApp .compact-search input { flex:1; min-width:0; padding:11px 12px; font-size:16px; background:#0b1b2a; border-color:#375878; }
+#mainApp .compact-search button { flex:0 0 40px; }
+#mainApp .empty { grid-column:1/-1; }
+#categoryFilterModal { z-index:72; }
+#categoryFilterModal .sheet { padding:17px 16px max(20px,env(safe-area-inset-bottom)); max-height:min(75dvh,640px)!important; }
+#categoryFilterModal .sheet-head h2 { font-size:18px; }
+.category-filter-options { display:grid; gap:5px; margin:16px 0 12px; }
+.filter-category-option { display:flex; align-items:center; gap:12px; width:100%; min-height:45px; padding:9px 12px; text-align:left; color:#f2efe7; border:1px solid #354858; border-radius:10px; background:#112536; font:inherit; }
+.filter-color { width:12px; height:12px; border-radius:4px; flex:0 0 12px; }
+.filter-label { flex:1; min-width:0; overflow-wrap:anywhere; font-size:14px; }
+.filter-check { width:21px; height:21px; flex:0 0 21px; opacity:0; color:#eac577; }
+.filter-check svg { width:21px; height:21px; }
+.filter-category-option[aria-pressed="true"] { background:#1d405a; border-color:#bf994d; }
+.filter-category-option[aria-pressed="true"] .filter-check { opacity:1; }
+.category-manage { font-size:13px; background:transparent; border-color:#43536a; color:#d9c18f; }
+/* Reader: back, title, history, pencil and fullscreen on ONE row, no footer. */
+#noteReadModal .sheet-head { display:flex; flex-flow:row nowrap; gap:5px; min-height:58px; padding:calc(7px + env(safe-area-inset-top)) 10px 7px; }
+#noteReadModal .sheet-head #readHeaderTitle { flex:1 1 auto; min-width:0; margin:0 4px; font-size:16px; line-height:1.3; }
+#noteReadModal .reader-tool,#noteReadModal #readFocusBtn {
+  display:grid; place-items:center; flex:0 0 40px; width:40px; height:40px; padding:8px;
+  border:1px solid #91b2ce35; border-radius:10px; background:#ffffff0a; color:#f2d598;
+  touch-action:manipulation; margin:0; cursor:pointer;
+}
+#noteReadModal .note-read-actions { display:none!important; }
+#noteReadModal #readNotePaper { padding-bottom:max(30px,env(safe-area-inset-bottom))!important; }
+#noteReadModal #readNoteContent { padding-bottom:25px!important; }
+/* Thumbnails stay compact inside normal paragraphs, lists and headings. */
+#noteContent.rich-editor img.note-inline-image,#readNoteContent img.note-inline-image {
+  display:inline-block!important; width:auto!important; height:auto!important;
+  max-width:min(144px,90%)!important; max-height:112px!important; min-width:0!important;
+  margin:6px 5px 6px 0!important; padding:3px!important; vertical-align:middle!important;
+  border:1px solid #9d927b90!important; border-radius:9px!important; background:#ffffffa8!important;
+  box-shadow:0 2px 5px #0001; object-fit:contain; cursor:zoom-in; -webkit-user-drag:none;
+}
+#readNoteContent img.note-inline-image:focus-visible { outline:3px solid #1b6098; outline-offset:2px; }
+.image-insert-btn { display:grid; place-items:center; width:34px; height:34px; flex:0 0 34px; padding:6px; border:1px solid #506276; border-radius:8px; background:#16334d; color:#f4cc82; margin:0; touch-action:manipulation; }
+.image-insert-btn[aria-busy="true"] { opacity:.6; animation:mauzi-image-loading 1s ease-in-out infinite; }
+.image-drop-target { outline:3px dashed #be8c35; outline-offset:-6px; }
+@keyframes mauzi-image-loading { 50% {opacity:.3;} }
+body.has-image-viewer { overflow:hidden!important; }
+.note-image-viewer {
+  position:fixed; z-index:150; left:0; right:0; top:var(--vv-top,0px); bottom:auto;
+  height:var(--app-vh,100dvh); width:100%; padding:0; background:#050608;
+  overflow:hidden; isolation:isolate;
+}
+.image-stage { position:absolute; inset:0; display:grid; place-items:center; overflow:hidden; touch-action:none; user-select:none; -webkit-user-select:none; cursor:zoom-in; }
+.image-stage.zoomed { cursor:grab; }
+.image-stage.zoomed:active { cursor:grabbing; }
+#largeNoteImage { display:block; width:100%; height:100%; min-width:0; min-height:0; max-width:none; max-height:none; object-fit:contain; transform-origin:center; will-change:transform; user-select:none; -webkit-user-drag:none; }
+.image-viewer-tools { position:absolute; top:max(8px,env(safe-area-inset-top)); right:max(9px,env(safe-area-inset-right)); z-index:2; display:flex; align-items:center; gap:5px; }
+.image-tool { display:grid; place-items:center; width:40px; height:40px; padding:8px; border:1px solid #b9c3ce55; border-radius:11px; background:#08121dd9; color:#f8e9c8; box-shadow:0 2px 10px #0005; backdrop-filter:blur(6px); touch-action:manipulation; }
+.image-tool:disabled { opacity:.5; }
+#deletePreviewImageBtn { color:#ffb09d; }
+#closeNoteImage { background:#243d54ef; }
+@media(max-width:380px){
+  #mainApp > header { padding-left:9px; padding-right:9px; }
+  #mainApp .topbar { gap:5px; }
+  #mainApp .app-brand { gap:5px; }
+  #mainApp .app-logo { width:25px; height:25px; flex-basis:25px; }
+  #mainApp .hello .app-name { font-size:12px; letter-spacing:0; }
+  #mainApp .topbar-actions { gap:3px; }
+  #mainApp .compact-icon,#mainApp #accountBtn { width:37px; height:38px; flex-basis:37px; padding:8px; border-radius:10px; }
+  #noteReadModal .reader-tool,#noteReadModal #readFocusBtn { width:37px; height:38px; flex-basis:37px; }
+  #noteReadModal .sheet-head { padding-left:8px; padding-right:8px; gap:4px; }
+  #noteReadModal .sheet-head #readHeaderTitle { font-size:14px; margin-inline:2px; }
+}
+@media(min-width:700px){
+  #mainApp > header { padding-inline:16px; }
+  #mainApp .hello .app-name { font-size:16px; }
+  #mainApp .compact-icon,#mainApp #accountBtn { width:42px; height:42px; flex-basis:42px; }
+  #noteReadModal .sheet-head { padding-inline:18px; }
+  #noteReadModal .reader-tool,#noteReadModal #readFocusBtn { width:42px; height:42px; flex-basis:42px; }
+}
+@media(prefers-reduced-motion:reduce){.image-insert-btn[aria-busy="true"]{animation:none;}}

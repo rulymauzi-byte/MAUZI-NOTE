@@ -2,12 +2,13 @@
    Deploy next to index.html. Relative URLs also work in /repository-name/.
    When publishing an update, change BUILD (or regenerate this package). */
 'use strict';
-const BUILD = '3.1.0-rich-paper-0b27f93f7cd8';
+const BUILD = '4.0.0-biblia-agenda-d816dfb67e27';
 const CACHE_PREFIX = 'mauzi-note::'+self.registration.scope+'::';
 const CACHE_NAME = CACHE_PREFIX+BUILD;
 const ASSETS = [
   './index.html', './manifest.webmanifest', './favicon.ico',
-  './editor-enhancements.js', './editor-enhancements.css', './drive-sync.js', './google-config.js', './CONFIGURAR_GOOGLE.html', './PRIVACIDAD.html',
+  './editor-enhancements.js', './editor-enhancements.css', './note-experience.js', './note-experience.css', './drive-sync.js', './google-config.js', './CONFIGURAR_GOOGLE.html', './PRIVACIDAD.html',
+  './modules-store.js', './modules-ui.js', './modules.css', './editor-modes.js', './dictionary.js', './calendar-link.js', './lexico-biblico.json', './ACTIVAR_RECORDATORIOS.html',
   './icons/icon-192.png', './icons/icon-512.png',
   './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'
 ].map(path=>new URL(path,self.registration.scope).href);
@@ -92,5 +93,18 @@ self.addEventListener('message',event=>{
     }catch(error){
       if(event.ports[0]) event.ports[0].postMessage({ready:false,error:String(error.message||error),build:BUILD});
     }
+  })());
+});
+
+// Clicks on persistent foreground-created reminders may reopen the app.
+// No setTimeout/setInterval is used here to pretend closed-app alarms are reliable.
+self.addEventListener('notificationclick',event=>{
+  const data=event.notification.data||{};event.notification.close();
+  if(!/^[\w-]+$/.test(data.eventId||''))return;
+  event.waitUntil((async()=>{
+    const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    const windowClient=windows.find(c=>c.url.startsWith(self.registration.scope));
+    if(windowClient){await windowClient.focus();windowClient.postMessage({type:'MAUZI_OPEN_EVENT',eventId:data.eventId,account:data.account||''});}
+    else{const url=new URL('./',self.registration.scope);url.hash='agenda='+data.eventId;await self.clients.openWindow(url.href);}
   })());
 });

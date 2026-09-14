@@ -1,0 +1,123 @@
+MAUZI NOTE 4.0 — PAQUETE COMPLETO
+================================
+Aplicación para: https://rulymauzi-byte.github.io/MAUZI-NOTE/
+
+ANTES DE ACTUALIZAR
+1. Guarda cualquier nota abierta.
+2. En Mi cuenta, espera que las notas estén confirmadas en tu Google Drive.
+3. Usa Guardar copia. No borres los datos del navegador ni desinstales.
+
+QUÉ SUBIR A TU REPOSITORIO ACTUAL
+Descomprime el ZIP. Abre el mismo repositorio MAUZI-NOTE.
+Add file → Upload files → selecciona los archivos → Commit changes.
+Deben quedar en la RAÍZ, junto al index.html que ya existe.
+No subas solamente el ZIP ni una carpeta adicional que envuelva todos los archivos.
+
+SUBE ESTOS 17 ARCHIVOS (todos; varios son NUEVOS):
+  index.html
+  drive-sync.js
+  editor-enhancements.js
+  editor-enhancements.css
+  note-experience.js
+  note-experience.css
+  modules-store.js
+  modules-ui.js
+  modules.css
+  editor-modes.js
+  dictionary.js
+  calendar-link.js
+  lexico-biblico.json
+  sw.js
+  CONFIGURAR_GOOGLE.html
+  PRIVACIDAD.html
+  ACTIVAR_RECORDATORIOS.html
+
+NO BORRES NINGÚN OTRO ARCHIVO DEL REPOSITORIO.
+
+GOOGLE: NO VUELVAS A CONFIGURAR DRIVE
+Conserva tu google-config.js publicado. El ZIP completo contiene una copia idéntica,
+pero no necesitas subirla otra vez. Su ID vigente empieza por 516673485096-rdoo0mn.
+No uses el cliente antiguo 565407... ni crees otro proyecto.
+
+Esta vez SÍ debes actualizar drive-sync.js: añade el enlace para sincronizar
+favoritos y agenda. No cambia el ID, los permisos actuales de Drive, el nombre
+de la base local de notas ni el formato de las revisiones antiguas.
+No confundir drive-sync.js (código de sincronización) con google-config.js (tu ID).
+
+CONSERVA TAMBIÉN: icons/, favicon.ico, manifest.webmanifest y .nojekyll.
+El paquete completo incluye sus copias sin cambios por si se necesita instalar
+el sitio desde cero. No se han insertado notas, contraseñas o tokens personales.
+
+DESPUÉS DE PUBLICAR
+Espera a que GitHub termine de publicar la actualización.
+Abre MAUZI NOTE → Mi cuenta → Estado de la aplicación / actualizaciones.
+Guarda la nota abierta antes de aplicar la actualización. Cierra y vuelve a abrir.
+Verifica la versión 4.0.0-biblia-agenda.
+Actualiza también los otros teléfonos antes de probar favoritos o agenda.
+No hace falta borrar datos, caché, notas, carpetas de Drive ni desinstalar.
+
+NOVEDADES
+- Navegación Notas / Biblia / Agenda.
+- Biblia independiente: 66 libros de los archivos existentes, capítulos, citas,
+  RV60 por defecto, NVI, NTV y TLA; lectura sin conexión.
+- Estrellas para guardar versículos y citas como favoritos por cuenta.
+- Seleccionar una palabra al LEER una nota o la Biblia muestra su significado.
+  La explicación tiene como máximo 12 palabras y se cierra al tocar fuera.
+- Edición: lápiz para escribir con teclado; formato para seleccionar y aplicar
+  negrita, color, títulos, viñetas, incisos y números romanos sin abrir el teclado.
+- El título se edita al tocarlo. Ya no ocupa otro campo fijo debajo de la barra.
+- Agenda mensual: fecha/hora, duración, recordatorio, nota vinculada y detalles.
+- Favoritos y agenda usan un diario separado en el mismo Drive del usuario.
+- Notas, imágenes, favoritos y agenda se incluyen en Guardar copia / Recuperar copia.
+
+DICCIONARIO: QUÉ CONSULTA REALMENTE
+Incluye 25 entradas bíblicas revisadas (39 formas, contando plurales/alias), con
+síntesis propias en español y enlaces a Strong/Thayer, BDB y un comentario de
+Matthew Henry para la fe. Este glosario funciona sin conexión. Una palabra por
+sí sola no identifica automáticamente el término original de un pasaje: la
+explicación es general y el contexto bíblico determina su sentido.
+
+Para palabras fuera de ese glosario consulta Wikcionario en línea (diccionario
+general, no comentario evangélico). Solo se envía la palabra seleccionada, nunca
+la nota, correo o permisos de Google. Se muestra una acepción completa de hasta
+12 palabras; si no existe una breve o la conexión falla, no se inventa ni se
+corta arbitrariamente una definición. Puedes abrir la fuente o desactivar
+la consulta en Mi cuenta. No se descargan ni resumen comentarios completos en
+vivo. Las entradas generales consultadas se conservan en memoria durante la sesión.
+
+AVISOS: IMPORTANTE
+La campana de Agenda permite notificaciones locales mientras la app está activa.
+No programa una alarma garantizada si el navegador cierra/suspende la app.
+Para avisar con MAUZI NOTE cerrada se incluye Google Calendar, OPCIONAL.
+Abre ACTIVAR_RECORDATORIOS.html: debes habilitar Google Calendar API y el permiso
+calendar.app.created en tu MISMO proyecto. No cambies tu ID ni desactives Drive.
+Luego cada usuario toca Guardar y activar en Google Calendar y autoriza su cuenta.
+Calendar debe tener sincronización y notificaciones activadas en ese dispositivo.
+La app solo confirma el aviso después de una respuesta satisfactoria de Google.
+
+Se envían título, detalle, hora y enlace de la actividad; NO la nota completa ni
+sus imágenes. Editar en MAUZI NOTE requiere reenviar el aviso a Calendar; no se
+importan cambios hechos directamente en Calendar. Marcar realizada no cancela
+el aviso; eliminar la actividad enviada pide cancelar también su evento remoto.
+
+COMPROBACIÓN TRAS ACTUALIZAR
+1. Crea un favorito en Biblia, una nota con foto y una actividad futura.
+2. En Mi cuenta confirma por separado el estado de notas y de favoritos/agenda.
+3. Abre la MISMA cuenta en otro dispositivo actualizado y comprueba los tres.
+4. Para probar avisos con la app cerrada, activa primero Google Calendar,
+   confirma el evento y prueba con una actividad no crítica unos minutos después.
+
+LÍMITES Y SEGURIDAD
+Un cambio pendiente solo está en el teléfono. No cambies/borras el dispositivo
+hasta comprobar que llegó a Drive. No se garantiza conservación eterna: mantén
+copias independientes. Las versiones anteriores de la app no conocen la nueva
+agenda; utiliza la versión 4 para editarla o recuperar sus respaldos.
+PRIVACIDAD.html incluye los nuevos tratamientos de datos. Completa tus datos
+reales de contacto antes de distribución pública; no se inventó un responsable.
+
+PRUEBAS
+Consulta COMPROBACIONES.txt. Se probó el código en navegador con almacenamiento,
+OAuth, Drive y Calendar SIMULADOS. No se accedió a tu cuenta real. La instalación,
+el permiso extra de Calendar y la entrega de avisos en teléfonos físicos deben
+comprobarse después de publicar. La consulta general se probó con respuesta
+simulada del proveedor; su disponibilidad real depende de Wikcionario.

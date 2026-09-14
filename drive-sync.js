@@ -76,6 +76,8 @@
     'Tus notas se sincronizan directamente con TU Google Drive, en la carpeta MAUZI NOTE. No se envían al Drive del creador de la app.');
     $('migrateLocalBtn').classList.toggle('hidden',state.local);refreshStatus();}
   function authMessage(message,error=false){txt($('authMessage'),message);$('authMessage').dataset.state=error?'error':'info';}
+  function moduleAccount(){return state?{key:state.key,uid:state.uid,email:state.email,local:!!state.local,authorized:validToken()&&navigator.onLine}:null;}
+  function moduleBridge(){const c=context();return {account:moduleAccount(),check:()=>assertContext(c),request:(url,options)=>driveFetch(url,options,c),folder:()=>getFolder(c)};}
   function refreshStatus(){
     let message='Falta conectar la app con Google',kind='pending';
     if(state?.local)message='Solo en este teléfono · sin copia en Drive';
@@ -87,13 +89,25 @@
     else if(flushing||state.queue.length)message='Guardada en el teléfono · sincronizando con tu Drive…';
     else if(state.lastScanAt){message='Guardado en tu Google Drive ✓';kind='synced';}
     else message='Conectando con tu Google Drive…';
-    txt($('cloudStatusChip'),message);$('cloudStatusChip').dataset.state=kind;
+    // The header contains only a light. Detailed messages live inside Mi cuenta.
+    const account=$('accountBtn');
+    if(account){
+      let indicator='offline';
+      if(cloudError) indicator='error';
+      else if(authPending) indicator='syncing';
+      else if(navigator.onLine && validToken()) indicator=state?.lastScanAt?'online':'syncing';
+      account.dataset.driveState=indicator;
+      const label=indicator==='online'?'Conectado a Google Drive':indicator==='syncing'?'Conectando con Google Drive':indicator==='error'?'Revisar sincronización':'Sin conexión activa a Google Drive';
+      account.setAttribute('aria-label','Mi cuenta y respaldo. '+label);
+      account.title='Mi cuenta y respaldo';
+    }
     txt($('accountSyncStatus'),message+(state?.lastSyncedAt?'\nÚltima confirmación: '+new Date(state.lastSyncedAt).toLocaleString('es-GT'):''));$('accountSyncStatus').dataset.state=kind;
     txt($('syncNowBtn'),validToken()?'Sincronizar ahora':'Conectar Google');
     $('syncNowBtn').disabled=!configured||authPending;
     txt($('googleAccountBtn'),'Cambiar cuenta Google');$('googleAccountBtn').disabled=!configured||authPending;
     $('driveBackupBtn').disabled=!state||state.local||authPending;
     $('driveRestoreBtn').disabled=!state||state.local||authPending;
+    window.dispatchEvent(new CustomEvent('mauzi:cloud-state',{detail:moduleAccount()}));
   }
   function messageFor(e){
     if(e?.name==='AbortError')return 'La conexión se interrumpió. Las notas pendientes siguen en el teléfono.';
@@ -315,13 +329,13 @@
   async function importPayload(data){
     if(!state)throw new Error('Abre una cuenta primero.');
     if(!Array.isArray(data?.notes)||!Array.isArray(data.categories))throw new Error('El respaldo no tiene el formato esperado.');
-    const ns=[...data.notes,...(data.trash||[])].map(cleanNote),cs=cleanCategories(data.categories);
+    const ns=[...data.notes,...(data.trash||[])].map(cleanNote),cs=cleanCategories(data.categories),idMap={};
     if(ns.length>10000)throw new Error('La copia contiene demasiadas notas para importarla de una sola vez.');
     await mutate(s=>{
       const cats=clone(s.categories),mapping=new Map();for(const cat of cs){const eq=cats.find(c=>c.name===cat.name&&c.color===cat.color);if(eq){mapping.set(cat.id,eq.id);continue;}const old=cat.id;if(cats.some(c=>c.id===cat.id))cat.id=id();mapping.set(old,cat.id);cats.push(cat);}
       if(cats.length>200)throw new Error('La copia contiene demasiadas categorías.');if(JSON.stringify(cats)!==JSON.stringify(s.categories))addCategories(s,cats);
-      for(const n of ns){n.categoryId=mapping.get(n.categoryId)||s.categories[0].id;if(Object.values(s.notes).some(x=>x.title===n.title&&x.contentHtml===n.contentHtml&&x.bgColor===n.bgColor&&x.deleted===n.deleted))continue;if(s.notes[n.id])n.id=id();addOperation(s,n,'');}
-    });scheduleFlush();
+      for(const n of ns){const original=n.id;n.categoryId=mapping.get(n.categoryId)||s.categories[0].id;const same=Object.values(s.notes).find(x=>x.title===n.title&&x.contentHtml===n.contentHtml&&x.bgColor===n.bgColor&&x.deleted===n.deleted);if(same){idMap[original]=same.id;continue;}if(s.notes[n.id])n.id=id();idMap[original]=n.id;addOperation(s,n,'');}
+    });scheduleFlush();return {idMap};
   }
   async function oldWorkspaces(){
     // Never create an empty old database just to look for a previous installation.
@@ -361,13 +375,12 @@
   $('localOnlyBtn').addEventListener('click',localOnly);
   $('googleAccountBtn').addEventListener('click',()=>login({choose:true}));
   $('syncNowBtn').addEventListener('click',()=>{cloudError='';if(!validToken())login();else scheduleFlush(0);refreshStatus();});
-  $('cloudStatusChip').addEventListener('click',()=>A.open('accountModal'));
   $('migrateLocalBtn').addEventListener('click',()=>migrate().catch(e=>A.toast(messageFor(e))));
   $('openTrashBtn').addEventListener('click',()=>showTrash().catch(e=>A.toast(messageFor(e))));
   $('historyNoteBtn').addEventListener('click',()=>showHistory().catch(e=>A.toast(messageFor(e))));
   $('driveBackupBtn').addEventListener('click',openDriveFolder);
   $('driveRestoreBtn').addEventListener('click',()=>showAllHistory().catch(e=>A.toast(messageFor(e))));
-  window.MauziCloud={save,login,logout,importPayload,beginEdit(nid){editorBase.clear();if(nid)editorBase.set(nid,state?.notes[nid]?.rev||'');},getExport:()=>state?{notes:visibleNotes(),categories:clone(state.categories),trash:Object.values(state.notes).filter(n=>n.deleted).map(cleanNote)}:null};
+  window.MauziCloud={save,login,logout,importPayload,account:moduleAccount,moduleBridge,beginEdit(nid){editorBase.clear();if(nid)editorBase.set(nid,state?.notes[nid]?.rev||'');},getExport:()=>state?{notes:visibleNotes(),categories:clone(state.categories),trash:Object.values(state.notes).filter(n=>n.deleted).map(cleanNote),modules:window.MauziModules?.exportData()||null}:null};
   (async()=>{try{
     await openStorage();let key='';try{key=localStorage.getItem(ACTIVE_KEY)||'';}catch(_){}
     if(key){const cached=await getWorkspace(key);if(cached){state=cached;applyState();}}

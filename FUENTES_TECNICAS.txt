@@ -1,0 +1,17 @@
+FUENTES Y ALCANCE
+Calendario secundario y permiso limitado:
+https://developers.google.com/workspace/calendar/api/v3/reference/calendars/insert
+Eventos y recordatorios:
+https://developers.google.com/workspace/calendar/api/v3/reference/events/insert
+Notificaciones del navegador:
+https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API
+API CORS de MediaWiki (Wikcionario):
+https://www.mediawiki.org/wiki/API:Cross-site_requests
+Permiso de Drive para archivos de la aplicación:
+https://developers.google.com/workspace/drive/api/guides/api-specific-auth
+
+El glosario: las fuentes por entrada están en lexico-biblico.json y en el cuadro
+emergente. Las explicaciones bíblicas son síntesis breves, no citas textuales.
+Las acepciones de Wikcionario se atribuyen en el cuadro bajo CC BY-SA 4.0.
+El texto de las Biblias se conservó del paquete aportado, sin descargar nuevas
+copias ni cambiar la división de sus versículos.

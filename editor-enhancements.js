@@ -1,10 +1,10 @@
-/* MAUZI NOTE 3.1 — texto enriquecido y renglones vinculados al texto real.
+/* MAUZI NOTE 3.3 — texto enriquecido y renglones vinculados al texto real.
    Sin bibliotecas remotas. No se solicita acceso general al portapapeles.
    Solo se procesa lo entregado por el navegador durante el gesto de pegar. */
 (() => {
   'use strict';
-  const DROP = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','TEXTAREA','SELECT','IMG','SVG','MATH','VIDEO','AUDIO','LINK','META','BASE','TEMPLATE','NOSCRIPT','CANVAS']);
-  const KEEP = new Set(['DIV','P','BR','B','STRONG','I','EM','U','S','STRIKE','DEL','INS','UL','OL','LI','H1','H2','H3','H4','H5','H6','SPAN','FONT','SUB','SUP','BLOCKQUOTE','PRE','CODE','A','TABLE','THEAD','TBODY','TFOOT','TR','TD','TH','CAPTION','COLGROUP','COL','HR']);
+  const DROP = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','FORM','INPUT','BUTTON','TEXTAREA','SELECT','SVG','MATH','VIDEO','AUDIO','LINK','META','BASE','TEMPLATE','NOSCRIPT','CANVAS']);
+  const KEEP = new Set(['IMG','DIV','P','BR','B','STRONG','I','EM','U','S','STRIKE','DEL','INS','UL','OL','LI','H1','H2','H3','H4','H5','H6','SPAN','FONT','SUB','SUP','BLOCKQUOTE','PRE','CODE','A','TABLE','THEAD','TBODY','TFOOT','TR','TD','TH','CAPTION','COLGROUP','COL','HR']);
   const LIST = new Set(['decimal','decimal-leading-zero','upper-roman','lower-roman','upper-alpha','lower-alpha','upper-latin','lower-latin','disc','circle','square','none']);
   const STYLE = ['color','background-color','font-weight','font-style','font-family','font-size','text-decoration','text-decoration-line','text-decoration-color','text-align','vertical-align','line-height','letter-spacing','white-space','list-style-type','list-style-position','margin-top','margin-bottom','margin-left','margin-right','padding-top','padding-bottom','padding-left','padding-right','text-indent','border-collapse','border-spacing','border-top','border-bottom','border-left','border-right','width','max-width'];
   const BLOCKS = new Set(['DIV','P','H1','H2','H3','H4','H5','H6','BLOCKQUOTE','PRE','LI','TR','UL','OL','TABLE']);
@@ -98,6 +98,19 @@
       }
     }
   }
+  // Only embedded raster pictures may survive persistence. Never retain remote
+  // tracking URLs, SVG, scripts, file: paths or temporary blob: references.
+  function safeImageSource(value){
+    const s=String(value||'');
+    if(s.length>1900000 || !/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/.test(s))return '';
+    try{
+      const split=s.indexOf(','),head=atob(s.slice(split+1,split+1+32));
+      const good=s.startsWith('data:image/png;')?head.startsWith('\x89PNG\r\n\x1a\n'):
+        s.startsWith('data:image/jpeg;')?head.charCodeAt(0)===255&&head.charCodeAt(1)===216:
+        s.startsWith('data:image/webp;')?head.startsWith('RIFF')&&head.slice(8,12)==='WEBP':head.startsWith('GIF8');
+      return good?s:'';
+    }catch(_){return '';}
+  }
   function sanitize(raw='',clipboard=false){
     raw=String(raw||'');if(raw.length>3000000)throw new Error('El texto es demasiado extenso. Divídelo en varias notas.');
     const doc=new DOMParser().parseFromString(raw.replace(/<!--\[if !supportLists\]>([\s\S]*?)<!\[endif\]-->/gi,'$1'),'text/html');
@@ -111,6 +124,14 @@
       let tag=node.tagName;
       if(!KEEP.has(tag)){for(const child of node.childNodes)convert(child,parent);return;}
       if(tag==='FONT')tag='SPAN';if(tag==='STRIKE')tag='S';
+      if(tag==='IMG'){
+        const src=safeImageSource(node.getAttribute('src'));
+        if(!src)return;
+        const image=document.createElement('img');image.src=src;
+        image.className='note-inline-image';image.alt=String(node.getAttribute('alt')||'Imagen adjunta').slice(0,180);
+        for(const key of ['width','height']){const v=Number(node.getAttribute(key));if(Number.isInteger(v)&&v>0&&v<=12000)image.setAttribute(key,String(v));}
+        image.setAttribute('draggable','false');parent.appendChild(image);return;
+      }
       const e=document.createElement(tag.toLowerCase());copyStyles(node,e);
       if(node.tagName==='FONT'){
         if(node.hasAttribute('color')&&!e.style.color)e.style.color=safeValue('color',node.getAttribute('color'));
@@ -143,7 +164,7 @@
   }
   function plain(raw=''){
     const host=document.createElement('div');host.innerHTML=raw;let value='';
-    function walk(n){if(n.nodeType===Node.TEXT_NODE){value+=n.nodeValue;return;}if(n.nodeType!==1)return;if(n.tagName==='BR'){value+='\n';return;}const b=BLOCKS.has(n.tagName);if(b&&value&&!value.endsWith('\n'))value+='\n';for(const c of n.childNodes)walk(c);if(b&&!value.endsWith('\n'))value+='\n';}
+    function walk(n){if(n.nodeType===Node.TEXT_NODE){value+=n.nodeValue;return;}if(n.nodeType!==1)return;if(n.tagName==='IMG'){value+='\n[Imagen: '+(n.getAttribute('alt')||'adjunta')+']\n';return;}if(n.tagName==='BR'){value+='\n';return;}const b=BLOCKS.has(n.tagName);if(b&&value&&!value.endsWith('\n'))value+='\n';for(const c of n.childNodes)walk(c);if(b&&!value.endsWith('\n'))value+='\n';}
     walk(host);return value.replace(/\u00a0/g,' ').trim();
   }
 
@@ -160,7 +181,7 @@
       const style=getComputedStyle(root),padT=parseFloat(style.paddingTop)||0,padB=parseFloat(style.paddingBottom)||0;
       const baseLine=parseFloat(style.lineHeight)||parseFloat(style.fontSize)*1.65;
       const fragments=[],exclusions=[],walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n,nodes=0;
-      for(const table of root.querySelectorAll('table,pre')){const r=table.getBoundingClientRect();exclusions.push({top:r.top-rect.top,bottom:r.bottom-rect.top});}
+      for(const table of root.querySelectorAll('table,pre,img')){const r=table.getBoundingClientRect();exclusions.push({top:r.top-rect.top,bottom:r.bottom-rect.top});}
       while((n=walker.nextNode())){
         if(++nodes>40000)break;
         if(!n.nodeValue.trim()||n.parentElement.closest('table,pre'))continue;
@@ -168,7 +189,7 @@
         for(const r of range.getClientRects())if(r.width>0&&r.height>0)fragments.push({top:r.top-rect.top,bottom:r.bottom-rect.top});
       }
       // Blank paragraphs are writable rows too.
-      for(const e of root.querySelectorAll('p,div,li'))if(!e.textContent.trim()&&!e.querySelector('p,div,li,table')){const r=e.getBoundingClientRect(),s=getComputedStyle(e);if(r.height){const font=parseFloat(s.fontSize)||18,lh=parseFloat(s.lineHeight)||baseLine;fragments.push({top:r.top-rect.top+(lh-font)/2,bottom:r.top-rect.top+(lh+font)/2});}}
+      for(const e of root.querySelectorAll('p,div,li'))if(!e.textContent.trim()&&!e.querySelector('p,div,li,table,img')){const r=e.getBoundingClientRect(),s=getComputedStyle(e);if(r.height){const font=parseFloat(s.fontSize)||18,lh=parseFloat(s.lineHeight)||baseLine;fragments.push({top:r.top-rect.top+(lh-font)/2,bottom:r.top-rect.top+(lh+font)/2});}}
       fragments.sort((a,b)=>a.top-b.top||b.bottom-a.bottom);
       const rows=[];
       for(const f of fragments){const prev=rows[rows.length-1];if(prev&&Math.min(prev.bottom,f.bottom)-Math.max(prev.top,f.top)>Math.min(prev.bottom-prev.top,f.bottom-f.top)*.22){prev.top=Math.min(prev.top,f.top);prev.bottom=Math.max(prev.bottom,f.bottom);}else rows.push({...f});}
@@ -183,7 +204,8 @@
       }
       if(!rows.length)prevY=padT+(baseLine+(parseFloat(style.fontSize)||18))/2+2-baseLine;
       for(let y=prevY+baseLine;y<height-2;y+=baseLine)if(y>padT&&!blocked(y-2,y+2))ys.push(y);
-      const path=ys.slice(0,20000).map(y=>'M0 '+(Math.round(y*2)/2)+'H'+width).join('');
+      const left=parseFloat(style.paddingLeft)||0,right=width-(parseFloat(style.paddingRight)||0);
+      const path=ys.slice(0,20000).map(y=>'M'+left+' '+(Math.round(y*2)/2)+'H'+right).join('');
       const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'"><path d="'+path+'" fill="none" stroke="#b3914b" stroke-opacity=".23" stroke-width=".8"/></svg>';
       const image='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
       if(image!==lastImage){lastImage=image;root.style.setProperty('--note-rules',image);}
@@ -195,6 +217,7 @@
     window.addEventListener('resize',request,{passive:true});
     window.visualViewport?.addEventListener('resize',request,{passive:true});
     root.addEventListener('input',request);
+    root.addEventListener('load',request,true);
     document.fonts?.ready.then(request);request();return {refresh:request};
   }
   function bind(){
@@ -202,6 +225,7 @@
     const paper=[paperEngine(editor),paperEngine(reader)];
     for(const id of ['noteModal','noteReadModal'])new MutationObserver(()=>paper.forEach(p=>p.refresh())).observe(document.getElementById(id),{attributes:true,attributeFilter:['class']});
     editor.addEventListener('paste',event=>{
+      if(event.defaultPrevented)return;
       const data=event.clipboardData;if(!data)return;
       const html=data.getData('text/html'),text=data.getData('text/plain');if(!html&&!text)return;
       event.preventDefault();
@@ -212,7 +236,7 @@
         let inserted=false;
         // An empty editor can retain a browser's previous H2/bold typing state.
         // Insert a clean fragment at the root in that case, rather than inheriting it.
-        if(!editor.textContent.trim()){
+        if(!editor.textContent.trim()&&!editor.querySelector('img')){
           const r=document.createRange();r.selectNodeContents(editor);r.deleteContents();
           const f=r.createContextualFragment(fragment),last=f.lastChild;r.insertNode(f);
           if(last){r.setStartAfter(last);r.collapse(true);selection.removeAllRanges();selection.addRange(r);}inserted=true;
@@ -227,6 +251,6 @@
     reader.addEventListener('click',e=>{const a=e.target.closest('a');if(a&&!a.getAttribute('href'))e.preventDefault();});
     window.MauziRich.refresh=()=>paper.forEach(p=>p.refresh());
   }
-  window.MauziRich={sanitize,plain,refresh:()=>{}};
+  window.MauziRich={sanitize,plain,safeImageSource,refresh:()=>{}};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
