@@ -39,7 +39,7 @@
     const seq=++sequence,scroll=paper.scrollTop;
     entering=true;setLayout(true);
     root.style.setProperty('--focus-bg',paper.style.getPropertyValue('--read-bg')||'#f8f5ed');
-    try{history.pushState({...history.state,mauziReaderFocus:true},'');historyEntry=true;}catch(_){}
+    if(!window.MauziNavigation){try{history.pushState({...history.state,mauziReaderFocus:true},'');historyEntry=true;}catch(_){}}
     const target=root;
     // Stay within the user gesture. Awaiting work before this call blocks it on mobile.
     try{
@@ -343,9 +343,9 @@
     if(busy)return;
     open=true;const seq=++generation;sourceImage=img;returnFocus=document.activeElement;
     large.src=src;large.alt=img.alt||'Imagen de la nota';fit();
-    $('deletePreviewImageBtn').classList.toggle('hidden',!editor.contains(img));
+    $('deletePreviewImageBtn').classList.remove('hidden');
     viewer.classList.remove('hidden');document.body.classList.add('has-image-viewer');
-    try{history.pushState({...history.state,mauziImagePreview:true},'');pushed=true;}catch(_){}
+    if(!window.MauziNavigation){try{history.pushState({...history.state,mauziImagePreview:true},'');pushed=true;}catch(_){}}
     // Progressive fullscreen. CSS fallback covers the entire visible app on iOS.
     if(!(document.fullscreenElement||document.webkitFullscreenElement)){
       const fn=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;
@@ -366,10 +366,22 @@
   $('imageZoomIn').addEventListener('click',()=>zoom(scale*1.4));
   $('imageZoomOut').addEventListener('click',()=>zoom(scale/1.4));
   $('imageFit').addEventListener('click',fit);
-  $('deletePreviewImageBtn').addEventListener('click',()=>{
-    const img=sourceImage;if(!img||!editor.contains(img))return;
-    if(!confirm('¿Quitar esta imagen de la nota? El cambio se aplica al guardar.'))return;
-    exitImage();img.remove();editor.dispatchEvent(new Event('input',{bubbles:true}));window.MauziRich.refresh();
+  $('deletePreviewImageBtn').addEventListener('click',async()=>{
+    const img=sourceImage;if(!img)return;
+    if(!confirm('¿Eliminar esta imagen de la nota? Al guardar y sincronizar se quitará también de las versiones administradas por MAUZI NOTE en tu Drive. Las copias exportadas aparte no cambian.'))return;
+    if(editor.contains(img)){
+      exitImage();img.remove();editor.dispatchEvent(new Event('input',{bubbles:true}));window.MauziRich.refresh();
+      toast('Imagen quitada. Guarda la nota para sincronizar la eliminación.');
+    }else{
+      const noteId=A.currentReadId(),source=img.getAttribute('src');
+      const note=A.note(noteId);if(!note)return;
+      const box=document.createElement('div');box.innerHTML=note.contentHtml||A.oldText(note.content||'');
+      const found=[...box.querySelectorAll('img')].find(x=>x.getAttribute('src')===source);if(!found)return;
+      found.remove();const button=$('deletePreviewImageBtn');button.disabled=true;
+      try{await A.updateNote(noteId,{contentHtml:box.innerHTML});exitImage();toast('Imagen eliminada. La sincronización completará el cambio en Drive.');}
+      catch(e){toast(e.message||'No se pudo guardar. La imagen no se eliminó.');}
+      finally{button.disabled=false;}
+    }
   });
   document.addEventListener('keydown',e=>{
     if(!open)return;

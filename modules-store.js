@@ -70,7 +70,13 @@
  }
  async function importData(payload,{idMap={}}={}){if(!payload)return;await ready();if(payload.format!==MARK||!Array.isArray(payload.records))throw new Error('Respaldo de favoritos/agenda no válido.');
   const rows=payload.records.map(validate);if(rows.length>10000)throw new Error('El respaldo tiene demasiados actividades.');for(const r of rows){if(r.deleted)continue;const existing=get(r.id);if(existing)continue;if(r.kind==='settings'&&payload.owner!==active.uid)continue;if(r.kind==='calendar'){r.payload.noteId=idMap[r.payload.noteId]||r.payload.noteId;if(payload.owner!==active.uid)r.payload.google=null;}await save(r.kind,r.id,r.payload);}}
- window.MauziModules={ready,list,get,save,remove,sync,account:()=>active?clone(active):null,isSyncing:()=>busy, syncState:()=>({lastSync:data?.lastSync||0,pending:data?.queue.length||0,error:data?.error||""}),
+ async function exportForKey(key){
+  if(typeof key!=='string'||!key.startsWith('local:'))return null;
+  if(key===active?.key)await ready();
+  const source=await read(key);if(!source)return null;
+  return {format:MARK,owner:'local',records:Object.values(source.records||{}).map(clone)};
+ }
+ window.MauziModules={ready,list,get,save,remove,sync,exportForKey,account:()=>active?clone(active):null,isSyncing:()=>busy, syncState:()=>({lastSync:data?.lastSync||0,pending:data?.queue.length||0,error:data?.error||""}),
   exportData:()=>data?{format:MARK,owner:active.uid,records:Object.values(data.records).map(clone)}:null,importData,status,
   _validate:validate};
  const accountModal=document.getElementById('accountModal');if(accountModal){const e=document.createElement('p');e.id='modulesSyncStatus';e.className='module-status';accountModal.querySelector('.sheet').append(e);}

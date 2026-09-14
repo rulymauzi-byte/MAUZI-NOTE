@@ -1,0 +1,125 @@
+/* MAUZI NOTE 4.2 — adaptive workspace; a full desktop, not a phone frame. */
+:root{--studio-bar:74px;--studio-rail:90px;--studio-list:340px;--studio-gap:14px;}
+#mainApp{width:100%;max-width:none;border:0;min-height:100dvh;}
+#mainApp .module-nav{width:100%;}
+#noteModal .note-editor-sheet{width:100%!important;max-width:none!important;height:var(--app-vh,100dvh)!important;max-height:var(--app-vh,100dvh)!important;margin:0!important;border-radius:0!important;overflow:hidden!important;padding:8px 12px 0!important;}
+#noteModal{align-items:stretch!important;padding:0!important;}
+#noteEditorScroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;scroll-padding:70px 0 40px;}
+#noteModal .note-paper-wrap{min-height:calc(var(--app-vh,100dvh) - 105px);margin:0;border-radius:12px 12px 0 0;}
+#noteModal #noteContent.rich-editor{min-height:calc(var(--app-vh,100dvh) - 130px)!important;}
+#noteModal .note-editor-head{gap:4px;flex:0 0 auto;}
+#noteModal .note-editor-head .reader-tool{flex-basis:35px;width:35px;}
+#noteTitle.inline-note-title{font-size:16px;}
+#notePropertiesButton{position:relative;}
+#notePropertiesButton::after{content:"";position:absolute;right:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--note-category-color,#dcb264);border:1px solid #6a767d;}
+.studio-popover{position:fixed;z-index:235;width:min(355px,calc(100vw - 20px));max-height:calc(var(--app-vh,100dvh) - 80px);overflow:auto;background:#101f2e;color:#f8f1de;border:1px solid #a68143;border-radius:15px;padding:15px;box-shadow:0 12px 40px #0007;}
+.studio-popover[hidden]{display:none!important;}
+.studio-popover-head{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #d7b57430;margin-bottom:12px;}
+.studio-popover-head strong{flex:1;font-size:15px;}
+.studio-popover .popup-close{height:30px;width:30px;flex-basis:30px;border:0;border-radius:8px;background:#294259;color:#efd6a2;font-size:21px;}
+.studio-popover .note-options-row{display:block;margin:0;padding:0;}
+.studio-popover .note-option-block{width:100%;}
+.studio-popover .note-bg-palette{display:flex;flex-wrap:wrap;gap:9px;padding:9px 0;}
+.studio-popover .bg-swatch{width:31px;height:31px;flex:0 0 31px;margin:0;}
+.studio-popover label{margin-top:11px;}
+.studio-popover #noteCategory{font-size:16px;padding:10px 12px;}
+.studio-popover .danger-btn{font-size:12px;margin-top:15px;padding:11px;}
+#accountBtn[data-attention="true"]::after{background:#e3a644;box-shadow:0 0 0 0 #e3a64480;animation:google-pulse 2s ease-in-out infinite;}
+#syncNowBtn.needs-google{position:relative;padding-right:34px;}
+#syncNowBtn.needs-google::after{content:"";position:absolute;right:14px;top:calc(50% - 5px);width:10px;height:10px;border-radius:50%;background:#ffdf88;animation:google-pulse 2s ease-in-out infinite;}
+@keyframes google-pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 #e3a64465}55%{opacity:.48;box-shadow:0 0 0 6px #e3a64400}}
+.google-benefits{border:1px solid #466680;border-left:3px solid #df9b3d;border-radius:13px;background:linear-gradient(135deg,#173957,#112331);padding:14px 16px;margin:14px 0;}
+.google-benefits h3{font-size:16px;color:#efcb80;margin:0 0 8px;}
+.google-benefits p{font-size:13px;line-height:1.55;margin:6px 0;color:#e1e9ee;}
+.google-benefits small{display:block;color:#b3c4d1;font-size:11px;line-height:1.6;margin-top:9px;}
+#navigationNotice{position:fixed;z-index:310;bottom:calc(88px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:calc(100vw - 26px);padding:12px 17px;border:1px solid #c09545;border-radius:12px;background:#102f48;color:#f8e9ca;box-shadow:0 7px 28px #0005;font-size:14px;text-align:center;pointer-events:none;}
+#navigationNotice[hidden]{display:none!important;}
+#noteReadModal #readNoteContent,#noteContent.rich-editor,#libraryText{-webkit-user-select:text;user-select:text;}
+#dictionarySources summary{cursor:pointer;font-size:10px;color:#dcbd7d;}
+#dictionarySources .source-citation{font-size:10px;margin-top:5px;color:#bac9d4;line-height:1.5;}
+#dictionaryContext:empty{display:none;}
+.dictionary-popover{width:min(300px,calc(100vw - 24px));padding:12px 14px;}
+.dictionary-popover #dictionaryMeaning{margin-bottom:4px;font-size:15px;}
+.dictionary-popover::after{content:"";position:absolute;left:var(--arrow-left,30px);bottom:-6px;width:10px;height:10px;transform:rotate(45deg);background:#102c46;border-right:1px solid #d2a550;border-bottom:1px solid #d2a550;}
+.dictionary-popover[data-placement="below"]::after{top:-6px;bottom:auto;transform:rotate(225deg);}
+@media(min-width:720px) and (max-width:1099px){
+ #mainApp>.content{padding:16px 28px 110px;}#mainApp .notes.view-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+ #mainApp .notes.view-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+ #mainApp>.module-section{padding:22px 30px 110px;}#mainApp .topbar .app-name{font-size:20px;}
+ #noteModal .note-editor-sheet{padding-inline:24px!important;}#noteModal #noteContent.rich-editor{padding-inline:36px!important;}
+}
+@media(min-width:1100px){
+ html,body{overflow:hidden;height:100%;}body{background:#07111c;}
+ #mainApp{height:100dvh;padding:var(--studio-bar) 0 0 var(--studio-rail)!important;min-height:0;}
+ #mainApp>header{position:fixed;inset:0 0 auto 0;z-index:90;height:var(--studio-bar);padding:13px 24px;display:flex;align-items:center;gap:30px;}
+ #mainApp .topbar{width:100%;height:100%;gap:18px;}
+ #mainApp .app-logo{width:42px;height:42px;flex-basis:42px;border-radius:11px;}
+ #mainApp .hello .app-name{font-size:21px;letter-spacing:1.5px;}
+ #mainApp .app-brand{gap:13px;}
+ #mainApp .topbar-actions{gap:10px;}
+ #mainApp .compact-icon,#mainApp #accountBtn{width:43px;height:43px;flex-basis:43px;}
+ #mainApp .compact-search:not(.hidden){position:absolute;top:65px;right:24px;width:360px;padding:10px;background:#0b2034;border:1px solid #4f6070;border-radius:13px;box-shadow:0 12px 30px #0005;}
+ #mainApp .module-nav{position:fixed;left:0;top:var(--studio-bar);bottom:0;width:var(--studio-rail);transform:none;flex-flow:column;justify-content:flex-start;gap:12px;padding:22px 10px;border-top:0;border-right:1px solid #bc883e45;border-radius:0;z-index:65;}
+ #mainApp .module-nav button{flex:0 0 75px;flex-direction:column;gap:8px;padding:9px 4px;width:68px;height:75px;font-size:12px;}
+ #mainApp .module-nav button svg{width:26px;height:26px;}
+ #mainApp>.content{padding:24px 28px 100px;height:calc(100dvh - var(--studio-bar));overflow-y:auto;}
+ #mainApp .notes{margin:0;align-items:start;}
+ #mainApp .notes.view-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:15px;}
+ #mainApp .notes.view-cards{grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;}
+ #mainApp .notes.view-list{grid-template-columns:1fr;gap:5px;}
+ #mainApp .notes.view-grid .note-card{min-height:92px;padding:14px 16px;}
+ #mainApp .notes.view-cards .note-card{min-height:66px;padding:13px 16px;}
+ #mainApp .notes.view-list .note-card{min-height:44px;padding:8px 14px;}
+ #mainApp .notes .note-title-only{font-size:15px!important;line-height:1.4!important;}
+ #mainApp .notes .menu-btn{height:30px;width:30px;font-size:15px;}
+ #mainApp .fab{right:30px!important;bottom:25px!important;width:56px;height:56px;}
+ #mainApp>.module-section{height:calc(100dvh - var(--studio-bar));min-height:0;overflow-y:auto;padding:26px 40px 45px;}
+ #mainApp #bibleSection{display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto auto auto 1fr;gap:14px 28px;align-items:start;}
+ #bibleSection .module-heading{grid-column:1;grid-row:1;}
+ #libraryVersions{grid-column:1;grid-row:2;}#bibleSelectors{grid-column:1;grid-row:3;}#libraryReferenceForm{grid-column:1;grid-row:4;}
+ #libraryReaderHeader{grid-column:2;grid-row:1;margin:0;}
+ #libraryText{grid-column:2;grid-row:2/5;height:100%;max-height:calc(100dvh - 203px);overflow:auto;padding:24px 34px;}
+ #libraryFavorites{grid-column:2;grid-row:2/5;overflow:auto;max-height:calc(100dvh - 210px);}
+ #mainApp #bibleSection.hidden{display:none!important;}
+ #mainApp #agendaSection{display:grid;grid-template-columns:minmax(460px,1fr) minmax(300px,.8fr);align-content:start;gap:0 35px;}
+ #agendaSection .module-heading{grid-column:1/-1;}#agendaSection .month-nav,#agendaSection .calendar-week,#agendaGrid{grid-column:1;}
+ #agendaSection .calendar-day{height:64px;font-size:16px;}
+ #agendaSection .agenda-date{grid-column:2;grid-row:2;margin-top:0;}#agendaEvents{grid-column:2;grid-row:3/6;max-height:calc(100dvh - 260px);overflow:auto;}
+ #agendaSection .agenda-help{grid-column:1/-1;}
+ #mainApp #agendaSection.hidden{display:none!important;}
+ body.desktop-note-open #mainApp>.content{width:var(--studio-list);padding:18px 12px 90px;}
+ body.desktop-note-open #mainApp .notes:is(.view-cards,.view-grid,.view-list){grid-template-columns:1fr;gap:8px;}
+ body.desktop-note-open #mainApp .notes .note-card{min-height:51px;padding:10px 12px;}
+ body.desktop-note-open #mainApp .fab{left:110px!important;right:auto!important;bottom:24px!important;}
+ body.desktop-note-open #mainApp .note-card.is-selected{outline:2px solid #dda94f;outline-offset:1px;}
+ #noteReadModal:not(.hidden),#noteModal:not(.hidden){inset:calc(var(--studio-bar) + 14px) 18px 18px calc(var(--studio-rail) + var(--studio-list))!important;width:auto!important;height:auto!important;max-height:none!important;min-height:0!important;background:transparent!important;backdrop-filter:none!important;z-index:60;align-items:stretch!important;}
+ #noteReadModal .note-read-sheet,#noteModal .note-editor-sheet{width:100%!important;height:100%!important;max-height:100%!important;border:1px solid #52708c66!important;border-radius:15px!important;box-shadow:0 12px 40px #0005!important;}
+ #noteModal .note-editor-sheet{padding:0!important;background:#0b1c2c;}
+ #noteReadModal .sheet-head,#noteModal .note-editor-head{min-height:64px!important;padding:10px 14px!important;gap:8px!important;background:linear-gradient(120deg,#164168,#102737);margin:0;}
+ #noteReadModal .sheet-head #readHeaderTitle,#noteTitle.inline-note-title{font-size:18px!important;}
+ #noteReadModal .sheet-head :is(.reader-tool,.reader-focus-enter),#noteModal .note-editor-head .reader-tool{width:38px!important;height:39px!important;flex-basis:38px!important;}
+ #noteModal #formatModeHint{padding:8px 18px;margin:0;}
+ #noteModal #noteEditorScroll{background:#081622;padding:16px 20px 0;}
+ #noteModal .editor-toolbar{top:-16px;padding:8px;margin:0 -4px 10px;}
+ #noteModal .note-paper-wrap{min-height:calc(100dvh - 225px);border-radius:10px 10px 0 0;}
+ #noteModal #noteContent.rich-editor{padding:34px 42px 90px!important;min-height:calc(100dvh - 240px)!important;}
+ #noteReadModal #readNotePaper{padding:30px 42px 40px!important;}
+ #noteReadModal #readNoteTitle{font-size:27px!important;margin-bottom:21px!important;}
+ #noteReadModal #readNoteContent{font-size:19px!important;line-height:1.85!important;}
+ .modal-backdrop:not(#noteModal):not(#noteReadModal){z-index:180;align-items:center;}
+ .modal-backdrop:not(#noteModal):not(#noteReadModal)>.sheet{border-radius:18px;max-height:calc(100dvh - 60px)!important;}
+ #accountModal .sheet{width:min(720px,95vw);max-width:720px;}
+ html.mauzi-note-focus #noteReadModal:not(.hidden){inset:0!important;height:var(--app-vh,100dvh)!important;width:100%!important;z-index:160;}
+ html.mauzi-note-focus #noteReadModal .note-read-sheet{border:0!important;border-radius:0!important;}
+ html.mauzi-note-focus #noteReadModal #readNotePaper{padding:56px max(8vw,32px) 40px!important;}
+ #navigationNotice{bottom:25px;}
+}
+@media(max-width:380px){#noteModal .note-editor-head .reader-tool{flex-basis:31px;width:31px;padding:7px;}#noteTitle.inline-note-title{font-size:14px;}#noteModal .note-editor-sheet{padding-inline:8px!important;}#noteReadModal .sheet-head :is(.reader-tool,.reader-focus-enter){width:29px!important;flex-basis:29px!important;padding:6px!important;}#noteReadModal .sheet-head{gap:2px!important;}#readHeaderTitle{font-size:13px!important;}}
+@media(prefers-reduced-motion:reduce){#accountBtn::after,#syncNowBtn::after{animation:none!important;}}
+/* Remove legacy centered/fixed mobile-sheet coordinates; the outer viewport owns them. */
+#noteModal .note-editor-sheet,#noteModal.keyboard-open .note-editor-sheet{
+ position:relative!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;transform:none!important;
+}
+@media(min-width:1100px){
+ #noteModal.keyboard-open .note-editor-sheet{height:100%!important;max-height:100%!important;max-width:none!important;padding:0!important;border-radius:15px!important;}
+}

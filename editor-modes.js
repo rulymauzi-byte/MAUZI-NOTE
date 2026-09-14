@@ -71,5 +71,5 @@
   el.addEventListener('click',start);el.addEventListener('keydown',e=>{if(!el.isContentEditable&&(e.key==='Enter'||e.key===' ')){e.preventDefault();start();}else if(el.isContentEditable&&e.key==='Enter'){e.preventDefault();el.blur();}else if(el.isContentEditable&&e.key==='Escape'){el.textContent=old;el.contentEditable='false';el.blur();e.stopPropagation();}});
   el.addEventListener('blur',async()=>{if(!el.isContentEditable||saving)return;const t=el.textContent.trim().slice(0,90),id=A.currentReadId();el.contentEditable='false';if(t===old)return;saving=true;try{await A.renameNote(id,t);A.toast('Título guardado');}catch(e){el.textContent=old;A.toast(e.message);}finally{saving=false;}});
  }
- window.MauziEditorModes={opened,isFormat:()=>mode==='format',restore,apply,markSaved:()=>{baseline=snap();skipGuard=true;},beforeClose:()=>{if(skipGuard){skipGuard=false;return true;}if(baseline&&baseline!==snap())return confirm('Hay cambios sin guardar. ¿Cerrar y descartarlos?');return true;}};
+ window.MauziEditorModes={opened,isFormat:()=>mode==='format',restore,apply,isDirty:()=>!!baseline&&baseline!==snap(),markSaved:()=>{baseline=snap();skipGuard=true;},beforeClose:()=>{if(skipGuard){skipGuard=false;return true;}if(baseline&&baseline!==snap())return confirm('Hay cambios sin guardar. ¿Cerrar y descartarlos?');return true;}};
 })();

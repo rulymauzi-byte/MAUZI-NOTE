@@ -1,0 +1,21 @@
+/* MAUZI NOTE 4.1 — no mandatory sign-in screen. */
+#loginScreen { display:none !important; }
+#appBootNotice{position:fixed;inset:0;z-index:200;display:grid;place-content:center;background:#08111c;color:#d8b16a;font:600 16px/1.5 system-ui,sans-serif;text-align:center;padding:24px;pointer-events:none;}
+#appBootNotice.hidden{display:none;}
+#mainApp[aria-busy="true"] .fab{opacity:.4;}
+#accountModal .sheet{scroll-padding-bottom:24px;}
+#activeEmail{overflow-wrap:anywhere;}
+#authMessage:empty{display:none;}
+#authMessage[data-state="error"]{color:#f0b179;}
+#authMessage[data-state="info"]{color:#adbfd0;}
+#googleActions{grid-template-columns:1fr;}
+#googleActions .primary-btn{font-size:14px;min-height:46px;margin-top:6px;}
+#googleActions .secondary-btn{min-height:40px;}
+.account-local-info{font-size:12px;color:#aebdcc;line-height:1.6;margin:12px 0;}
+.guest-transfer{margin:14px 0;padding:14px;border:1px solid #aa823c;background:linear-gradient(135deg,#102b41,#151917);border-radius:16px;}
+.guest-transfer h3{color:#efc673;font-size:16px;line-height:1.4;margin:0 0 8px;}
+.guest-transfer p{font-size:12px;line-height:1.6;overflow-wrap:anywhere;}
+.guest-transfer .primary-btn{font-size:13px;margin-top:4px;}
+#guestTransferStatus:empty{display:none;}
+#accountBtn[data-local-profile="true"] svg{width:21px;height:21px;display:block;margin:auto;pointer-events:none;}
+#retryLocalStorageBtn{margin-top:12px;}

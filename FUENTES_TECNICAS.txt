@@ -15,3 +15,11 @@ emergente. Las explicaciones bíblicas son síntesis breves, no citas textuales.
 Las acepciones de Wikcionario se atribuyen en el cuadro bajo CC BY-SA 4.0.
 El texto de las Biblias se conservó del paquete aportado, sin descargar nuevas
 copias ni cambiar la división de sus versículos.
+
+Cambios 4.2:
+MDN — navegación y límites de cerrar ventanas
+https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
+https://developer.mozilla.org/en-US/docs/Web/API/Window/close
+Google — gestión y eliminación específica de archivos propios
+https://developers.google.com/workspace/drive/api/guides/delete
+https://developers.google.com/workspace/drive/api/reference/rest/v3/files/delete

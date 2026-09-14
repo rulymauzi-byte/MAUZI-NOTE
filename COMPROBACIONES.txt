@@ -1,67 +1,45 @@
-COMPROBACIONES — MAUZI NOTE 4.0
-==============================
-ENTORNO: navegador Chromium con documento local de prueba. La política administrada
-del navegador no permite navegación de sitios, por lo que se cargó el DOM y se
-simularon explícitamente almacenamiento, OAuth, respuestas Drive/Calendar y el
-proveedor del diccionario. No son pruebas reales con la cuenta del usuario.
-No se deshabilitaron ni alteraron las políticas del navegador.
+MAUZI NOTE 4.2 — COMPROBACIONES EJECUTADAS
+=========================================
+Todos los resultados de red/Google/IndexedDB e historial de navegación se obtuvieron
+con un servidor y almacenamiento SIMULADOS en un contexto de prueba aislado.
+No hay sesión de Google ni datos personales incluidos en este paquete.
 
-El JavaScript de la aplicación se ejecutó en el navegador. Solo el entorno de
-prueba sustituye los servicios externos; esas simulaciones NO se incluyen en la app.
+PASA — DOM y funciones ejecutadas en Chromium (Playwright, renderer aislado):
+- Apertura sin correo y creación/guardado/lectura de notas.
+- Distribuciones 1920×1080, 1440×1000, 820×1180, 390×844 y 320px.
+- Pantalla de PC amplia, lista y editor/lector a la derecha, módulos laterales.
+- Viewport reducido a 320×360 simulando el espacio disponible sobre teclado.
+- Desplegable superior de fondo/categoría; cambio y persistencia en lector/editor.
+- Selección de fe abre automáticamente popup, límite de 12 palabras y cierre.
+- Luz de Google sin cuenta y beneficios dentro del perfil.
+- Atrás desde nota, editor, opciones, cuenta y modo Solo nota.
+- Guardado al volver; fallo de guardado deja el editor y texto visibles.
+- Doble Atrás en raíz y recuperación del guard cuando no hay página precedente.
+- Biblioteca sin conexión: texto integrado, módulos de Biblia y Agenda.
+- Cuenta simulada: sube texto, negritas, lista romana e imagen incorporada.
+- Segundo cliente simulado recibe la imagen; cliente nuevo conserva los datos.
+- Eliminación desde visor de lectura y desde contenido del editor.
+- Se confirma versión saneada antes de eliminar archivo de imagen anterior.
+- No quedan bytes de la foto eliminada en las versiones remotas simuladas.
+- Cliente anterior sincroniza y pierde solo la imagen, no el texto de la nota.
+- Conservación del texto, negritas, números romanos, carpeta y otras notas.
+- Fallo temporal de eliminación remota: no confirma sincronización, conserva
+  el texto y completa la limpieza al reintentar.
+- Sin errores de JavaScript no controlados en las pruebas.
 
-Comprobaciones completadas:
-OK  image_persisted
-OK  automatic_dictionary
-OK  dictionary_outside_dismiss
-OK  inline_title_saved
-OK  format_no_keyboard
-OK  roman_format
-OK  offline_bible_RVR1960
-OK  offline_bible_NVI
-OK  offline_bible_NTV
-OK  offline_bible_TLA
-OK  bible_no_network
-OK  offline_favorite_queued
-OK  favorite_synced
-OK  verse_popup_default_RV60
-OK  verse_popup_content
-OK  popup_favorite
-OK  calendar_confirmed
-OK  calendar_no_note_content
-OK  calendar_popup_minutes
-OK  calendar_retry_no_duplicate
-OK  online_dictionary_parsed
-OK  all_definitions_max12
-OK  device_recovery_note_image
-OK  device_recovery_favs_agenda
-OK  accounts_isolated
-OK  offline_user2_pending
-OK  bible_width_360
-OK  reader_width_360
-OK  focus_mode_360
-OK  bible_width_768
-OK  reader_width_768
-OK  focus_mode_768
-OK  bible_width_1440
-OK  reader_width_1440
-OK  focus_mode_1440
-OK  foreground_reminder
-OK  no_runtime_errors
+PASA — Revisión estática:
+- node --check en todos los JS e inline scripts de index.html.
+- Todos los recursos locales referidos y las 31 rutas de caché existen.
+- google-config.js idéntico al paquete anterior y al ID vigente verificado.
+- Datos bíblicos integrados idénticos al paquete anterior.
+- Hash SHA256 de huellas coincide con implementación independiente (ASCII,
+  Unicode y textos largos).
 
-OK  Importación de PNG real en modo formato sin habilitar contenteditable.
-OK  Respaldo/restauración de nota con imagen y favoritos.
-OK  Restauración reasigna correctamente la nota vinculada de la actividad.
-OK  Sintaxis de todos los scripts de la entrega.
-OK  Todas las dependencias del service worker existen en el ZIP.
-OK  google-config.js coincide exactamente con el ID vigente del usuario.
-OK  Payload de Biblias idéntico al de la versión 3.3 (SHA-256 verificado).
-OK  Iconos, logo, manifiesto y favicon conservados sin cambios.
-OK  Capturas revisadas en anchos de 360, 390, 768 y 1440 px.
+PENDIENTE DE VALIDACIÓN REAL TRAS PUBLICAR:
+- Autorización real Google, Drive del usuario y recuperación en teléfonos reales.
+- Android/iOS, gestos físicos Atrás, pantalla completa y teclado nativo.
+- Instalación/actualización de service worker por HTTPS y notificaciones físicas.
+El navegador puede reservar cierres/gestos al sistema; no se garantiza interceptar
+cerrar pestaña, ventana, retirada de recientes ni cierre forzado del proceso.
 
-Pruebas pendientes fuera de este entorno:
-- OAuth/Drive real en dos cuentas y dos dispositivos físicos.
-- Activación de Google Calendar API, permiso calendar.app.created y aviso real.
-- Instalación y actualización con service worker en GitHub Pages.
-- Teclado virtual real de iOS/Android y selección táctil del sistema.
-- Consulta en vivo al endpoint CORS de Wikcionario.
-No se afirma que estas pruebas pendientes hayan pasado.
+No se incluye el simulador de pruebas en los archivos de la aplicación.
