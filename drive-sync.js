@@ -36,7 +36,7 @@
   let activeRequestController=null;
   // Checks are lightweight: only new immutable revisions are downloaded.
   // A checkpoint is advanced only after data is committed locally.
-  const SYNC_POLL_MS=20000, FULL_RESCAN_MS=300000;
+  const SYNC_POLL_MS=10000, FULL_RESCAN_MS=300000;
   let flushDue=0,retryNotBefore=0,retryAttempt=0,forceFullNext=true,lastWake=0;
   let cycleReason='inicio',localWarningShown=false;
   const syncMetrics={lastStarted:0,lastFinished:0,lastDuration:0,received:0,sent:0,mode:'',reason:''};
@@ -154,7 +154,7 @@
     if($('syncProgressDetails')){
       const fmt=t=>t?new Date(t).toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'Aún no confirmada';
       $('syncProgressDetails').textContent='Cuenta: '+(state?.local?'Sin cuenta Google':state?.email||'Sin cuenta')+'\nÚltima subida: '+fmt(state?.lastUploadAt)+'\nÚltima consulta a Drive: '+fmt(state?.lastCheckedAt)+'\nÚltimo cambio recibido: '+fmt(state?.lastDownloadAt)+'\nPendientes: '+(state?.queue.length||0)+(state?.mediaQueue?.length?' · eliminaciones de imagen pendientes':'');
-      $('syncConnectionHelp').textContent=!state||state.local?'Sin Google, los cambios solo están en este dispositivo. Conecta la misma cuenta en PC y celular.':!navigator.onLine?'Sin internet. Se reintentará al volver la conexión.':!validToken()?'Falta renovar el permiso en este dispositivo. Toca Conectar Google; no es necesario repetir la configuración.':'Automático: sube al guardar y busca cambios cada 20 segundos con la app activa. No necesitas pulsar Sincronizar en cada nota.';
+      $('syncConnectionHelp').textContent=!state||state.local?'Sin Google, los cambios solo están en este dispositivo. Conecta la misma cuenta en PC y celular.':!navigator.onLine?'Sin internet. Se reintentará al volver la conexión.':!validToken()?'Falta renovar el permiso en este dispositivo. Toca Conectar Google; no es necesario repetir la configuración.':'Automático: sube al guardar y busca cambios cada 10 segundos con la app activa. No necesitas pulsar Sincronizar en cada nota.';
     }
     window.dispatchEvent(new CustomEvent('mauzi:sync-status',{detail}));
     window.dispatchEvent(new CustomEvent('mauzi:archive-status',{detail:archiveState()}));
@@ -558,7 +558,7 @@
     }
   }
 
-  function syncState(){return {deletePending:ND.pending(state),lastDeleteCompleted:state?.lastDeleteCompleted||0,ready:storageReady,authPending,googleLoading,transferBusy,mediaPending:(state?.mediaQueue?.length||0)+(state?.mediaPurgePending?1:0),authorized:validToken()&&navigator.onLine,requiresConnection:!!state&&!state.local&&!validToken(),local:!!state?.local,email:state?.email||'',pending:state?.queue.length||0,busy:flushing,error:cloudError,pollSeconds:20,lastCheckedAt:state?.lastCheckedAt||0,lastUploadAt:state?.lastUploadAt||0,lastDownloadAt:state?.lastDownloadAt||0,...syncMetrics};}
+  function syncState(){return {deletePending:ND.pending(state),lastDeleteCompleted:state?.lastDeleteCompleted||0,ready:storageReady,authPending,googleLoading,transferBusy,mediaPending:(state?.mediaQueue?.length||0)+(state?.mediaPurgePending?1:0),authorized:validToken()&&navigator.onLine,requiresConnection:!!state&&!state.local&&!validToken(),local:!!state?.local,email:state?.email||'',pending:state?.queue.length||0,busy:flushing,error:cloudError,pollSeconds:10,lastCheckedAt:state?.lastCheckedAt||0,lastUploadAt:state?.lastUploadAt||0,lastDownloadAt:state?.lastDownloadAt||0,...syncMetrics};}
   function scheduleFlush(delay=250,reason='cambio'){
     if(!state||state.local)return;
     const now=Date.now(),due=Math.max(now+Math.max(0,delay),retryNotBefore);
@@ -639,7 +639,11 @@
     googleLoading=true;authMessage('');refreshStatus();
     loadGoogle().then(()=>authMessage('')).catch(e=>authMessage(e.message,true)).finally(()=>{googleLoading=false;refreshStatus();});
   }
-  function clearConnection(){archiveError='';archiveMemo=null;activeRequestController?.abort();activeRequestController=null;session++;token='';expiresAt=0;user=null;forceFullNext=true;retryNotBefore=0;retryAttempt=0;localWarningShown=false;clearTimeout(expiryTimer);clearTimeout(flushTimer);flushTimer=null;flushDue=0;cloudError='';if($('openDriveLink')){$('openDriveLink').classList.add('hidden');$('openDriveLink').removeAttribute('href');}}
+  function clearConnection(){archiveError='';archiveMemo=null;activeRequestController?.abort();
+    // 4.9 Al cerrar o cambiar de cuenta se revoca el permiso en Google: el token deja
+    // de ser válido enseguida y ningún dato queda accesible desde este dispositivo.
+    const oldToken=token;if(oldToken&&window.google?.accounts?.oauth2?.revoke){try{google.accounts.oauth2.revoke(oldToken,()=>{});}catch(_){}}
+    activeRequestController=null;session++;token='';expiresAt=0;user=null;forceFullNext=true;retryNotBefore=0;retryAttempt=0;localWarningShown=false;clearTimeout(expiryTimer);clearTimeout(flushTimer);flushTimer=null;flushDue=0;cloudError='';if($('openDriveLink')){$('openDriveLink').classList.add('hidden');$('openDriveLink').removeAttribute('href');}}
   function login({choose=false}={}){
     if(authPending)return;
     if(!configured){authMessage('No se cargó la configuración de Google. Esta edición incluye el ID: actualiza todos los archivos. Puedes seguir usando tus notas sin cuenta.',true);return;}
@@ -810,7 +814,7 @@
   }
   document.addEventListener('visibilitychange',wakeSync);
   window.addEventListener('focus',wakeSync);window.addEventListener('pageshow',wakeSync);
-  setInterval(()=>{if(!document.hidden){refreshStatus();if(validToken())scheduleFlush(0,'cada 20 segundos');}},SYNC_POLL_MS);
+  setInterval(()=>{if(!document.hidden){refreshStatus();if(validToken())scheduleFlush(0,'cada 10 segundos');}},SYNC_POLL_MS);
   $('localOnlyBtn').addEventListener('click',localOnly);
   $('accountBtn').addEventListener('click',prepareGoogle);
   $('transferGuestBtn').addEventListener('click',transferGuest);

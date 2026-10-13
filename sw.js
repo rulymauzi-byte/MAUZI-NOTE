@@ -2,7 +2,7 @@
    Deploy next to index.html. Relative URLs also work in /repository-name/.
    When publishing an update, change BUILD (or regenerate this package). */
 'use strict';
-const BUILD = '4.8.0-eliminar-notas-20260914';
+const BUILD = '4.9.0-documentos-20261013';
 const CACHE_PREFIX = 'mauzi-note::'+self.registration.scope+'::';
 const CACHE_NAME = CACHE_PREFIX+BUILD;
 const ASSETS = [
@@ -10,7 +10,7 @@ const ASSETS = [
   './archive-core.js', './archive-ui.js', './archive-ui.css', './AYUDA_GOOGLE_Y_CARPETAS.html',
   './note-deletion-core.js', './note-deletion-ui.js', './note-deletion.css', './studio.js', './studio.css', './navigation.js', './media-sync.js',
   './editor-enhancements.js', './editor-enhancements.css', './note-experience.js', './note-experience.css', './drive-sync.js', './google-config.js', './CONFIGURAR_GOOGLE.html', './PRIVACIDAD.html',
-  './ACTUALIZAR.html', './account-config.js', './account-access.css', './modules-store.js', './modules-ui.js', './modules.css', './editor-modes.js', './calendar-link.js', './ACTIVAR_RECORDATORIOS.html',
+  './ACTUALIZAR.html', './account-config.js', './account-access.css', './modules-store.js', './modules-ui.js', './modules.css', './editor-modes.js', './calendar-link.js', './ACTIVAR_RECORDATORIOS.html', './documents-io.js',
   './icons/icon-192.png', './icons/icon-512.png',
   './icons/icon-maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'
 ].map(path=>new URL(path,self.registration.scope).href);

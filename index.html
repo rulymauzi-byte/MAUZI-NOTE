@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="mauzi-google-client-id" content="516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com" />
-  <meta name="mauzi-build" content="4.8.0-eliminar-notas" />
+  <meta name="mauzi-build" content="4.9.0-documentos" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#0a2947" />
   <title>MAUZI NOTE</title>
@@ -638,10 +638,13 @@
       font-weight:800;
     }
 
-    /* Lector bíblico: solo el texto solicitado */
+    /* Lector bíblico: solo el texto solicitado, con desplazamiento táctil suave */
     .bible-reader{
       background:#131312;
       overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain;
+      touch-action:pan-y;
       padding:16px 14px;
     }
     .bible-reader-text{
@@ -1333,6 +1336,17 @@
     #noteContent.rich-editor {caret-color:#edc35e;scroll-margin-top:55px;}
     @media (max-width:560px){.bible-reader{padding:14px 12px;}.bible-reader-text{font-size:17px;}}
 
+    /* 4.9 — Versículos: cierre con un toque fuera del cuadro, sin botón X */
+    .bible-close-hint{margin:8px 0 0;text-align:center;color:#9a917c;font-size:11px;}
+    /* 4.9 — Importar/exportar documentos desde el editor */
+    .doc-io-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 2px;}
+    .doc-io-btn{display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px;font-size:13px;font-weight:700;}
+    .doc-io-btn svg{width:17px;height:17px;flex:none;}
+    #docExportModal{z-index:80;}
+    #docExportModal .sheet{display:flex;flex-direction:column;gap:9px;}
+    #docExportModal .doc-export-note{margin:0;color:var(--muted);font-size:12px;line-height:1.5;}
+    #docExportModal .secondary-btn{width:100%;min-height:48px;font-weight:750;}
+
 
     /* MAUZI NOTE · Azul, naranja, dorado y negro. Sin cambiar las vistas compactas. */
     :root{
@@ -1584,6 +1598,18 @@
         <label>Categoría</label>
         <select id="noteCategory" class="field"></select>
 
+        <div class="doc-io-row">
+          <button id="importDocBtn" class="secondary-btn doc-io-btn" type="button" title="Abrir un documento Word, página web o texto con su formato">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            Importar documento
+          </button>
+          <button id="exportDocBtn" class="secondary-btn doc-io-btn" type="button" title="Guardar esta nota como Word, página web o texto para abrirla en otros programas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>
+            Exportar nota
+          </button>
+        </div>
+        <input id="importDocFile" type="file" class="hidden" accept=".docx,.html,.htm,.txt,.md,.markdown,.text,.csv,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/html,text/plain">
+
         <button id="saveNoteBtn" class="primary-btn">Guardar nota</button>
         <button id="deleteNoteBtn" class="danger-btn hidden">Mover a la papelera</button>
       </div>
@@ -1712,7 +1738,6 @@
           <small>Biblia · Sin conexión</small>
           <h2 id="biblePassageTitle">Mateo 3:5</h2>
         </div>
-        <button class="close" data-close="bibleModal">×</button>
       </div>
 
       <div class="bible-reader">
@@ -1727,6 +1752,7 @@
         <button class="bible-version" data-bible-version="NTV">NTV</button>
         <button class="bible-version" data-bible-version="TLA">TLA</button>
       </div>
+      <p class="bible-close-hint">Desliza para leer · toca fuera del cuadro para cerrar</p>
     </div>
   </div>
 
@@ -1747,6 +1773,16 @@
 <div id="cloudRecoveryModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle">
   <div class="sheet"><div class="sheet-head"><h2 id="recoveryTitle">Recuperar notas</h2><button class="close" data-close="cloudRecoveryModal" aria-label="Cerrar">×</button></div>
   <p id="recoveryHint" class="cloud-message"></p><div id="recoveryItems" class="recovery-items"></div></div>
+</div>
+
+<div id="docExportModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="docExportTitle">
+  <div class="sheet">
+    <div class="sheet-head"><h2 id="docExportTitle">Exportar esta nota</h2><button class="close" data-close="docExportModal" aria-label="Cerrar">×</button></div>
+    <p class="doc-export-note">El archivo conserva el formato de la nota (negritas, colores, listas y tablas) y se puede abrir con otros programas.</p>
+    <button id="exportDocxBtn" class="secondary-btn" type="button">Word (.docx) — Word, LibreOffice, Google Docs</button>
+    <button id="exportHtmlBtn" class="secondary-btn" type="button">Página web (.html) — cualquier navegador</button>
+    <button id="exportTxtBtn" class="secondary-btn" type="button">Texto (.txt) — sin formato</button>
+  </div>
 </div>
   <div id="noteImageViewer" class="note-image-viewer hidden" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
     <div id="imageStage" class="image-stage"><img id="largeNoteImage" alt="" draggable="false"></div>
@@ -1903,7 +1939,7 @@ THE SOFTWARE.
     }
     document.addEventListener("keydown", e=>{
       if(e.key!=="Escape" || window.MauziImages?.isOpen()) return;
-      const order=["categoryFilterModal","cloudRecoveryModal","bibleModal","installModal","noteModal","categoriesModal","accountModal","noteReadModal"];
+      const order=["docExportModal","categoryFilterModal","cloudRecoveryModal","bibleModal","installModal","noteModal","categoriesModal","accountModal","noteReadModal"];
       const id=order.find(id=>!$(id).classList.contains("hidden"));
       if(id){ e.preventDefault(); closeModal(id); }
     });
@@ -2903,7 +2939,7 @@ THE SOFTWARE.
    This block manages installation and local export. drive-sync.js manages user-authorized Google Drive access. */
 (() => {
   'use strict';
-  const APP_VERSION = '4.8.0-eliminar-notas';
+  const APP_VERSION = '4.9.0-documentos';
   const $p = id => document.getElementById(id);
   let registration = null;
   let reloadAfterUpdate = false;
@@ -3153,6 +3189,7 @@ THE SOFTWARE.
 <script src="./welcome-access.js"></script>
 <script src="./quick-sync.js"></script>
 <script src="./note-deletion-ui.js"></script>
+<script src="./documents-io.js"></script>
 <script src="./navigation.js"></script>
 </body>
 </html>
