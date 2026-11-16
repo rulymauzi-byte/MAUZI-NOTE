@@ -1,4 +1,5 @@
-/* MAUZI NOTE 4.5 — elección de acceso y validación por el administrador.
+/* MAUZI NOTE 5.0 — elección de acceso: sin cuenta o entrar con Google (sin validación previa).
+   (Base 4.5 — elección de acceso y validación por el administrador.)
    No guarda credenciales ni una lista de correos en el sitio público.
    Un clic en WhatsApp NO equivale a enviar el mensaje, aprobar una cuenta ni
    autenticarla. La autorización efectiva sigue a cargo de Google.
@@ -7,7 +8,7 @@
   'use strict';
   const A=window.MauziApp, C=window.MauziCloud;
   if(!A||!C){document.documentElement.classList.remove('mauzi-welcome-pending');return;}
-  const CHOICE_KEY='mauzi-note:access-choice-v1', PHONE='50258484682';
+  const CHOICE_KEY='mauzi-note:access-choice-v1';
   const $=id=>document.getElementById(id);
   const icon=(body)=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   const device=icon('<rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 18h4"/>');
@@ -36,8 +37,9 @@
           <div class="access-card-head"><span class="access-emblem">${cloud}</span><span class="access-tag">Con respaldo en la nube</span></div>
           <h2>Lleva tus notas contigo</h2>
           <div class="access-benefits"><p>${check}<span>Recupera lo sincronizado al cambiar de celular.</span></p><p>${check}<span>Usa la misma cuenta en PC, tablet y celular.</span></p><p>${check}<span>Respalda notas, imágenes, favoritos y agenda.</span></p></div>
-          <p class="access-approval">Primero solicita al administrador que valide tu correo. Después conecta tu cuenta Google.</p>
-          <button id="accessChooseGoogle" type="button" class="access-button access-button-gold">Vincular mi correo ${arrow}</button>
+          <p class="access-approval">Toca el botón y elige tu cuenta de Google. Listo: no necesitas pedir permiso a nadie.</p>
+          <button id="accessChooseGoogle" type="button" class="access-button access-button-gold">Entrar con mi correo Google ${arrow}</button>
+          <p id="accessChoiceStatus" class="access-message" role="status" aria-live="polite"></p>
           <small>Cada cuenta tiene su propio espacio privado en la nube.</small>
         </article>
       </div>
@@ -45,18 +47,10 @@
     </div>
     <div id="accessValidationPanel" hidden>
       <button id="accessGoBack" type="button" class="access-text-button">${icon('<path d="m15 5-7 7 7 7"/>')} Volver a las opciones</button>
-      <p class="access-eyebrow">VINCULACIÓN POR INVITACIÓN</p><h1 id="accessValidationTitle" tabindex="-1">Valida tu acceso</h1>
-      <p class="access-lead">Envía tu correo Google al administrador de <strong>MAUZI NOTE</strong> por WhatsApp. Espera su confirmación y luego entra con ese mismo correo.</p>
-      <form id="accessRequestForm" class="access-request-box">
-        <label for="accessRequestEmail">Correo de tu cuenta Google</label><input id="accessRequestEmail" type="email" inputmode="email" autocomplete="email" spellcheck="false" autocapitalize="none" maxlength="254" placeholder="tucorreo@gmail.com" aria-describedby="accessRequestPrivacy" required>
-        <a id="accessWhatsApp" class="access-button access-button-gold" href="https://wa.me/50258484682" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">${icon('<path d="M20 11.5a8 8 0 0 1-8 8 9 9 0 0 1-4-.9L3 20l1.4-4.4a8 8 0 1 1 15.6-4.1Z"/><path d="M8 8c0 4 4 7 7 7l1-2-2-1-1 1-3-3 1-1-1-2-2 1Z"/>')} Solicitar validación por WhatsApp</a>
-        <span class="access-contact">Administrador · Guatemala · <b>+502 5848 4682</b></span>
-        <p id="accessRequestPrivacy" class="access-micro">El mensaje contiene solo el correo que escribas y la solicitud. Tú lo revisas y lo envías en WhatsApp. No envíes contraseñas, códigos ni tus notas.</p>
-      </form>
-      <p id="accessRequestStatus" class="access-message" role="status" aria-live="polite" hidden></p>
-      <div class="access-approved-box"><strong>¿Ya confirmaron tu acceso?</strong><p>Elige en Google el correo que te autorizaron. MAUZI NOTE solo recibe tu nombre y correo, nunca tu contraseña.</p><button id="accessConnectGoogle" class="access-button access-button-blue" type="button">Ya validaron mi correo: conectar Google</button><p id="accessGoogleStatus" class="access-message" role="status" aria-live="polite"></p></div>
+      <p class="access-eyebrow">TU CUENTA</p><h1 id="accessValidationTitle" tabindex="-1">Entra con tu correo</h1>
+      <p class="access-lead">Elige tu cuenta de Google. Tus notas se guardan en tu propio espacio de la nube y aparecen en todos los equipos donde entres con el mismo correo.</p>
+      <div class="access-approved-box"><p>MAUZI NOTE solo recibe tu nombre y correo, nunca tu contraseña.</p><button id="accessConnectGoogle" class="access-button access-button-blue" type="button">Entrar con Google</button><p id="accessGoogleStatus" class="access-message" role="status" aria-live="polite"></p></div>
       <button id="accessContinueLocal" class="access-button access-button-outline" type="button">Usar sin vincular correo por ahora</button>
-      <p class="access-footnote">La validación la realiza el administrador de MAUZI NOTE; no es una verificación oficial de Google. Abrir WhatsApp no activa tu cuenta. Puedes usar la app sin correo mientras esperas.</p>
     </div>
     <div class="access-footer"><span>No te pedimos tu contraseña.</span><a href="./PRIVACIDAD.html" target="_blank" rel="noopener noreferrer">Privacidad</a></div>
   </div>`;
@@ -93,15 +87,6 @@
     }finally{busy=false;update();}
   }
   function close(){if(initial){useLocal();return;}hide();}
-  function prepareRequest(event){
-    const input=$('accessRequestEmail');input.value=input.value.trim();
-    if(!input.checkValidity()||/[\r\n]/.test(input.value)){event.preventDefault();input.reportValidity();return;}
-    const message='Hola, solicito validar mi acceso a MAUZI NOTE. Mi correo Google es: '+input.value+'. Gracias.';
-    $('accessWhatsApp').href='https://wa.me/'+PHONE+'?text='+encodeURIComponent(message);
-    const status=$('accessRequestStatus');status.hidden=false;
-    status.textContent='En WhatsApp, revisa el mensaje y pulsa Enviar. Luego espera la confirmación del administrador. Esta pantalla no puede confirmar el envío ni la autorización.';
-    // Never set an "approved" flag from this event or store the entered email.
-  }
   function update(){
     const control=$('syncNowBtn'), auth=$('authMessage');
     const googleButton=$('accessConnectGoogle');
@@ -114,13 +99,14 @@
     else if(auth?.textContent?.trim()){
       const error=auth.dataset.state==='error';
       message.textContent=auth.textContent;
-      if(error&&/cancelado|deneg|denied|concedi/i.test(auth.textContent))message.textContent+=' Si tu acceso aún no fue autorizado, envía tu correo al administrador. Puedes continuar sin vincular.';
       message.dataset.state=error?'error':'info';
-    }else{message.textContent='Solo continúa cuando el administrador haya confirmado tu correo.';message.dataset.state='info';}
+    }else{message.textContent='';message.dataset.state='info';}
+    const choice=$('accessChoiceStatus');if(choice){choice.textContent=waitingForGoogle||message.dataset.state==='error'?message.textContent:'';choice.dataset.state=message.dataset.state||'info';}
   }
   function connect(){
     if($('accessConnectGoogle').disabled)return;
-    if(!navigator.onLine){$('accessGoogleStatus').textContent='Necesitas internet para conectar Google. Puedes usar la app sin correo.';return;}
+    if(!navigator.onLine){$('accessGoogleStatus').textContent='Necesitas internet para entrar con Google. Puedes usar la app sin correo.';update();return;}
+    if(!C.isReady?.()){C.prepareConnection?.();$('accessGoogleStatus').textContent='Preparando la conexión… vuelve a tocar en un momento.';return;}
     waitingForGoogle=true;
     // Keep this on the click stack: Google's popup requires a direct user action.
     C.login({choose:!!C.account()&&!C.account().local});
@@ -128,27 +114,18 @@
   }
   $('accessUseLocal').addEventListener('click',useLocal);
   $('accessContinueLocal').addEventListener('click',useLocal);
-  $('accessChooseGoogle').addEventListener('click',()=>show('validation',{first:initial}));
+  // Un solo toque, como en la app del maratón: abre Google directamente.
+  $('accessChooseGoogle').addEventListener('click',()=>{if(C.isReady?.()&&navigator.onLine&&ready)connect();else show('validation',{first:initial});});
   $('accessGoBack').addEventListener('click',()=>show('choice',{first:initial}));
   $('accessClose').addEventListener('click',close);
-  $('accessWhatsApp').addEventListener('click',prepareRequest);
-  $('accessRequestForm').addEventListener('submit',e=>{e.preventDefault();$('accessWhatsApp').click();});
   $('accessConnectGoogle').addEventListener('click',connect);
 
   const block=document.createElement('section');block.className='access-account-block';
-  block.innerHTML='<h3>Vinculación y validación de acceso</h3><p>Vincula tu correo para respaldar en la nube y recuperar lo sincronizado en otro dispositivo. Sin vincular, tus notas solo están aquí: conserva una copia independiente.</p><button id="accessAccountOptions" class="secondary-btn" type="button">Opciones de acceso y WhatsApp</button><small>Solicita al administrador la validación de tu correo antes de conectarlo por primera vez. No compartas contraseñas ni códigos.</small>';
+  block.innerHTML='<h3>Entrar con tu correo</h3><p>Entra con tu cuenta de Google para respaldar en la nube y ver tus notas en otro dispositivo. Sin cuenta, tus notas solo están aquí: conserva una copia independiente.</p><button id="accessAccountOptions" class="secondary-btn" type="button">Opciones de acceso</button><small>No compartas contraseñas ni códigos con nadie.</small>';
   $('googleOptionalHint').after(block);
   $('accessAccountOptions').addEventListener('click',()=>show('choice'));
-  // Gate only a first linkage. Known accounts keep their ordinary reconnect/sync
-  // controls, without having to request WhatsApp validation again.
-  document.addEventListener('click',e=>{
-    const b=e.target.closest?.('#syncNowBtn,#loginBtn,#googleAccountBtn,#driveBackupBtn');
-    if(!b||b.disabled||opened)return;
-    const account=C.account();
-    if(b.id==='googleAccountBtn'||!account||account.local){e.preventDefault();e.stopImmediatePropagation();show('validation');}
-  },true);
   window.addEventListener('mauzi:cloud-state',e=>{
-    if(waitingForGoogle&&e.detail?.authorized){remember('google');hide();A.open('accountModal');}
+    if((waitingForGoogle||(opened&&initial))&&e.detail?.authorized&&!e.detail.local){remember('google');hide();A.open('accountModal');}
     update();
   });
   const observer=new MutationObserver(()=>{

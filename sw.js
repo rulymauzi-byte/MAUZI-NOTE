@@ -2,7 +2,7 @@
    Deploy next to index.html. Relative URLs also work in /repository-name/.
    When publishing an update, change BUILD (or regenerate this package). */
 'use strict';
-const BUILD = '5.0.0-firebase-20261115';
+const BUILD = '5.0.1-firebase-20261115';
 const CACHE_PREFIX = 'mauzi-note::'+self.registration.scope+'::';
 const CACHE_NAME = CACHE_PREFIX+BUILD;
 const ASSETS = [

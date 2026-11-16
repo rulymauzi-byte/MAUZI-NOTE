@@ -2,26 +2,23 @@
 <h1>Conectar tu cuenta a la nube</h1>
 <div class="box"><h2>Para usuarios</h2>
 <ol>
-<li>Envía tu correo Google al administrador por WhatsApp (<a href="https://wa.me/50258484682" target="_blank" rel="noopener noreferrer">+502 5848 4682</a>) y espera su confirmación.</li>
-<li>En MAUZI NOTE abre <strong>Mi cuenta → Conectar mi correo con Google</strong> y elige ese mismo correo.</li>
+<li>En MAUZI NOTE toca <strong>Entrar con mi correo Google</strong> (o Mi cuenta → <strong>Conectar mi correo con Google</strong>) y elige tu cuenta.</li>
 <li>Espera a ver <strong>«Guardado en la nube ✓»</strong>. Desde ese momento tus notas llegan solas a tus otros equipos con la misma cuenta.</li>
 </ol>
-<p>La sesión queda abierta en el dispositivo: ya no vence cada semana. Si usabas la versión anterior (Google Drive), conecta la misma cuenta: las notas guardadas en este dispositivo se pasan solas a la nube.</p>
-<p>Si aparece «Tu correo aún no está validado», el administrador todavía no lo agregó. Puedes seguir usando la app sin cuenta mientras tanto.</p>
+<p>No necesitas pedir permiso a nadie. La sesión queda abierta en el dispositivo: no vence cada semana. Nadie más puede leer tus notas desde la app.</p>
+<p>Si usabas la versión anterior (Google Drive), entra con la misma cuenta: las notas guardadas en este dispositivo se pasan solas a la nube.</p>
+<p>Si el navegador bloquea la ventana de Google, la app abre Google en la misma página y vuelve sola al terminar.</p>
 </div>
 <div class="box"><h2>Para el administrador (proyecto Firebase «MauziNote»)</h2>
 <ol>
 <li><strong>Authentication → Sign-in method → Google → Habilitar.</strong></li>
 <li><strong>Authentication → Configuración → Dominios autorizados →</strong> agregar <code>rulymauzi-byte.github.io</code>.</li>
 <li><strong>Firestore Database → Crear base de datos</strong> (modo producción) y en <strong>Reglas</strong> pegar el contenido de <code>firestore.rules</code> → Publicar.</li>
-<li>Pegar la configuración de la app web en <code>firebase-config.js</code> y subir los archivos a GitHub.</li>
+<li>La configuración de la app web ya está en <code>firebase-config.js</code>. Subir los archivos a GitHub.</li>
 </ol>
-<h2>Validar a una persona</h2>
-<p>Firestore Database → Datos → <strong>Iniciar colección</strong> (solo la primera vez) con ID <code>permitidos</code>. Luego <strong>Agregar documento</strong>:</p>
-<pre>ID del documento:  correo en minúsculas, por ejemplo  juan@gmail.com
-Campo:             nombre   (string)   Juan</pre>
-<p>Para quitar el acceso, borra ese documento. No hay límite de 100 usuarios ni vencimiento a los 7 días.</p>
-<p>¿Abrir la app a cualquier cuenta Google sin validar? En <code>firestore.rules</code> cambia <code>return estaPermitido();</code> por <code>return true;</code> y publica.</p>
+<h2>Quién puede entrar</h2>
+<p>Cualquier cuenta de Google, sin validación previa, igual que la app del maratón. Las reglas de <code>firestore.rules</code> hacen que cada cuenta solo pueda leer y escribir sus propios datos.</p>
+<p>Para quitarle el acceso a alguien: Authentication → Usuarios → busca su correo → <strong>Inhabilitar cuenta</strong>.</p>
 <h2>Plan gratuito (Spark)</h2>
 <p>Incluye 1 GiB de datos, 50 000 lecturas y 20 000 escrituras al día. Las imágenes ocupan espacio dentro de las notas; si el límite diario se alcanza, los cambios se quedan en el dispositivo y se envían al día siguiente.</p>
 </div>

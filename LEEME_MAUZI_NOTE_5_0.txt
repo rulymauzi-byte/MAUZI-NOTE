@@ -3,8 +3,9 @@ MAUZI NOTE 5.0 — 15 de noviembre de 2026
 LA NUBE CAMBIA DE GOOGLE DRIVE A FIREBASE
 
 QUÉ CAMBIA PARA EL USUARIO
-- Se entra con Google (Firebase Authentication). La sesión queda abierta: ya no
-  vence a los 7 días ni hay límite de 100 usuarios de prueba.
+- Se entra con Google (Firebase Authentication), sin pedir permiso por WhatsApp.
+  La sesión queda abierta: ya no vence a los 7 días ni hay límite de usuarios.
+- Si el navegador bloquea la ventana de Google, se entra por redirección.
 - Las notas se sincronizan en TIEMPO REAL: lo que guardas en el celular aparece
   en la PC al instante (antes, cada 10 segundos).
 - Se conserva todo lo demás: uso sin cuenta, papelera, eliminación definitiva,
@@ -23,8 +24,9 @@ ANTES DE PUBLICAR (una sola vez, en la consola de Firebase, proyecto MauziNote)
 3. Authentication → Configuración → Dominios autorizados → rulymauzi-byte.github.io
 4. Firestore Database → Crear base de datos (modo producción).
 5. Firestore → Reglas → pegue firestore.rules → Publicar.
-6. Firestore → Datos → colección "permitidos" → un documento por correo validado
-   (vea VALIDAR_USUARIOS.txt). Agréguese usted primero.
+6. Listo. Cualquier persona entra con su correo de Google, sin validación
+   (como la app del maratón). La colección "permitidos" ya no se usa: puede
+   borrarla de Firestore.
 
 QUÉ SUBIR A GITHUB (rulymauzi-byte/MAUZI-NOTE)
 - Nuevos:  firebase-sync.js, firebase-config.js, CONFIGURAR_FIREBASE.html,
@@ -32,7 +34,6 @@ QUÉ SUBIR A GITHUB (rulymauzi-byte/MAUZI-NOTE)
 - Cambiados: index.html, sw.js, modules-store.js, quick-sync.js,
            welcome-access.js, archive-ui.js, note-deletion-ui.js, studio.js,
            modules-ui.js, note-experience.js, PRIVACIDAD.html, ACTUALIZAR.html,
-           VALIDAR_USUARIOS.txt
 - drive-sync.js ya no se usa (index.html no lo carga). Puede quedarse o borrarse.
 - google-config.js y account-config.js se quedan: los usa Google Calendar.
 
@@ -44,15 +45,14 @@ users/{uid}/notes/{nota}/versions/  historial
 users/{uid}/meta/categories         categorías
 users/{uid}/meta/media              imágenes quitadas (huellas, sin la imagen)
 users/{uid}/modules/{id}            favoritos y agenda
-permitidos/{correo}                 lista de correos validados (solo admin)
 
 LÍMITES DEL PLAN GRATIS (Spark)
 1 GiB guardado, 50 000 lecturas y 20 000 escrituras por día. Si se alcanza,
 los cambios esperan en el dispositivo y se envían después.
 
 PRUEBAS REALIZADAS
-Se probó en Chrome (sin pantalla) con un Firebase SIMULADO: entrada con correo
-no validado y validado, subida de notas, notas grandes con imágenes divididas en
+Se probó en Chrome (sin pantalla) con un Firebase SIMULADO: entrada directa con
+Google, entrada por redirección con la ventana bloqueada, subida de notas, notas grandes con imágenes divididas en
 partes, recepción en tiempo real, ediciones simultáneas, eliminación definitiva,
 agenda, sesión que sigue abierta al recargar, salida, y paso de notas de la 4.9.
 NO se probó contra el Firebase real ni en un celular físico: haga una prueba con

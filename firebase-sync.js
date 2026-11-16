@@ -22,6 +22,7 @@
   const GUEST_CHOICE='mauzi-note:guest-workspace';
   const DEVICE_EMAIL='copia@este-telefono.local';
   const ACTIVE_FALLBACK='mauzi-note:last-workspace';
+  const REDIRECT_KEY='mauzi-note:firebase-redirect';
   const CHUNK=300000, HISTORY_KEEP=30, HISTORY_PRUNE_AT=45;
   const guestIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>';
   const clone=v=>structuredClone(v),txt=(n,t)=>{if(n)n.textContent=t;};
@@ -171,7 +172,7 @@
     if(code==='auth/unauthorized-domain')return 'Este sitio aún no está autorizado en Firebase (Authentication → Configuración → Dominios autorizados).';
     if(code==='auth/operation-not-allowed')return 'En Firebase falta habilitar el acceso con Google (Authentication → Sign-in method).';
     if(code==='auth/network-request-failed'||code==='unavailable')return 'Sin conexión con la nube. Tus cambios siguen en este dispositivo y se reintentará.';
-    if(code==='permission-denied')return 'La nube no autorizó esta cuenta. Pide al administrador que valide tu correo.';
+    if(code==='permission-denied')return 'La nube no autorizó esta operación. Revisa que las reglas de Firestore estén publicadas.';
     if(code==='resource-exhausted')return 'Se alcanzó el límite diario gratuito de la nube. Tus cambios se conservan aquí y se enviarán después.';
     if(code==='deadline-exceeded'||e?.name==='AbortError')return 'La conexión tardó demasiado. Las notas pendientes siguen en el dispositivo.';
     return e?.message||'No se confirmó el guardado en la nube. La copia local se conserva.';
@@ -235,6 +236,8 @@
       let db;try{db=f.initializeFirestore(app,{ignoreUndefinedProperties:true});}catch(_){db=f.getFirestore(app);}
       fb={app,auth,db,a,f};
       a.onAuthStateChanged(auth,u=>{onAuthUser(u).catch(e=>{authMessage(messageFor(e),true);refreshStatus();});});
+      let back=false;try{back=!!sessionStorage.getItem(REDIRECT_KEY);}catch(_){}
+      if(back)setTimeout(()=>completeRedirect(),0);
       return fb;
     })(),25000,'La nube tardó en cargar. Revisa internet y vuelve a tocar Conectar.').catch(e=>{fbReady=null;throw e;});
     return fbReady;
@@ -249,14 +252,13 @@
   const metaRef=(uid,name)=>fb.f.doc(fb.db,'users',uid,'meta',name);
   const partRef=(ref,i)=>fb.f.doc(ref,'parts','p'+i);
 
-  /* Comprueba que la cuenta está validada: las reglas sólo permiten leer users/{uid}
-     a correos presentes en la colección "permitidos" (o a todos, si así se configuró). */
+  /* Comprueba que la nube acepta la cuenta (las reglas solo dejan a cada uno su propio users/{uid}). */
   async function verifyAccess(u){
     if(!u.email||u.emailVerified!==true)throw Object.assign(new Error('Google debe devolver un correo verificado.'),{code:'mauzi/not-validated'});
     try{await withTimeout(fb.f.getDoc(userDoc(u.uid)),20000,'La nube no respondió. Revisa internet.');}
     catch(e){
       if(e.code==='permission-denied'){
-        throw Object.assign(new Error('Tu correo '+u.email+' aún no está validado por el administrador de MAUZI NOTE. Envía tu correo por WhatsApp y vuelve a intentar cuando te confirmen. Puedes seguir usando la app sin cuenta.'),{code:'mauzi/not-validated'});
+        throw Object.assign(new Error('La nube rechazó la cuenta '+u.email+'. Revisa que las reglas de Firestore estén publicadas. Puedes seguir usando la app sin cuenta.'),{code:'mauzi/not-validated'});
       }
       throw e;
     }
@@ -547,8 +549,20 @@
     const finish=()=>{authPending=false;loginInFlight=false;$('loginBtn').disabled=false;refreshStatus();};
     const provider=new fb.a.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
     // Debe ejecutarse dentro del toque del usuario: sin await antes de abrir la ventana.
-    fb.a.signInWithPopup(fb.auth,provider).then(async cred=>{
-      const u=cred.user;
+    fb.a.signInWithPopup(fb.auth,provider).then(cred=>finishLogin(cred.user,sourceLocal)).catch(async e=>{
+      // Igual que la app del maratón: si el navegador bloquea la ventana, se entra por redirección.
+      if(/popup-blocked|operation-not-supported|web-storage/i.test(String(e.code||''))){
+        try{sessionStorage.setItem(REDIRECT_KEY,JSON.stringify({sourceLocal,at:Date.now()}));}catch(_){}
+        authMessage('Abriendo Google en esta misma página…');
+        await fb.a.signInWithRedirect(fb.auth,provider);return;
+      }
+      throw e;
+    }).catch(async e=>{
+      if(e.code==='mauzi/not-validated'){accessDenied='';await fb.a.signOut(fb.auth).catch(()=>{});}
+      authMessage(messageFor(e),true);if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')A.toast(messageFor(e));
+    }).finally(finish);
+  }
+  async function finishLogin(u,sourceLocal){
       if(!$('noteModal').classList.contains('hidden'))throw new Error('Guarda y cierra la nota antes de terminar la conexión con Google.');
       await verifyAccess(u);
       clearConnection();
@@ -557,12 +571,24 @@
       const adopted=await adoptLegacy(state.key,email);state=await getWorkspace(state.key);
       rememberActive();applyState();attach(u);
       authMessage(adopted?'Cuenta verificada. Pasando '+adopted+' notas de la versión anterior a la nube…':'Cuenta verificada. Sincronizando tus notas…');
+      try{localStorage.setItem('mauzi-note:access-choice-v1','google');}catch(_){}
       transferSource='';$('guestTransferPanel').classList.add('hidden');
       if(sourceLocal)await offerGuestTransfer(sourceLocal);
-    }).catch(async e=>{
-      if(e.code==='mauzi/not-validated'){accessDenied='';await fb.a.signOut(fb.auth).catch(()=>{});}
-      authMessage(messageFor(e),true);if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')A.toast(messageFor(e));
-    }).finally(finish);
+  }
+  /* Vuelta de una entrada por redirección (cuando el navegador bloqueó la ventana de Google). */
+  async function completeRedirect(){
+    let pending=null;try{pending=JSON.parse(sessionStorage.getItem(REDIRECT_KEY)||'null');sessionStorage.removeItem(REDIRECT_KEY);}catch(_){}
+    if(!pending)return;
+    loginInFlight=true;authPending=true;refreshStatus();
+    try{
+      await window.MauziCloud.ready;
+      const res=await fb.a.getRedirectResult(fb.auth);const u=res?.user||fb.auth.currentUser;
+      if(!u)throw Object.assign(new Error('No se completó la entrada con Google.'),{code:'auth/popup-closed-by-user'});
+      await finishLogin(u,pending.sourceLocal&&(await getWorkspace(pending.sourceLocal))?.local?pending.sourceLocal:'');
+    }catch(e){
+      if(e.code==='mauzi/not-validated')await fb.a.signOut(fb.auth).catch(()=>{});
+      authMessage(messageFor(e),true);
+    }finally{loginInFlight=false;authPending=false;$('loginBtn').disabled=false;refreshStatus();}
   }
   async function enterLocal(){
     let key='';try{key=localStorage.getItem(GUEST_CHOICE)||'';}catch(_){}
@@ -737,7 +763,8 @@
     try{
       await openStorage();let key='';try{key=localStorage.getItem(ACTIVE_KEY)||'';if(!key){const fallback=localStorage.getItem(ACTIVE_FALLBACK)||'';if(fallback.startsWith('local:')||fallback.startsWith(PREFIX))key=fallback;}}catch(_){}
       const cached=key?await getWorkspace(key):null;
-      if(cached){state=cached;rememberActive();applyState();if(!state.local)prepareConnection();}
+      let returning=false;try{returning=!!sessionStorage.getItem(REDIRECT_KEY);}catch(_){}
+      if(cached){state=cached;rememberActive();applyState();if(!state.local||returning)prepareConnection();}
       else{
         // Usuario de la 4.x conectado a Drive: se siguen mostrando SUS notas de este dispositivo
         // hasta que conecte Google otra vez; entonces se pasan solas a Firebase.
@@ -746,7 +773,7 @@
         if(legacy&&!legacy.local){
           state=legacy;applyState();prepareConnection();
           authMessage('MAUZI NOTE ahora guarda en la nube con Firebase. Toca «Conectar Google y sincronizar» con la misma cuenta ('+legacy.email+'): tus notas de este dispositivo se pasarán solas.',false);
-        }else await enterLocal();
+        }else{await enterLocal();if(returning)prepareConnection();}
       }
       $('retryLocalStorageBtn').classList.add('hidden');
     }catch(e){

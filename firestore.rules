@@ -2,39 +2,24 @@ rules_version = '2';
 // MAUZI NOTE 5.0 — Reglas de Cloud Firestore.
 // Pegar en: Firebase → Firestore Database → Reglas → Publicar.
 //
-// Cada persona SOLO puede leer y escribir dentro de users/{su uid}/...
-// Además, su correo debe estar en la colección "permitidos" (validación del administrador).
-//   Para validar a alguien: Firestore → Iniciar colección "permitidos" (solo la primera vez)
-//   → Agregar documento → ID del documento = el correo en minúsculas (ej. juan@gmail.com)
-//   → un campo cualquiera, por ejemplo  nombre = "Juan"  → Guardar.
-// Para quitar el acceso: borra ese documento.
-//
-// ¿Quieres que cualquier cuenta Google pueda usar la app sin validar?
-// Cambia  return estaPermitido();  por  return true;  dentro de validado().
+// Igual que la app del maratón: cualquier persona entra con su cuenta de Google,
+// sin pedir permiso al administrador. Cada cuenta SOLO puede leer y escribir
+// dentro de users/{su uid}/... — nadie puede ver las notas de otro.
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Solo cuentas reales con correo verificado (no anónimas)
     function conectado() {
       return request.auth != null
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
         && request.auth.token.email_verified == true;
-    }
-    function estaPermitido() {
-      return exists(/databases/$(database)/documents/permitidos/$(request.auth.token.email.lower()));
-    }
-    function validado() {
-      return estaPermitido();
     }
 
     // Datos privados de cada cuenta: notas, versiones, partes, categorías, agenda.
     match /users/{uid}/{document=**} {
-      allow read, write: if conectado() && request.auth.uid == uid && validado();
+      allow read, write: if conectado() && request.auth.uid == uid;
     }
 
-    // Lista de correos validados: cada persona solo puede consultar SU propio correo.
-    // Solo el administrador la modifica desde la consola de Firebase.
-    match /permitidos/{correo} {
-      allow get: if conectado() && request.auth.token.email.lower() == correo;
-      allow list, write: if false;
-    }
+    // Todo lo demás queda cerrado.
   }
 }
