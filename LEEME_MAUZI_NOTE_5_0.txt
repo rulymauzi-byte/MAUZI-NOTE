@@ -1,0 +1,59 @@
+MAUZI NOTE 5.0 — 15 de noviembre de 2026
+========================================
+LA NUBE CAMBIA DE GOOGLE DRIVE A FIREBASE
+
+QUÉ CAMBIA PARA EL USUARIO
+- Se entra con Google (Firebase Authentication). La sesión queda abierta: ya no
+  vence a los 7 días ni hay límite de 100 usuarios de prueba.
+- Las notas se sincronizan en TIEMPO REAL: lo que guardas en el celular aparece
+  en la PC al instante (antes, cada 10 segundos).
+- Se conserva todo lo demás: uso sin cuenta, papelera, eliminación definitiva,
+  historial de versiones (hasta 30 por nota), ediciones simultáneas conservadas,
+  imágenes, años y carpetas, favoritos de la Biblia y agenda.
+- Quien usaba la 4.x con Drive: al abrir la 5.0 sigue viendo sus notas del
+  dispositivo. Toca "Conectar Google y sincronizar" con la MISMA cuenta y las
+  notas, la papelera, las categorías y la agenda de ese dispositivo se pasan solas
+  a Firebase. La copia original no se borra.
+  OJO: las notas que solo estaban en Drive y en NINGÚN dispositivo actualizado no
+  se pasan solas. Abra la app en al menos un equipo que las tenga.
+
+ANTES DE PUBLICAR (una sola vez, en la consola de Firebase, proyecto MauziNote)
+1. Agregar app → Web. Copie el bloque firebaseConfig en firebase-config.js.
+2. Authentication → Sign-in method → Google → Habilitar.
+3. Authentication → Configuración → Dominios autorizados → rulymauzi-byte.github.io
+4. Firestore Database → Crear base de datos (modo producción).
+5. Firestore → Reglas → pegue firestore.rules → Publicar.
+6. Firestore → Datos → colección "permitidos" → un documento por correo validado
+   (vea VALIDAR_USUARIOS.txt). Agréguese usted primero.
+
+QUÉ SUBIR A GITHUB (rulymauzi-byte/MAUZI-NOTE)
+- Nuevos:  firebase-sync.js, firebase-config.js, CONFIGURAR_FIREBASE.html,
+           firestore.rules (opcional, es solo referencia)
+- Cambiados: index.html, sw.js, modules-store.js, quick-sync.js,
+           welcome-access.js, archive-ui.js, note-deletion-ui.js, studio.js,
+           modules-ui.js, note-experience.js, PRIVACIDAD.html, ACTUALIZAR.html,
+           VALIDAR_USUARIOS.txt
+- drive-sync.js ya no se usa (index.html no lo carga). Puede quedarse o borrarse.
+- google-config.js y account-config.js se quedan: los usa Google Calendar.
+
+CÓMO SE GUARDA EN FIRESTORE
+users/{uid}                         correo y última conexión
+users/{uid}/notes/{nota}            versión actual de cada nota
+users/{uid}/notes/{nota}/parts/pN   trozos de notas grandes (imágenes)
+users/{uid}/notes/{nota}/versions/  historial
+users/{uid}/meta/categories         categorías
+users/{uid}/meta/media              imágenes quitadas (huellas, sin la imagen)
+users/{uid}/modules/{id}            favoritos y agenda
+permitidos/{correo}                 lista de correos validados (solo admin)
+
+LÍMITES DEL PLAN GRATIS (Spark)
+1 GiB guardado, 50 000 lecturas y 20 000 escrituras por día. Si se alcanza,
+los cambios esperan en el dispositivo y se envían después.
+
+PRUEBAS REALIZADAS
+Se probó en Chrome (sin pantalla) con un Firebase SIMULADO: entrada con correo
+no validado y validado, subida de notas, notas grandes con imágenes divididas en
+partes, recepción en tiempo real, ediciones simultáneas, eliminación definitiva,
+agenda, sesión que sigue abierta al recargar, salida, y paso de notas de la 4.9.
+NO se probó contra el Firebase real ni en un celular físico: haga una prueba con
+dos equipos antes de anunciarlo a los usuarios.

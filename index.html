@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="mauzi-google-client-id" content="516673485096-rdoo0mn62ehurum4oqkn16ogh0rcfa5j.apps.googleusercontent.com" />
-  <meta name="mauzi-build" content="4.9.0-documentos" />
+  <meta name="mauzi-build" content="5.0.0-firebase" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
   <meta name="theme-color" content="#0a2947" />
   <title>MAUZI NOTE</title>
@@ -1688,7 +1688,7 @@
       <button type="button" class="secondary-btn account-install" data-install-open>Instalar MAUZI NOTE</button>
       <button type="button" class="secondary-btn" data-app-status>Estado de la aplicación / actualizaciones</button>
       <div class="backup-section cloud-section">
-        <h3>Sincronización con MI Google Drive</h3>
+        <h3>Sincronización en la nube</h3>
         <div id="accountSyncStatus" class="cloud-message" role="status">Guardado en este dispositivo. Google es opcional.</div>
         <div id="authMessage" class="cloud-message" role="status" aria-live="polite"></div>
         <div class="backup-actions" id="googleActions"><button id="syncNowBtn" class="primary-btn" type="button">Conectar mi correo con Google</button><button id="googleAccountBtn" class="secondary-btn" type="button">Cambiar cuenta Google</button></div>
@@ -1702,14 +1702,14 @@
         </section>
         <button id="migrateLocalBtn" class="secondary-btn hidden">Importar notas de este teléfono</button>
         <button id="openTrashBtn" class="secondary-btn">Papelera · recuperar notas</button>
-        <a class="cloud-help" href="./CONFIGURAR_GOOGLE.html" target="_blank" rel="noopener">Ayuda para conectar Google Drive</a>
+        <a class="cloud-help" href="./CONFIGURAR_FIREBASE.html" target="_blank" rel="noopener">Ayuda para conectar tu cuenta</a>
       </div>
       <div id="driveFolderSection" class="backup-section cloud-section">
-        <h3>Mi carpeta de notas en Google Drive</h3>
-        <p>Al guardar una nota, se envía a tu Drive cuando hay internet y el permiso de Google está activo. Las versiones anteriores se conservan en la carpeta MAUZI NOTE. No borres sus archivos desde Drive.</p>
-        <div class="backup-actions"><button id="driveBackupBtn" class="secondary-btn">Ver mi carpeta de Drive</button><button id="driveRestoreBtn" class="secondary-btn">Notas e historial</button></div>
-        <div id="driveStatus" class="cloud-message" role="status">Al cambiar de teléfono, espera a que aparezca: Guardado en tu Google Drive ✓.</div>
-        <a id="openDriveLink" class="cloud-help hidden" href="#" target="_blank" rel="noopener noreferrer">Abrir MI carpeta MAUZI NOTE en Google Drive</a>
+        <h3>Mis notas en la nube</h3>
+        <p>Al guardar una nota, se envía a la nube de MAUZI NOTE cuando hay internet y llega en tiempo real a tus otros equipos con la misma cuenta. Se conservan las versiones anteriores de cada nota.</p>
+        <div class="backup-actions"><button id="driveBackupBtn" class="secondary-btn">Estado de mi nube</button><button id="driveRestoreBtn" class="secondary-btn">Notas e historial</button></div>
+        <div id="driveStatus" class="cloud-message" role="status">Al cambiar de teléfono, espera a que aparezca: Guardado en la nube ✓.</div>
+        <a id="openDriveLink" class="cloud-help hidden" href="#" target="_blank" rel="noopener noreferrer">Abrir</a>
       </div>
       <div class="backup-section">
         <h3>Respaldo de mis notas</h3>
@@ -2936,7 +2936,7 @@ THE SOFTWARE.
 <script src="./install-manager.js"></script>
 <script id="mauziPwa">
 /* MAUZI NOTE · PWA installation, offline status, and local backups.
-   This block manages installation and local export. drive-sync.js manages user-authorized Google Drive access. */
+   This block manages installation and local export. firebase-sync.js manages the Firebase cloud account. */
 (() => {
   'use strict';
   const APP_VERSION = '4.9.0-documentos';
@@ -3121,7 +3121,7 @@ THE SOFTWARE.
       if (!confirm('¿Agregar este respaldo de '+origin+' al perfil '+currentEmail+'? Tus notas actuales se conservarán.')) return;
       if(window.MauziCloud?.importPayload){
         await window.MauziCloud.importPayload(data);
-        $p('backupMessage').textContent='Copia recuperada sin borrar notas actuales. Revisa la confirmación de Drive antes de cambiar de teléfono.';
+        $p('backupMessage').textContent='Copia recuperada sin borrar notas actuales. Revisa «Guardado en la nube ✓» antes de cambiar de teléfono.';
         showToast('Respaldo recuperado');return;
       }
       const mergedCategories = structuredClone(categories);
@@ -3177,7 +3177,8 @@ THE SOFTWARE.
 <script src="./account-config.js"></script>
 <script src="./media-sync.js"></script>
 <script src="./note-deletion-core.js"></script>
-<script src="./drive-sync.js"></script>
+<script src="./firebase-config.js"></script>
+<script src="./firebase-sync.js"></script>
 <script src="./modules-store.js"></script>
 <script src="./text-selection.js"></script>
 <script src="./editor-modes.js"></script>

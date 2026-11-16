@@ -1,0 +1,61 @@
+MAUZI NOTE 4.9 — 13 de octubre de 2026
+======================================
+
+CAMBIOS DE ESTA ACTUALIZACIÓN
+-----------------------------
+
+1. GOOGLE: MÁS SEGURO Y SIEMPRE DE CADA USUARIO
+   - Cada persona conecta SU PROPIA cuenta de Google y sus notas se guardan
+     en SU PROPIO Drive. Nunca pasan por el Drive ni el teléfono del creador.
+   - El permiso es el mínimo posible (drive.file): la app solo puede ver los
+     archivos que ella misma creó dentro de tu Drive, nada más.
+   - El token de acceso vive solo en memoria; nunca se guarda en el
+     dispositivo ni se envía a ningún otro servidor.
+   - NUEVO: al salir de Google o cambiar de cuenta, el permiso se REVOCA
+     de inmediato en los servidores de Google (antes solo se borraba del
+     teléfono). Si pierdes el dispositivo, basta cambiar de cuenta para que
+     el acceso anterior quede inútil.
+   - La app no usa contraseñas ni claves secretas: la verificación la hace
+     Google directamente en su propia ventana.
+
+2. IMPORTAR DOCUMENTOS CON SU FORMATO
+   - En el editor de la nota hay un botón nuevo: "Importar documento".
+   - Admite Word (.docx), página web (.html/.htm) y texto (.txt/.md/.csv).
+   - Conserva el contenido y el formato: títulos, negritas, cursivas,
+     subrayados, colores, tamaño de letra, listas con viñetas o números,
+     alineación y tablas.
+   - Todo se procesa dentro del dispositivo; el documento nunca se sube a
+     internet para convertirlo.
+
+3. EXPORTAR NOTAS PARA OTROS PROGRAMAS
+   - Botón nuevo "Exportar nota" en el editor, con tres opciones:
+       · Word (.docx) — abre en Word, LibreOffice y Google Docs.
+       · Página web (.html) — abre en cualquier navegador.
+       · Texto (.txt) — sin formato, compatible con todo.
+   - El archivo exportado conserva el formato de la nota.
+
+4. VERSÍCULOS MÁS CÓMODOS
+   - La ventana del versículo ya no tiene botón X.
+   - Para cerrarla basta tocar cualquier lugar fuera del cuadro.
+   - El texto se desplaza con el dedo suavemente (scroll táctil mejorado).
+
+5. GUARDADO RÁPIDO EN LA NUBE ENTRE DISPOSITIVOS
+   - No se pide ninguna API ni configuración: después de conectar tu Google
+     UNA vez, cada nota se sube sola a tu Drive al guardarla.
+   - La búsqueda de cambios ahora es cada 10 segundos (antes 20), así las
+     notas llegan antes a tu PC, tablet u otro celular con la misma cuenta.
+   - Para ver tus notas en otro dispositivo: instala o abre la app allí y
+     conecta LA MISMA cuenta de Google. Tus notas aparecen automáticamente.
+
+ARCHIVOS NUEVOS
+---------------
+- documents-io.js — importación y exportación de documentos (nuevo).
+
+ARCHIVOS ACTUALIZADOS
+---------------------
+- index.html, drive-sync.js, sw.js
+
+NO TOCAR
+--------
+- No borres la carpeta "MAUZI NOTE" dentro de tu Google Drive.
+- No edites los archivos version-*.json de Drive a mano.

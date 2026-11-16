@@ -47,7 +47,7 @@
     }
     const inProgress = state.busy || moduleBusy || Date.now() < pressUntil;
     let mode = 'local';
-    let description = 'Vincular tu correo para guardar las notas en tu Google Drive.';
+    let description = 'Vincular tu correo para guardar las notas en la nube.';
 
     if (!state.ready) {
       mode = 'loading';
@@ -67,10 +67,10 @@
     } else if (state.authorized) {
       if (inProgress) {
         mode = 'syncing';
-        description = 'Sincronizando con tu Google Drive.';
+        description = 'Sincronizando con la nube.';
       } else if (pending) {
         mode = 'pending';
-        description = 'Hay cambios pendientes de confirmar en Google Drive. Toca Sincronice para intentarlo ahora.';
+        description = 'Hay cambios pendientes de confirmar en la nube. Toca Sincronice para intentarlo ahora.';
       } else if (!state.lastCheckedAt) {
         mode = 'pending';
         description = 'Google conectado. Falta confirmar la primera sincronización.';
@@ -101,15 +101,15 @@
       return;
     }
     if (!C.config().configured) {
-      A.toast('No se cargó la configuración de Google. Revisa Mi cuenta; tus notas siguen aquí.');
+      A.toast('Falta la configuración de la nube (firebase-config.js). Tus notas siguen aquí.');
       return;
     }
     const account = C.account();
     // If the script was removed by the browser or failed, prepare it, but do not
     // open a later, unrequested popup or claim a successful connection.
-    if (account && !account.local && !C.syncState().authorized && !window.google?.accounts?.oauth2) {
+    if (account && !account.local && !C.syncState().authorized && !C.isReady?.()) {
       C.prepareConnection?.();
-      A.toast('Preparando Google. Toca Sincronice cuando termine de cargar.');
+      A.toast('Preparando la conexión. Toca Sincronice cuando termine de cargar.');
       queueRender();
       return;
     }

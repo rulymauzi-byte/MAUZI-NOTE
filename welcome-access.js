@@ -28,20 +28,20 @@
         <article class="access-option access-guest">
           <div class="access-card-head"><span class="access-emblem">${device}</span><span class="access-tag">Sin cuenta</span></div>
           <h2>Empieza ahora</h2><p>Escribe notas, agrega imágenes y usa la Biblia y la agenda en este dispositivo.</p>
-          <div class="access-caution"><strong>Solo en este dispositivo</strong><p>Sin vincular correo no hay copia automática en Drive ni recuperación en otro equipo. Si pierdes el dispositivo o borras sus datos, podrías perder lo que no respaldaste.</p></div>
+          <div class="access-caution"><strong>Solo en este dispositivo</strong><p>Sin vincular correo no hay copia automática en la nube ni recuperación en otro equipo. Si pierdes el dispositivo o borras sus datos, podrías perder lo que no respaldaste.</p></div>
           <button id="accessUseLocal" type="button" class="access-button access-button-blue">Usar sin vincular correo ${arrow}</button>
           <small>Después puedes vincular tu cuenta desde Mi cuenta.</small>
         </article>
         <article class="access-option access-linked">
-          <div class="access-card-head"><span class="access-emblem">${cloud}</span><span class="access-tag">Con respaldo en tu Drive</span></div>
+          <div class="access-card-head"><span class="access-emblem">${cloud}</span><span class="access-tag">Con respaldo en la nube</span></div>
           <h2>Lleva tus notas contigo</h2>
           <div class="access-benefits"><p>${check}<span>Recupera lo sincronizado al cambiar de celular.</span></p><p>${check}<span>Usa la misma cuenta en PC, tablet y celular.</span></p><p>${check}<span>Respalda notas, imágenes, favoritos y agenda.</span></p></div>
           <p class="access-approval">Primero solicita al administrador que valide tu correo. Después conecta tu cuenta Google.</p>
           <button id="accessChooseGoogle" type="button" class="access-button access-button-gold">Vincular mi correo ${arrow}</button>
-          <small>La copia va a tu propio Drive, no al del creador.</small>
+          <small>Cada cuenta tiene su propio espacio privado en la nube.</small>
         </article>
       </div>
-      <p class="access-footnote">La sincronización requiere internet y permiso vigente de Google. Antes de cambiar de equipo, comprueba que tus cambios llegaron a Drive y conserva una copia independiente.</p>
+      <p class="access-footnote">La sincronización requiere internet. Antes de cambiar de equipo, comprueba que aparezca «Guardado en la nube ✓» y conserva una copia independiente.</p>
     </div>
     <div id="accessValidationPanel" hidden>
       <button id="accessGoBack" type="button" class="access-text-button">${icon('<path d="m15 5-7 7 7 7"/>')} Volver a las opciones</button>
@@ -54,7 +54,7 @@
         <p id="accessRequestPrivacy" class="access-micro">El mensaje contiene solo el correo que escribas y la solicitud. Tú lo revisas y lo envías en WhatsApp. No envíes contraseñas, códigos ni tus notas.</p>
       </form>
       <p id="accessRequestStatus" class="access-message" role="status" aria-live="polite" hidden></p>
-      <div class="access-approved-box"><strong>¿Ya confirmaron tu acceso?</strong><p>Elige en Google el correo que te autorizaron y acepta el permiso para los archivos de MAUZI NOTE.</p><button id="accessConnectGoogle" class="access-button access-button-blue" type="button">Ya validaron mi correo: conectar Google</button><p id="accessGoogleStatus" class="access-message" role="status" aria-live="polite"></p></div>
+      <div class="access-approved-box"><strong>¿Ya confirmaron tu acceso?</strong><p>Elige en Google el correo que te autorizaron. MAUZI NOTE solo recibe tu nombre y correo, nunca tu contraseña.</p><button id="accessConnectGoogle" class="access-button access-button-blue" type="button">Ya validaron mi correo: conectar Google</button><p id="accessGoogleStatus" class="access-message" role="status" aria-live="polite"></p></div>
       <button id="accessContinueLocal" class="access-button access-button-outline" type="button">Usar sin vincular correo por ahora</button>
       <p class="access-footnote">La validación la realiza el administrador de MAUZI NOTE; no es una verificación oficial de Google. Abrir WhatsApp no activa tu cuenta. Puedes usar la app sin correo mientras esperas.</p>
     </div>
@@ -136,7 +136,7 @@
   $('accessConnectGoogle').addEventListener('click',connect);
 
   const block=document.createElement('section');block.className='access-account-block';
-  block.innerHTML='<h3>Vinculación y validación de acceso</h3><p>Vincula tu correo para respaldar en tu Drive y recuperar lo sincronizado en otro dispositivo. Sin vincular, tus notas solo están aquí: conserva una copia independiente.</p><button id="accessAccountOptions" class="secondary-btn" type="button">Opciones de acceso y WhatsApp</button><small>Solicita al administrador la validación de tu correo antes de conectarlo por primera vez. No compartas contraseñas ni códigos.</small>';
+  block.innerHTML='<h3>Vinculación y validación de acceso</h3><p>Vincula tu correo para respaldar en la nube y recuperar lo sincronizado en otro dispositivo. Sin vincular, tus notas solo están aquí: conserva una copia independiente.</p><button id="accessAccountOptions" class="secondary-btn" type="button">Opciones de acceso y WhatsApp</button><small>Solicita al administrador la validación de tu correo antes de conectarlo por primera vez. No compartas contraseñas ni códigos.</small>';
   $('googleOptionalHint').after(block);
   $('accessAccountOptions').addEventListener('click',()=>show('choice'));
   // Gate only a first linkage. Known accounts keep their ordinary reconnect/sync

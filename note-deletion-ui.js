@@ -10,7 +10,7 @@
  // The old control had been moved into a panel and hidden in reading mode.
  $('deleteNoteBtn').classList.add('legacy-delete-control');
  const modal=document.createElement('div');modal.id='noteDeleteModal';modal.className='modal-backdrop hidden';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-labelledby','deleteDialogTitle');
- modal.innerHTML=`<div class="delete-dialog sheet"><div class="delete-dialog-head"><span class="delete-symbol">${trash}</span><h2 id="deleteDialogTitle">Eliminar nota</h2><button class="close" type="button" data-close="noteDeleteModal" aria-label="Cancelar eliminación">×</button></div><p class="delete-note-name" id="deleteNoteName"></p><p class="delete-account-hint" id="deleteAccountHint"></p><label class="delete-choice"><input type="radio" name="deleteMode" value="trash" checked><span><strong>Mover a la papelera</strong><small>Se oculta en tus dispositivos al sincronizar. Puedes recuperarla.</small></span></label><label class="delete-choice"><input type="radio" name="deleteMode" value="permanent"><span><strong>Eliminar definitivamente</strong><small>Borra esta nota, imágenes e historial de MAUZI NOTE y de Drive al sincronizar. No se puede recuperar.</small></span></label><p class="delete-warning" id="deleteWarning" hidden>Se eliminará únicamente esta nota. Los respaldos exportados y las fotografías originales no se modifican.</p><p class="delete-error" id="deleteError" role="alert"></p><div class="delete-dialog-actions"><button id="cancelDeleteBtn" class="secondary-btn" type="button" data-close="noteDeleteModal">Cancelar</button><button id="confirmDeleteBtn" class="danger-btn" type="button">Mover a papelera</button></div></div>`;
+ modal.innerHTML=`<div class="delete-dialog sheet"><div class="delete-dialog-head"><span class="delete-symbol">${trash}</span><h2 id="deleteDialogTitle">Eliminar nota</h2><button class="close" type="button" data-close="noteDeleteModal" aria-label="Cancelar eliminación">×</button></div><p class="delete-note-name" id="deleteNoteName"></p><p class="delete-account-hint" id="deleteAccountHint"></p><label class="delete-choice"><input type="radio" name="deleteMode" value="trash" checked><span><strong>Mover a la papelera</strong><small>Se oculta en tus dispositivos al sincronizar. Puedes recuperarla.</small></span></label><label class="delete-choice"><input type="radio" name="deleteMode" value="permanent"><span><strong>Eliminar definitivamente</strong><small>Borra esta nota, imágenes e historial de MAUZI NOTE y de la nube al sincronizar. No se puede recuperar.</small></span></label><p class="delete-warning" id="deleteWarning" hidden>Se eliminará únicamente esta nota. Los respaldos exportados y las fotografías originales no se modifican.</p><p class="delete-error" id="deleteError" role="alert"></p><div class="delete-dialog-actions"><button id="cancelDeleteBtn" class="secondary-btn" type="button" data-close="noteDeleteModal">Cancelar</button><button id="confirmDeleteBtn" class="danger-btn" type="button">Mover a papelera</button></div></div>`;
  document.body.append(modal);
  let target=null,busy=false,origin=null;
  function mode(){return modal.querySelector('input[name="deleteMode"]:checked')?.value||'trash';}
@@ -23,7 +23,7 @@
   origin=document.activeElement;target={id:nid,key:account?.key,title:note.title||title||'Sin título'};
   window.MauziStudio?.closeProperties();
   $('deleteNoteName').textContent=target.title;
-  $('deleteAccountHint').textContent=account?.local?'Sin cuenta: esta acción afecta la copia de este dispositivo.':('Cuenta: '+account?.email+'. La eliminación se enviará a tu Drive y llegará a los otros dispositivos al sincronizar.');
+  $('deleteAccountHint').textContent=account?.local?'Sin cuenta: esta acción afecta la copia de este dispositivo.':('Cuenta: '+account?.email+'. La eliminación se enviará a la nube y llegará a los otros dispositivos al sincronizar.');
   if(!$('noteModal').classList.contains('hidden')&&window.MauziEditorModes?.isDirty())$('deleteAccountHint').textContent+=' Hay cambios sin guardar en el editor; se descartarán si eliminas esta nota.';
   modal.querySelector('input[value="'+(permanent?'permanent':'trash')+'"]').checked=true;
   $('deleteError').textContent='';updateMode();A.open(modal.id);requestAnimationFrame(()=>$('cancelDeleteBtn').focus({preventScroll:true}));
@@ -44,7 +44,7 @@
    const wasTrash=!$('cloudRecoveryModal').classList.contains('hidden');
    A.close(modal.id);target=null;window.MauziSections?.select('notes');
    if(wasTrash)await C.showTrash();
-   A.toast(result.local?(permanent?'Nota eliminada de este dispositivo.':'Nota movida a la papelera.'):(permanent?'Eliminada aquí. Pendiente de confirmar en Drive.':'Nota en la papelera. Se sincroniza con Google.'));
+   A.toast(result.local?(permanent?'Nota eliminada de este dispositivo.':'Nota movida a la papelera.'):(permanent?'Eliminada aquí. Pendiente de confirmar en la nube.':'Nota en la papelera. Se sincroniza con Google.'));
   }catch(error){$('deleteError').textContent=error.message||'No se pudo eliminar. Tu nota se conserva.';}
   finally{busy=false;modal.removeAttribute('aria-busy');modal.querySelectorAll('button,input').forEach(b=>b.disabled=false);updateMode();updateStatus();}
  }
@@ -53,7 +53,7 @@
  window.addEventListener('mauzi:editor-opened',()=>{editButton.hidden=!$('editingId').value;});
  editButton.hidden=true;
  const info=document.createElement('p');info.id='noteDeletionStatus';info.className='delete-status';info.setAttribute('role','status');$('accountSyncStatus').after(info);
- function updateStatus(){const s=C.deletionState();for(const el of document.querySelectorAll('.delete-pending-summary')){el.hidden=!s.pending;el.textContent=s.pending+' eliminación(es) definitiva(s) pendientes de confirmar en Drive. Conecta Google y sincroniza.';}info.hidden=!s.pending&&!s.lastCompleted;info.textContent=s.pending?s.pending+' eliminación(es) definitiva(s) pendientes de confirmar en Drive. Mantén internet y Google conectado; se reintentará automáticamente.':s.lastCompleted?'Última eliminación definitiva confirmada en Drive: '+new Date(s.lastCompleted).toLocaleString('es-GT'):'';}
+ function updateStatus(){const s=C.deletionState();for(const el of document.querySelectorAll('.delete-pending-summary')){el.hidden=!s.pending;el.textContent=s.pending+' eliminación(es) definitiva(s) pendientes de confirmar en la nube. Conecta Google y sincroniza.';}info.hidden=!s.pending&&!s.lastCompleted;info.textContent=s.pending?s.pending+' eliminación(es) definitiva(s) pendientes de confirmar en la nube. Mantén internet y Google conectado; se reintentará automáticamente.':s.lastCompleted?'Última eliminación definitiva confirmada en la nube: '+new Date(s.lastCompleted).toLocaleString('es-GT'):'';}
  window.addEventListener('mauzi:sync-status',updateStatus);updateStatus();
  window.MauziNoteDeletionUI={open,close,isDeleting:id=>busy&&target?.id===id};
 })();

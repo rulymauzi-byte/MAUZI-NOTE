@@ -142,7 +142,7 @@
     const status=$('accountSyncStatus'),text=status.textContent||'',kind=status.dataset.state;
     const light=kind==='synced'?'online':kind==='error'?'error':/sincronizando|conectando con tu/i.test(text)?'syncing':'offline';
     $('accountBtn').dataset.driveState=light;
-    $('accountBtn').setAttribute('aria-label','Mi cuenta y respaldo. '+(light==='online'?'Conectado a Google Drive':light==='syncing'?'Sincronizando':light==='error'?'Revisar sincronización':'Sin conexión activa'));
+    $('accountBtn').setAttribute('aria-label','Mi cuenta y respaldo. '+(light==='online'?'Conectado a la nube':light==='syncing'?'Sincronizando':light==='error'?'Revisar sincronización':'Sin conexión activa'));
   }).observe(legacyStatus,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['data-state']});
   updateView();updateFilter();
 })();
@@ -368,7 +368,7 @@
   $('imageFit').addEventListener('click',fit);
   $('deletePreviewImageBtn').addEventListener('click',async()=>{
     const img=sourceImage;if(!img)return;
-    if(!confirm('¿Eliminar esta imagen de la nota? Al guardar y sincronizar se quitará también de las versiones administradas por MAUZI NOTE en tu Drive. Las copias exportadas aparte no cambian.'))return;
+    if(!confirm('¿Eliminar esta imagen de la nota? Al guardar y sincronizar se quitará también de las versiones administradas por MAUZI NOTE en la nube. Las copias exportadas aparte no cambian.'))return;
     if(editor.contains(img)){
       exitImage();img.remove();editor.dispatchEvent(new Event('input',{bubbles:true}));window.MauziRich.refresh();
       toast('Imagen quitada. Guarda la nota para sincronizar la eliminación.');
@@ -378,7 +378,7 @@
       const box=document.createElement('div');box.innerHTML=note.contentHtml||A.oldText(note.content||'');
       const found=[...box.querySelectorAll('img')].find(x=>x.getAttribute('src')===source);if(!found)return;
       found.remove();const button=$('deletePreviewImageBtn');button.disabled=true;
-      try{await A.updateNote(noteId,{contentHtml:box.innerHTML});exitImage();toast('Imagen eliminada. La sincronización completará el cambio en Drive.');}
+      try{await A.updateNote(noteId,{contentHtml:box.innerHTML});exitImage();toast('Imagen eliminada. La sincronización completará el cambio en la nube.');}
       catch(e){toast(e.message||'No se pudo guardar. La imagen no se eliminó.');}
       finally{button.disabled=false;}
     }

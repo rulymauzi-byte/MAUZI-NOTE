@@ -100,7 +100,7 @@
  function openEvent(id='',linkedNote=''){editingRecord=id?M.get(id):null;const p=editingRecord?.payload,n=A.note(linkedNote);$('agendaEventId').value=id;$('agendaEditorTitle').textContent=p?'Editar actividad':'Nueva actividad';
   $('agendaTitle').value=p?.title||n?.title||'';$('agendaDate').value=p?.date||selectedDate;$('agendaTime').value=p?.time||'09:00';$('agendaAllDay').checked=!!p?.allDay;$('agendaTimeLabel').textContent=p?.allDay?'Hora del aviso':'Hora';$('agendaReminder').value=String(p?.reminder??0);$('agendaDuration').value=String(p?.duration||30);$('agendaDetails').value=p?.details||'';
   $('agendaLinkedNote').replaceChildren(new Option('Sin nota vinculada',''));for(const item of A.snapshot().notes)$('agendaLinkedNote').append(new Option(item.title||'Sin título',item.id));$('agendaLinkedNote').value=p?.noteId||linkedNote||'';
-  $('deleteAgendaEvent').classList.toggle('hidden',!p);$('exportAgendaIcs').classList.toggle('hidden',!p);$('agendaEditorStatus').textContent=p?.google?(p.google.signature===calendarSignature(p)?'Aviso enviado a Google Calendar.':'Actividad modificada: vuelve a activar en Google Calendar para actualizar su aviso.'):'Se guarda en tu cuenta y se sincroniza con tu Drive.';
+  $('deleteAgendaEvent').classList.toggle('hidden',!p);$('exportAgendaIcs').classList.toggle('hidden',!p);$('agendaEditorStatus').textContent=p?.google?(p.google.signature===calendarSignature(p)?'Aviso enviado a Google Calendar.':'Actividad modificada: vuelve a activar en Google Calendar para actualizar su aviso.'):'Se guarda en tu cuenta y se sincroniza con la nube.';
   dialog.classList.remove('hidden');document.body.classList.add('has-modal');dialog.querySelector('.sheet').scrollTop=0;
  }
  function closeEvent(){if(eventBusy)return;dialog.classList.add('hidden');if(!document.querySelector('.modal-backdrop:not(.hidden)'))document.body.classList.remove('has-modal');}
@@ -112,7 +112,7 @@
   eventBusy=true;$('saveAgendaEvent').disabled=true;$('sendAgendaGoogle').disabled=true;
   try{const id=await M.save('calendar',$('agendaEventId').value||undefined,p);$('agendaEventId').value=id;editingRecord=M.get(id);
    if(withGoogle){$('agendaEditorStatus').textContent='Esperando autorización de Google Calendar…';await authorization;await window.MauziCalendarLink.send(id);A.toast('Actividad guardada y aviso confirmado en Google Calendar.');}
-   else A.toast(p.google?'Actividad guardada. Reenvía a Google para actualizar su aviso.':'Actividad guardada en este dispositivo. Se sincronizará con tu Drive.');
+   else A.toast(p.google?'Actividad guardada. Reenvía a Google para actualizar su aviso.':'Actividad guardada en este dispositivo. Se sincronizará con la nube.');
    selectedDate=p.date;month=new Date(p.date+'T12:00:00');month.setDate(1);eventBusy=false;closeEvent();renderCalendar();checkReminders();
   }catch(e){$('agendaEditorStatus').textContent=e.message||'No se pudo completar el guardado.';}finally{eventBusy=false;$('saveAgendaEvent').disabled=false;$('sendAgendaGoogle').disabled=false;}
  }

@@ -31,7 +31,7 @@
  <form id="archiveYearForm" class="archive-input-row"><input id="archiveNewYear" inputmode="numeric" autocomplete="off" placeholder="Escribe otro año" aria-label="Otro año"><button type="submit">Usar año</button></form>
  <h3 class="archive-step">Carpeta</h3><div id="archiveFolderList" class="archive-folder-list" role="group" aria-label="Carpetas de las notas"></div>
  <form id="archiveFolderForm" class="archive-input-row"><input id="archiveNewFolder" autocomplete="off" placeholder="Ej.: Predicaciones / Jóvenes" aria-label="Carpeta o subcarpeta"><button type="submit">Usar carpeta</button></form>
- <p class="archive-help archive-fine">Las carpetas nuevas se crean en Drive al guardar su primera nota y sincronizar. Los años vacíos elegidos aquí se recuerdan solo en este dispositivo.</p>
+ <p class="archive-help archive-fine">El año y la carpeta viajan dentro de cada nota a la nube. Los años vacíos elegidos aquí se recuerdan solo en este dispositivo.</p>
  <button type="button" id="archiveShowBtn" class="primary-btn">Ver notas</button></div>`;
  document.body.append(modal);
  function refreshBar(){ensureAccount();$('archiveCurrentLocation').textContent=pathLabel();$('archiveBrowseBtn').title='Organizar: '+pathLabel();bar.classList.toggle('archive-filtered',active());$('archiveClearBtn').hidden=!active();}
@@ -65,7 +65,7 @@
  function properties(read){inReader=!!read;selectionAccount=accountKey();readId=A.currentReadId();const n=read?A.note(readId):null,loc=read?location(n||{}):draft;
   $('archiveNoteYear').value=loc.archiveYear;$('archiveNotePath').value=loc.folderPath;prop.open=false;
   $('archiveApplyLocation').textContent=read?'Mover nota':'Elegir ubicación';
-  $('archiveNoteLocationHint').textContent=read?'Con internet y Google conectado también se moverá su carpeta en Drive.':'Guarda el contenido con ✓ para confirmar también esta ubicación.';
+  $('archiveNoteLocationHint').textContent=read?'Con internet y Google conectado la ubicación llega también a tus otros equipos.':'Guarda el contenido con ✓ para confirmar también esta ubicación.';
   updateSummary();hints(loc.archiveYear);
  }
  prop.addEventListener('toggle',()=>window.MauziStudio?.placeProperties());
@@ -74,17 +74,17 @@
   const b=$('archiveApplyLocation');b.disabled=true;
   try{const loc={archiveYear:K.year($('archiveNoteYear').value),folderPath:K.path($('archiveNotePath').value)};
    if(selectionAccount!==accountKey())throw Error('La cuenta cambió. Abre de nuevo las opciones.');
-   if(inReader){await A.updateNote(readId,loc);A.toast('Ubicación guardada. Se sincroniza con tu Drive cuando esté conectado.');}
+   if(inReader){await A.updateNote(readId,loc);A.toast('Ubicación guardada. Se sincroniza con la nube cuando esté conectado.');}
    else{draft=loc;A.toast('Ubicación elegida. Guarda la nota con ✓.');}
    if(!extraYears.includes(loc.archiveYear))extraYears.push(loc.archiveYear);
    if(loc.folderPath)extraFolders[loc.archiveYear]=[...new Set([...(extraFolders[loc.archiveYear]||[]),loc.folderPath])];prefs();
    window.MauziStudio?.closeProperties();refreshBar();
   }catch(e){A.toast(e.message);}finally{b.disabled=false;}
  };
- const info=document.createElement('section');info.id='archiveAccountPanel';info.className='archive-account-section';info.innerHTML='<h3>Años y carpetas en tu Drive</h3><p>Las notas se organizan en MAUZI NOTE → año → carpeta → nota. Los textos e imágenes permanecen juntos y cada usuario utiliza su propio Drive.</p><p id="archiveSyncStatus" role="status"></p><button type="button" class="secondary-btn" id="archiveSyncBtn">Revisar organización</button><details class="archive-security"><summary>¿Se puede desconectar Google?</summary><p>Sí. El permiso es temporal: cuando venza, vuelve a tocar Conectar Google. Lo que ya llegó a Drive no se borra al vencer el permiso. Los cambios pendientes se quedan aquí hasta reconectar.</p><p>Antes de cambiar de teléfono confirma el guardado en Drive y conserva una copia independiente. Esta app no garantiza una conexión permanente.</p><a href="./AYUDA_GOOGLE_Y_CARPETAS.html" target="_blank" rel="noopener">Años, seguridad y los 100 usuarios de prueba</a></details>';
+ const info=document.createElement('section');info.id='archiveAccountPanel';info.className='archive-account-section';info.innerHTML='<h3>Años y carpetas</h3><p>Las notas se organizan por año → carpeta → nota. El año y la carpeta se guardan dentro de cada nota y llegan a todos tus equipos.</p><p id="archiveSyncStatus" role="status"></p><button type="button" class="secondary-btn" id="archiveSyncBtn">Revisar organización</button><details class="archive-security"><summary>¿Se puede desconectar Google?</summary><p>Sí. Desde Mi cuenta puedes salir de Google cuando quieras. Lo que ya llegó a la nube no se borra al salir. Los cambios pendientes se quedan aquí hasta reconectar.</p><p>Antes de cambiar de teléfono confirma «Guardado en la nube ✓» y conserva una copia independiente. Esta app no garantiza una conexión permanente.</p><a href="./AYUDA_GOOGLE_Y_CARPETAS.html" target="_blank" rel="noopener">Años, seguridad y los 100 usuarios de prueba</a></details>';
  $('driveFolderSection').after(info);
  function status(){const s=window.MauziCloud?.archiveState?.();if(!s)return;$('archiveSyncStatus').textContent=s.local?'Sin cuenta: la organización se guarda en este dispositivo.':s.error?'Notas conservadas. Falta terminar de organizar: '+s.error:s.pending?'Organización pendiente: '+s.pending+' notas. Se continúa al sincronizar con Google.':s.missing?'Carpetas revisadas. No se encontraron '+s.missing+' archivos antiguos: revisa tu copia de respaldo.':s.finishedAt?'Carpetas organizadas. Se conservan las versiones de las notas.':'Se crea la carpeta de cada nota al guardar y sincronizar.';}
- $('archiveSyncBtn').onclick=async()=>{const c=window.MauziCloud;if(!c?.account()?.authorized){A.toast('Conecta tu Google desde Mi cuenta para organizar Drive.');return;}try{await c.organizeNow();A.toast('Revisando años y carpetas en tu Drive.');}catch(e){A.toast(e.message);}};
+ $('archiveSyncBtn').onclick=async()=>{const c=window.MauziCloud;if(!c?.account()?.authorized){A.toast('Conecta tu Google desde Mi cuenta.');return;}try{await c.organizeNow();A.toast('Años y carpetas al día.');}catch(e){A.toast(e.message);}};
  function refresh(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;refreshBar();status();if(!modal.classList.contains('hidden')&&!modal.contains(document.activeElement))renderBrowser();});}
  window.addEventListener('mauzi:notes-render',refresh);window.addEventListener('mauzi:cloud-state',refresh);window.addEventListener('mauzi:archive-status',status);
  window.MauziArchive={
